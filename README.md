@@ -1,76 +1,42 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
+# Unspeakable
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A modernized, digital "forbidden-word" party game designed specifically for chaotic in-person play. Built for the [Hack Club Flavortown](https://flavortown.hackclub.com/) kitchen.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+![Work in Progress](https://img.shields.io/badge/Status-Work_In_Progress-orange)
+![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-purple?logo=kotlin)
+![Compose](https://img.shields.io/badge/Compose-Multiplatform-blue)
 
-### Build and Run Android Application
+## About the Project
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+I am building this game to create party moments that physical cards just can't replicate. While you can play it normally on a single device (Pass & Play), the main twist is a **local multiplayer mode** where each team uses their own phone. 
 
-### Build and Run Desktop (JVM) Application
+By connecting multiple devices in the same room, the app ensures each team sees different information: The describer’s view is completely different from the opposing team’s (Currently in development)
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+### Planned Game Modes
+* **Classic Mode:** The standard game. Get your team to guess the word without saying the 5 forbidden words.
+* **Minefield Mode:** The describer only sees 3 of their forbidden words, but the opposing team sees all of them. The opposing team waits with a digital buzzer on their screen to catch the describer stepping on an "invisible mine."
+* **Sabotage:** The opposing team can type new forbidden words into their phone mid-round to mess with the describer in real-time.
 
-### Build and Run Web Application
+## Tech Stack
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+This project is built completely from scratch using modern Kotlin architecture:
+* **[Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform.html):** Sharing logic, state machines, and networking across devices.
+* **[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/):** A fully custom, highly expressive Material 3 UI featuring variable fonts (`Roboto Flex`).
+* **[Room (SQLite)](https://developer.android.com/kotlin/multiplatform/room):** Embedded local database to store and randomly generate thousands of game cards.
+* **[Ktor](https://ktor.io/):** (In Progress) Using Ktor's embedded server and WebSockets to allow one phone to act as the "Host" while others join the local network.
 
-### Build and Run iOS Application
+## 📱 Platforms & Compiling
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+The architecture is fully cross-platform! Currently, I am actively developing and testing on:
+* ✅ **Android**
+* ✅ **Desktop (JVM)**
 
----
+*Note on iOS:* The codebase is written to support iOS natively via Kotlin Multiplatform. However, because I don't currently have a Mac, I cannot compile or test the `.ipa` build. 
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+## How to Run (Development)
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+Clone the repository and open it in **Android Studio** or **IntelliJ**.
+
+**To run on Android:**
+```bash
+./gradlew :composeApp:installDebug
