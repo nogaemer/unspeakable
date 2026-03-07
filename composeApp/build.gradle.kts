@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -19,7 +18,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosX64(),
@@ -30,9 +29,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm()
-    
+
 //    js {
 //        browser()
 //        binaries.executable()
@@ -43,7 +42,7 @@ kotlin {
 //        browser()
 //        binaries.executable()
 //    }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)

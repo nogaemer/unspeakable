@@ -2,7 +2,6 @@ package de.nogaemer.unspeakable.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.nogaemer.unspeakable.db.Graph
 import de.nogaemer.unspeakable.model.GameEvent
 import de.nogaemer.unspeakable.session.ClientGameSession
 import de.nogaemer.unspeakable.session.GameSession
@@ -55,18 +54,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun drawRandomCard(){
-        viewModelScope.launch {
-            try {
-                val newCard = Graph.dao.getRandomCard("en")
-
-                if (newCard != null) {
-                    onEvent(GameEvent.SendCard(newCard))
-                }
-
-            } catch (e: Exception) {
-                println("Database not ready yet")
-            }
-        }
+        onEvent(GameEvent.RequestNewRandomCard)
     }
 
     override fun onCleared() {

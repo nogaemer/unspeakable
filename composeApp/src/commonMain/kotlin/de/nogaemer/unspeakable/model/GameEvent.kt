@@ -10,9 +10,15 @@ sealed class GameEvent {
     @Serializable
     data object StartRound : GameEvent(), HostOnly
     @Serializable
-    data class SendCard(val card: UnspeakableCard) : GameEvent(), HostOnly
+    data class Tick(val currentRoundTime: Int) : GameEvent(), HostOnly
     @Serializable
-    data object NewRandomCard : GameEvent(), HostOnly
+    data class SendMaxRoundTime(val maxRoundTime: Int) : GameEvent()
+
+    @Serializable
+    data object RequestNewRandomCard : GameEvent()
+    @Serializable
+    data class SendCard(val card: UnspeakableCard) : GameEvent(), HostOnly
+
     @Serializable
     data object EndGame : GameEvent(), HostOnly
     @Serializable

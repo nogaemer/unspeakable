@@ -1,7 +1,5 @@
 package de.nogaemer.unspeakable.game
 
-import androidx.compose.runtime.currentRecomposeScope
-import de.nogaemer.unspeakable.db.Graph
 import de.nogaemer.unspeakable.db.UnspeakableCard
 import de.nogaemer.unspeakable.model.GameEvent
 import kotlinx.serialization.Serializable
@@ -10,24 +8,33 @@ data class GameState(
     val phase: GamePhase = GamePhase.SETUP,
     val isHost: Boolean = false,
     val currentCard: UnspeakableCard? = null,
-){
+
+    var maxRoundTime: Int? = null,
+    var currentRoundTime: Int? = null,
+) {
     suspend fun applyEvent(event: GameEvent): GameState {
         return when (event) {
-            GameEvent.EndGame -> TODO()
+            is GameEvent.EndGame -> TODO()
 
             is GameEvent.SendCard -> this.copy(
                 currentCard = event.card
             )
 
-            is GameEvent.NewRandomCard -> this.copy(
-                currentCard = Graph.dao.getRandomCard("de")
-            )
+            is GameEvent.RequestNewRandomCard -> TODO()
 
-            GameEvent.Buzz -> TODO()
+            is GameEvent.Buzz -> TODO()
 
             is GameEvent.Sabotage -> TODO()
 
-            GameEvent.StartRound -> TODO()
+            is GameEvent.StartRound -> TODO()
+
+            is GameEvent.Tick -> this.copy(
+                currentRoundTime = (event.currentRoundTime ?: 0) - 1
+            )
+
+            is GameEvent.SendMaxRoundTime -> this.copy(
+                maxRoundTime = event.maxRoundTime
+            )
         }
     }
 }

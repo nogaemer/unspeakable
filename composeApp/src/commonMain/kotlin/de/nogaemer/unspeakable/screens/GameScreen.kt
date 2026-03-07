@@ -1,6 +1,5 @@
 package de.nogaemer.unspeakable.screens
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,7 +83,7 @@ fun GameScreen(
         state = state,
         onEvent = { event -> viewModel.onEvent(event) },
         startHost = { viewModel.startHostingGame() },
-        connectHost = { viewModel.joinGameAsClient("192.168.178.63")},
+        connectHost = { viewModel.joinGameAsClient("192.168.178.63") },
         drawRandomCard = { viewModel.drawRandomCard() }
     )
 //    }
@@ -97,10 +100,46 @@ fun PlayingScreen(
     drawRandomCard: () -> Unit
 ) {
 
-    val animatedProgress by animateFloatAsState(
-        targetValue = 0.5f,
-        label = "timer_progress"
-    )
+
+    var progress by remember { mutableStateOf(1f) }
+
+    // Re-run this block if the round time changes
+    LaunchedEffect(state.currentRoundTime, state.maxRoundTime) {
+        val currentSeconds = state.currentRoundTime?.toFloat() ?: 0f
+        val maxSeconds = state.maxRoundTime?.toFloat()?.coerceAtLeast(1f) ?: 1f
+
+        // Where the circle should be RIGHT NOW
+        val startProgress = currentSeconds / maxSeconds
+        // Where the circle should be ONE SECOND FROM NOW
+        val endProgress = ((currentSeconds - 1).coerceAtLeast(0f)) / maxSeconds
+
+        // If we have time left to animate...
+        if (currentSeconds > 0) {
+            val startTimeNanos = withFrameNanos { it }
+            val oneSecondNanos = 1_000_000_000L // 1 second in nanoseconds
+
+            // Loop forever until the coroutine is cancelled (which happens
+            // when the server sends the next 1-second tick!)
+            while (true) {
+                withFrameNanos { frameTimeNanos ->
+                    val elapsedNanos = frameTimeNanos - startTimeNanos
+
+                    if (elapsedNanos >= oneSecondNanos) {
+                        progress = endProgress
+                    } else {
+                        // Calculate exact percentage between the start and end of this second
+                        val fraction = elapsedNanos.toFloat() / oneSecondNanos
+                        // Linear interpolation
+                        progress = startProgress + (endProgress - startProgress) * fraction
+                    }
+                }
+            }
+        } else {
+            progress = 0f
+        }
+    }
+
+
 
     Column(
         modifier = Modifier.fillMaxHeight().fillMaxWidth()
@@ -192,7 +231,7 @@ fun PlayingScreen(
             {
                 CircularWavyProgressIndicator(
                     modifier = Modifier.size(148.dp),
-                    progress = { animatedProgress },
+                    progress = { progress },
                     trackStroke = Stroke(
                         width =
                             with(LocalDensity.current) {
@@ -211,7 +250,12 @@ fun PlayingScreen(
                     wavelength = 64.0.dp
                 )
                 Text(
-                    text = "01:23",
+                    text = run {
+                        val minutes = (state.currentRoundTime ?: 1) / 60
+                        val seconds = (state.currentRoundTime ?: 1) % 60
+                        minutes.toString().padStart(2, '0') + ":" + seconds.toString()
+                            .padStart(2, '0')
+                    },
                     style = TextStyle(
                         fontSize = 64.sp,
                         fontFamily = getRobotoFlexFamilyClock(),
