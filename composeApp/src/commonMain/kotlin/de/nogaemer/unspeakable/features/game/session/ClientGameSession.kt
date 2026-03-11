@@ -1,12 +1,13 @@
-package de.nogaemer.unspeakable.session
+package de.nogaemer.unspeakable.features.game.session
 
-import de.nogaemer.unspeakable.game.GameState
-import de.nogaemer.unspeakable.model.GameEvent
+import de.nogaemer.unspeakable.core.model.GameEvent
+import de.nogaemer.unspeakable.features.game.GameState
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
-import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +19,7 @@ import kotlinx.serialization.json.Json
 
 class ClientGameSession(
     private val hostIp: String,
+    private val playerName: String,
     private val scope: CoroutineScope
 ) : GameSession {
     private val _state = MutableStateFlow(GameState())
@@ -28,6 +30,8 @@ class ClientGameSession(
 
     suspend fun connect() {
         session = client.webSocketSession("ws://$hostIp:8080/game")
+        sendEvent(GameEvent.JoinGame(playerName))
+
         scope.launch {
             for (frame in session.incoming) {
                 val event = Json.decodeFromString<GameEvent>(
@@ -43,7 +47,10 @@ class ClientGameSession(
     }
 
     override fun close() {
-        TODO("Not yet implemented")
+        scope.launch {
+            session.close()
+            client.close()
+        }
     }
 
 }

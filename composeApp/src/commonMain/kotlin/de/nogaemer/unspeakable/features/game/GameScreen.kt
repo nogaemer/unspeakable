@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.screens
+package de.nogaemer.unspeakable.features.game
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,69 +34,34 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SkipForward
 import com.composables.icons.lucide.X
-import de.nogaemer.unspeakable.game.GameState
-import de.nogaemer.unspeakable.game.GameViewModel
-import de.nogaemer.unspeakable.model.GameEvent
-import org.jetbrains.compose.resources.Font
-import unspeakable.composeapp.generated.resources.Res
-import unspeakable.composeapp.generated.resources.roboto_flex
+import de.nogaemer.unspeakable.core.model.GameEvent
+import de.nogaemer.unspeakable.core.util.robotoFlex
+import de.nogaemer.unspeakable.core.util.robotoFlexCardItems
+import de.nogaemer.unspeakable.core.util.robotoFlexClock
 
 @Composable
-fun GameScreen(
-    viewModel: GameViewModel = viewModel { GameViewModel() }
-) {
-    val state by viewModel.state.collectAsState()
-
-//    LaunchedEffect(dbReady) {
-//        if (!dbReady) return@LaunchedEffect
-//        viewModel.startHostingGame()
-//        viewModel.drawRandomCard()
-//    }
-
-//    Column {
-//        Spacer(modifier = Modifier.height(50.dp))
-//        Row {
-//            Button(onClick = { viewModel.startHostingGame() }) {
-//                Text("Host Game")
-//            }
-//            Button(onClick = { viewModel.joinGameAsClient("192.168.178.63") }) {
-//                Text("Join Game")
-//            }
-//            Button(onClick = {
-//                viewModel.drawRandomCard()
-//            }) {
-//                Text("End Game")
-//            }
-//        }
+fun GameScreen(component: GameComponent) {
+    val state by component.state.collectAsState()
     PlayingScreen(
         state = state,
-        onEvent = { event -> viewModel.onEvent(event) },
-        startHost = { viewModel.startHostingGame() },
-        connectHost = { viewModel.joinGameAsClient("192.168.178.63") },
-        drawRandomCard = { viewModel.drawRandomCard() }
+        onEvent = component::onEvent,
+        drawRandomCard = component::drawRandomCard
     )
-//    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Suppress("UNUSED_PARAMETER")
 @Composable
 fun PlayingScreen(
     state: GameState,
     onEvent: (event: GameEvent) -> Unit,
-    startHost: () -> Unit,
-    connectHost: () -> Unit,
     drawRandomCard: () -> Unit
 ) {
 
@@ -172,7 +137,11 @@ fun PlayingScreen(
                             )
                             .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
                     ) {
-                        Text("Team A", color = MaterialTheme.colorScheme.onBackground)
+                        Text(
+                            "Team A",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                     Box(
                         modifier = Modifier.size(40.dp).clip(MaterialShapes.Pentagon.toShape())
@@ -184,7 +153,8 @@ fun PlayingScreen(
                         Text(
                             "12",
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -205,6 +175,7 @@ fun PlayingScreen(
                             "12",
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                     Column(
@@ -220,7 +191,11 @@ fun PlayingScreen(
                             )
                             .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
                     ) {
-                        Text("Team B", color = MaterialTheme.colorScheme.onBackground)
+                        Text(
+                            "Team B",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -258,7 +233,7 @@ fun PlayingScreen(
                     },
                     style = TextStyle(
                         fontSize = 64.sp,
-                        fontFamily = getRobotoFlexFamilyClock(),
+                        fontFamily = robotoFlexClock(),
                         fontWeight = FontWeight(500),
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
@@ -296,7 +271,7 @@ fun PlayingScreen(
                         text = state.currentCard.word.uppercase(),
                         style = TextStyle(
                             fontSize = 72.sp,
-                            fontFamily = getRobotoFlexFamilyCardTitle(),
+                            fontFamily = robotoFlex(),
                             color = MaterialTheme.colorScheme.tertiary,
                             textAlign = TextAlign.Center,
                         )
@@ -332,7 +307,7 @@ fun PlayingScreen(
                                     text = word.uppercase(),
                                     style = TextStyle(
                                         fontSize = 16.sp,
-                                        fontFamily = getRobotoFlexCardItems(),
+                                        fontFamily = robotoFlexCardItems(),
                                         color = MaterialTheme.colorScheme.onBackground,
                                     )
                                 )
@@ -347,7 +322,7 @@ fun PlayingScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FilledTonalIconButton(
-                    onClick = startHost,
+                    onClick = { TODO() },
                     modifier = Modifier.size(96.dp),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -361,7 +336,7 @@ fun PlayingScreen(
                     }
                 )
                 FilledTonalIconButton(
-                    onClick = connectHost,
+                    onClick = { TODO() },
                     modifier = Modifier.size(96.dp),
                     shape = RoundedCornerShape(28.dp),
                     content = {
@@ -391,58 +366,4 @@ fun PlayingScreen(
 }
 
 
-@Composable
-fun getRobotoFlexFamilyCardTitle(): FontFamily {
-    return FontFamily(
-        Font(
-            resource = Res.font.roboto_flex,
-
-            variationSettings = FontVariation.Settings(
-                FontVariation.slant(-10f),
-                FontVariation.grade(-90),
-                FontVariation.weight(600),
-                FontVariation.width(40f),
-                FontVariation.Setting("opsz", 72f),
-                FontVariation.Setting("XTRA", 450f),
-                FontVariation.Setting("YOPQ", 25f),
-            )
-        )
-    )
-}
-
-@Composable
-fun getRobotoFlexFamilyClock(): FontFamily {
-
-    return FontFamily(
-        Font(
-            resource = Res.font.roboto_flex,
-            variationSettings = FontVariation.Settings(
-                FontVariation.Setting("GRAD", -200f),
-                FontVariation.Setting("XOPQ", 96f),
-                FontVariation.Setting("XTRA", 414f),
-                FontVariation.Setting("YOPQ", 79f),
-                FontVariation.Setting("wdth", 25f),
-                FontVariation.Setting("opsz", 144f),
-                FontVariation.Setting("wght", 500f)
-            )
-        )
-    )
-}
-
-@Composable
-fun getRobotoFlexCardItems(): FontFamily {
-
-    return FontFamily(
-        Font(
-            resource = Res.font.roboto_flex,
-
-            variationSettings = FontVariation.Settings(
-                FontVariation.grade(-90),
-                FontVariation.weight(600),
-                FontVariation.width(120f),
-                FontVariation.Setting("opsz", 16f),
-            )
-        )
-    )
-}
-
+// Font family helpers moved to FontFamilies.kt

@@ -1,11 +1,17 @@
-package de.nogaemer.unspeakable.model
+package de.nogaemer.unspeakable.core.model
 
 import de.nogaemer.unspeakable.db.UnspeakableCard
+import de.nogaemer.unspeakable.features.game.Player
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class GameEvent {
     interface HostOnly
+
+    @Serializable
+    data class JoinGame(val playerName: String) : GameEvent()
+    @Serializable
+    data class AddPlayer(val player: Player) : GameEvent(), HostOnly
 
     @Serializable
     data object StartRound : GameEvent(), HostOnly

@@ -25,7 +25,7 @@ This project is built completely from scratch using modern Kotlin architecture:
 * **[Room (SQLite)](https://developer.android.com/kotlin/multiplatform/room):** Embedded local database to store and randomly generate thousands of game cards.
 * **[Ktor](https://ktor.io/):** (In Progress) Using Ktor's embedded server and WebSockets to allow one phone to act as the "Host" while others join the local network.
 
-## 📱 Platforms & Compiling
+## Platforms & Compiling
 
 The architecture is fully cross-platform! Currently, I am actively developing and testing on:
 * ✅ **Android**

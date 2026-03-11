@@ -1,8 +1,8 @@
-package de.nogaemer.unspeakable.session
+package de.nogaemer.unspeakable.features.game.session
 
+import de.nogaemer.unspeakable.core.model.GameEvent
 import de.nogaemer.unspeakable.db.Graph
-import de.nogaemer.unspeakable.game.GameState
-import de.nogaemer.unspeakable.model.GameEvent
+import de.nogaemer.unspeakable.features.game.GameState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Clock
 
 abstract class HostAuthority(
-    private val scope: CoroutineScope = CoroutineScope(Job())
+    protected val scope: CoroutineScope
 ) : GameSession {
     protected val _state = MutableStateFlow(GameState(isHost = true))
     override val state = _state.asStateFlow()
@@ -72,8 +72,8 @@ class Timer(
     }
 
     fun start() {
-        reset();
-        resume();
+        reset()
+        resume()
         println(Clock.System.now())
 
         timerJob = scope.launch {
