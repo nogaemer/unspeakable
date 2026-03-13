@@ -1,10 +1,12 @@
 package de.nogaemer.unspeakable.features.game_settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,7 +25,7 @@ fun SetupScreen(
     val networkMode = component.networkMode
 
     Column(
-        Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 32.dp),
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 32.dp),
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         if (networkMode == NetworkMode.CLIENT) {

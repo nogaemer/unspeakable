@@ -7,11 +7,11 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.androidPredictiveBackAnimatableV2
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
@@ -23,7 +23,7 @@ import de.nogaemer.unspeakable.db.isDatabaseFileCopied
 import de.nogaemer.unspeakable.db.writeDatabaseFile
 import de.nogaemer.unspeakable.features.game.GameScreen
 import de.nogaemer.unspeakable.features.game_settings.SetupScreen
-import de.nogaemer.unspeakable.features.home.HomeScreen
+import de.nogaemer.unspeakable.features.main.MainScreen
 import de.nogaemer.unspeakable.navigation.RootComponent
 import unspeakable.composeapp.generated.resources.Res
 
@@ -34,9 +34,6 @@ import unspeakable.composeapp.generated.resources.Res
 )
 @Composable
 fun App(root: RootComponent) {
-
-    //Database setup
-    val scope = rememberCoroutineScope()
 
     //DB init
     LaunchedEffect(Unit) {
@@ -66,35 +63,23 @@ fun App(root: RootComponent) {
 fun AppContent(root: RootComponent) {
     AppTheme {
         Surface {
-            // "Children" replaces Crossfade and adds animations
             Children(
                 stack = root.stack,
-                // This provides native slide animations AND predictive iOS swipe back
                 animation = predictiveBackAnimation(
                     backHandler = root.backHandler,
                     onBack = root::goBack,
-                    fallbackAnimation = stackAnimation(slide())
+                    selector = { backEvent, _, _ ->
+                        androidPredictiveBackAnimatableV2(
+                            backEvent
+                        )
+                    },
+                    fallbackAnimation = stackAnimation(slide()),
                 )
             ) { child ->
                 when (val instance = child.instance) {
-                    is RootComponent.Child.Home -> {
-                        HomeScreen(
-                            component = instance.component
-                        )
-                    }
-
-                    is RootComponent.Child.Setup -> {
-                        SetupScreen(
-                            component = instance.component
-                        )
-                    }
-
-                    is RootComponent.Child.Game -> {
-                        GameScreen(
-                            component = instance.component
-                        )
-                    }
-
+                    is RootComponent.Child.Main -> MainScreen(instance.component)
+                    is RootComponent.Child.Setup -> SetupScreen(instance.component)
+                    is RootComponent.Child.Game -> GameScreen(instance.component)
                 }
             }
         }

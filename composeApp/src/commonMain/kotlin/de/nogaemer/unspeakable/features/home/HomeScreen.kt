@@ -1,6 +1,7 @@
 package de.nogaemer.unspeakable.features.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -27,16 +30,19 @@ import de.nogaemer.unspeakable.core.util.robotoFlex
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeScreen(component: HomeComponent) {
-    Column(
+
+    Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 64.dp, bottom = 0.dp),
-        verticalArrangement = Arrangement.spacedBy(72.dp)
+            .padding(top = 48.dp)
     ) {
+
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 0.dp, bottom = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 fontSize = 72.sp,
@@ -57,68 +63,78 @@ fun HomeScreen(component: HomeComponent) {
             Text(
                 fontSize = 22.sp,
                 text = "THE ULTIMATE WORD GAME",
-                fontFamily = robotoFlex(
-                    FontVariation.Settings(
-                        FontVariation.weight(400),
-                    )
-                ),
+                fontFamily = robotoFlex(FontVariation.Settings(FontVariation.weight(400))),
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
 
-        Column(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
         ) {
-            GameModeCard(
-                title = "Host  a\nGame",
-                fontVariation = FontVariation.Settings(
-                    FontVariation.weight(500),
-                    FontVariation.width(100f),
-                    FontVariation.grade(150),
-                    FontVariation.opticalSizing(64.sp),
-                    FontVariation.Setting("XOPQ", 175f),
-                    FontVariation.Setting("YOPQ", 90f)
-                ),
-                backgroundShapeModifier = Modifier
-                    .offset(x = (-65).dp, y = 20.dp)
-                    .rotate(20F)
-                    .requiredSize(320.dp).aspectRatio(1f)
-                    .clip(MaterialShapes.Cookie7Sided.toShape()),
-                onClick = component::onHostClicked
-            )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 20.dp)
+                    .clip(RoundedCornerShape(32.dp)),
+            ) {
+                item {
+                    GameModeCard(
+                        title = "Host  a\nGame",
+                        fontVariation = FontVariation.Settings(
+                            FontVariation.weight(500),
+                            FontVariation.width(100f),
+                            FontVariation.grade(150),
+                            FontVariation.opticalSizing(64.sp),
+                            FontVariation.Setting("XOPQ", 175f),
+                            FontVariation.Setting("YOPQ", 90f)
+                        ),
+                        backgroundShapeModifier = Modifier
+                            .offset(x = (-65).dp, y = 20.dp)
+                            .rotate(20F).requiredSize(320.dp).aspectRatio(1f)
+                            .clip(MaterialShapes.Cookie7Sided.toShape()),
+                        onClick = component::onHostClicked
+                    )
+                }
 
-            GameModeCard(
-                title = "Join  a\nGame",
-                fontVariation = FontVariation.Settings(
-                    FontVariation.slant(-10f),
-                    FontVariation.weight(400),
-                    FontVariation.width(100f),
-                    FontVariation.grade(-200),
-                    FontVariation.opticalSizing(64.sp),
-                    FontVariation.Setting("XOPQ", 175f),
-                    FontVariation.Setting("YTUC", 760f)
-                ),
-                backgroundShapeModifier = Modifier
-                    .offset(x = (-65).dp, y = 20.dp)
+                item {
+                    GameModeCard(
+                        title = "Join  a\nGame",
+                        fontVariation = FontVariation.Settings(
+                            FontVariation.slant(-10f),
+                            FontVariation.weight(400),
+                            FontVariation.width(100f),
+                            FontVariation.grade(-200),
+                            FontVariation.opticalSizing(64.sp),
+                            FontVariation.Setting("XOPQ", 175f),
+                            FontVariation.Setting("YTUC", 760f)
+                        ),
+                        backgroundShapeModifier = Modifier
+                            .offset(x = (-65).dp, y = 20.dp)
+                            .rotate(-90F).requiredSize(320.dp).aspectRatio(1f)
+                            .clip(MaterialShapes.Ghostish.toShape()),
+                        onClick = component::onJoinClicked
+                    )
+                }
 
-                    .rotate(-90F)
-                    .requiredSize(320.dp).aspectRatio(1f)
-                    .clip(MaterialShapes.Ghostish.toShape()),
-                onClick = component::onJoinClicked
-            )
-
-            GameModeCardSmall(
-                title = "Local",
-                fontVariation = FontVariation.Settings(
-                    FontVariation.weight(500),
-                    FontVariation.grade(150),
-                    FontVariation.opticalSizing(64.sp),
-                    FontVariation.Setting("XOPQ", 175f),
-                    FontVariation.Setting("YOPQ", 100f)
-                ),
-                onClick = component::onLocalClicked
-            )
+                item {
+                    GameModeCardSmall(
+                        title = "Local",
+                        fontVariation = FontVariation.Settings(
+                            FontVariation.weight(500),
+                            FontVariation.grade(150),
+                            FontVariation.opticalSizing(64.sp),
+                            FontVariation.Setting("XOPQ", 175f),
+                            FontVariation.Setting("YOPQ", 100f)
+                        ),
+                        onClick = component::onLocalClicked
+                    )
+                }
+            }
         }
     }
 }
+
+
+

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class ScreenConfig {
     @Serializable
-    data object Home : ScreenConfig()
+    data object Main : ScreenConfig()
 
     @Serializable
     data class Setup(val networkMode: NetworkMode) : ScreenConfig()

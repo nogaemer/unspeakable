@@ -8,14 +8,14 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
-import de.nogaemer.unspeakable.core.model.GameConfig
 import de.nogaemer.unspeakable.features.game.DefaultGameComponent
 import de.nogaemer.unspeakable.features.game.GameComponent
 import de.nogaemer.unspeakable.features.game_settings.DefaultSetupComponent
-import de.nogaemer.unspeakable.features.game_settings.NetworkMode
 import de.nogaemer.unspeakable.features.game_settings.SetupComponent
-import de.nogaemer.unspeakable.features.home.DefaultHomeComponent
-import de.nogaemer.unspeakable.features.home.HomeComponent
+import de.nogaemer.unspeakable.features.main.DefaultMainComponent
+import de.nogaemer.unspeakable.features.main.MainComponent
+import de.nogaemer.unspeakable.navigation.RootComponent.Child.Game
+import de.nogaemer.unspeakable.navigation.RootComponent.Child.Main
 
 class RootComponent(
     componentContext: ComponentContext
@@ -28,7 +28,7 @@ class RootComponent(
     val stack: Value<ChildStack<ScreenConfig, Child>> = childStack(
         source = navigation,
         serializer = ScreenConfig.serializer(),
-        initialConfiguration = ScreenConfig.Home,
+        initialConfiguration = ScreenConfig.Main,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -36,12 +36,12 @@ class RootComponent(
     @OptIn(DelicateDecomposeApi::class)
     private fun createChild(config: ScreenConfig, context: ComponentContext): Child {
         return when (config) {
-            is ScreenConfig.Home -> Child.Home(
-                DefaultHomeComponent(
+            ScreenConfig.Main -> Main(
+                DefaultMainComponent(
                     context,
-                    onHost = { navigation.push(ScreenConfig.Setup(NetworkMode.HOST)) },
-                    onJoin = { navigation.push(ScreenConfig.Setup(NetworkMode.CLIENT)) },
-                    onLocal = { navigation.push(ScreenConfig.Game(GameConfig.Local)) }
+                    onSelect = { networkMode ->
+                        navigation.push(ScreenConfig.Setup(networkMode))
+                    }
                 )
             )
 
@@ -51,10 +51,9 @@ class RootComponent(
                 }
             )
 
-            is ScreenConfig.Game -> Child.Game(
+            is ScreenConfig.Game -> Game(
                 DefaultGameComponent(context, config.gameConfig)
             )
-
         }
     }
 
@@ -68,7 +67,7 @@ class RootComponent(
     }
 
     sealed class Child {
-        data class Home(val component: HomeComponent) : Child()
+        data class Main(val component: MainComponent) : Child()
         data class Setup(val component: SetupComponent) : Child()
         data class Game(val component: GameComponent) : Child()
     }

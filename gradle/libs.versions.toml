@@ -13,6 +13,7 @@ composeHotReload = "1.0.0"
 composeMultiplatform = "1.10.1"
 decompose = "3.4.0"
 extensionsCompose = "3.4.0"
+extensionsComposeExperimental = "3.4.0"
 iconsLucideCmp = "2.2.1"
 junit = "4.13.2"
 kotlin = "2.3.10"
@@ -31,6 +32,7 @@ ktor = "3.4.1"
 [libraries]
 extensions1-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "extensionsCompose" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+extensions1-compose-experimental = { module = "com.arkivanov.decompose:extensions-compose-experimental", version.ref = "extensionsComposeExperimental" }
 icons-lucide-cmp = { module = "com.composables:icons-lucide-cmp", version.ref = "iconsLucideCmp" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

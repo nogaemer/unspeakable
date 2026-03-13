@@ -81,6 +81,8 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.lifecycle.coroutines)
             implementation(libs.extensions1.compose)
+            implementation(libs.extensions1.compose.experimental)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

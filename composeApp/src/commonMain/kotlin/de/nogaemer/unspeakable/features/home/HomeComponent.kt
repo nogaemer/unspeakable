@@ -1,6 +1,7 @@
 package de.nogaemer.unspeakable.features.home
 
 import com.arkivanov.decompose.ComponentContext
+import de.nogaemer.unspeakable.features.game_settings.NetworkMode
 
 interface HomeComponent {
     fun onHostClicked()
@@ -10,12 +11,10 @@ interface HomeComponent {
 
 class DefaultHomeComponent(
     componentContext: ComponentContext,
-    private val onHost:  () -> Unit,
-    private val onJoin:  () -> Unit,
-    private val onLocal: () -> Unit
+    private val onSelect: (networkMode: NetworkMode) -> Unit,
 ) : HomeComponent, ComponentContext by componentContext {
 
-    override fun onHostClicked()  = onHost()
-    override fun onJoinClicked()  = onJoin()
-    override fun onLocalClicked() = onLocal()
+    override fun onHostClicked() = onSelect(NetworkMode.HOST)
+    override fun onJoinClicked() = onSelect(NetworkMode.CLIENT)
+    override fun onLocalClicked() = onSelect(NetworkMode.LOCAL)
 }
