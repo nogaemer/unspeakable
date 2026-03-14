@@ -25,11 +25,14 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.lyricist.strings
 import de.nogaemer.unspeakable.core.util.robotoFlex
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeScreen(component: HomeComponent) {
+    val textCommon = strings.common
+    val textHome = strings.home
 
     Column (
         modifier = Modifier
@@ -46,7 +49,7 @@ fun HomeScreen(component: HomeComponent) {
         ) {
             Text(
                 fontSize = 72.sp,
-                text = "Unspeakable".uppercase(),
+                text = textCommon.appName.uppercase(),
                 fontFamily = robotoFlex(
                     FontVariation.Settings(
                         FontVariation.slant(-10f),
@@ -62,7 +65,7 @@ fun HomeScreen(component: HomeComponent) {
             )
             Text(
                 fontSize = 22.sp,
-                text = "THE ULTIMATE WORD GAME",
+                text = textCommon.appTagline,
                 fontFamily = robotoFlex(FontVariation.Settings(FontVariation.weight(400))),
                 color = MaterialTheme.colorScheme.onBackground,
             )
@@ -81,7 +84,7 @@ fun HomeScreen(component: HomeComponent) {
             ) {
                 item {
                     GameModeCard(
-                        title = "Host  a\nGame",
+                        title = textHome.hostAGame,
                         fontVariation = FontVariation.Settings(
                             FontVariation.weight(500),
                             FontVariation.width(100f),
@@ -100,7 +103,7 @@ fun HomeScreen(component: HomeComponent) {
 
                 item {
                     GameModeCard(
-                        title = "Join  a\nGame",
+                        title = textHome.joinAGame,
                         fontVariation = FontVariation.Settings(
                             FontVariation.slant(-10f),
                             FontVariation.weight(400),
@@ -120,7 +123,7 @@ fun HomeScreen(component: HomeComponent) {
 
                 item {
                     GameModeCardSmall(
-                        title = "Local",
+                        title = textHome.local,
                         fontVariation = FontVariation.Settings(
                             FontVariation.weight(500),
                             FontVariation.grade(150),
@@ -135,6 +138,3 @@ fun HomeScreen(component: HomeComponent) {
         }
     }
 }
-
-
-

@@ -1,7 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -83,6 +82,9 @@ kotlin {
             implementation(libs.extensions1.compose)
             implementation(libs.extensions1.compose.experimental)
 
+            implementation(libs.lyricist)
+            implementation(libs.multiplatform.settings)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -144,6 +146,23 @@ dependencies {
     add("kspJvm", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
+    add("kspCommonMainMetadata", libs.lyricist.processor)
+}
+
+tasks.configureEach {
+    if (name != "kspCommonMainKotlinMetadata" &&
+        (name.startsWith("ksp") || name.startsWith("compileKotlin"))
+    ) {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+
+kotlin.sourceSets.commonMain {
+    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+}
+
+ksp {
+    arg("lyricist.generateStringsProperty", "true")
 }
 
 

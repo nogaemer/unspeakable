@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.lyricist.strings
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -23,6 +24,7 @@ fun SetupScreen(
     val playerName by component.playerName.collectAsState()
     val ipAddress by component.ipAddress.collectAsState()
     val networkMode = component.networkMode
+    val text = strings.gameSetup
 
     Column(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 32.dp),
@@ -32,20 +34,20 @@ fun SetupScreen(
             TextField(
                 value = ipAddress,
                 onValueChange = component::updateIpAddress,
-                label = { Text("IP Address") })
+                label = { Text(text.ipAddress) })
         }
         if (networkMode != NetworkMode.LOCAL) {
             TextField(
                 value = playerName,
                 onValueChange = component::updatePlayerName,
-                label = { Text("Player Name") })
+                label = { Text(text.playerName) })
         }
 
 
         Button(
             onClick = { component.onStartGame() },
         ) {
-            Text("Start")
+            Text(text.startGame)
         }
     }
 

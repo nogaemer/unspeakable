@@ -38,7 +38,7 @@ abstract class HostAuthority(
                 handleSideEffects(GameEvent.SendMaxRoundTime(timer.maxTime))
 
                 try {
-                    val newCard = Graph.dao.getRandomCard("en") ?: return
+                    val newCard = Graph.dao.getRandomCard(Graph.settings.appSettings.locales.lang) ?: return
                     handleSideEffects(GameEvent.SendCard(newCard))
                 } catch (e: Exception) {
                     e.printStackTrace()

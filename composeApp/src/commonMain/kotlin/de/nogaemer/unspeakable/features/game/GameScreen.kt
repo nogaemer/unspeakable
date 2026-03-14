@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.lyricist.strings
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SkipForward
@@ -67,6 +68,9 @@ fun PlayingScreen(
 
 
     var progress by remember { mutableStateOf(1f) }
+    val text = strings.game
+    val leftTeamPoints = state.match?.teams?.getOrNull(0)?.points ?: 0
+    val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
 
     // Re-run this block if the round time changes
     LaunchedEffect(state.currentRoundTime, state.maxRoundTime) {
@@ -138,7 +142,7 @@ fun PlayingScreen(
                             .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
                     ) {
                         Text(
-                            "Team A",
+                            text.teamA,
                             color = MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold
                         )
@@ -151,7 +155,7 @@ fun PlayingScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "12",
+                            leftTeamPoints.toString(),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold
@@ -172,7 +176,7 @@ fun PlayingScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "12",
+                            rightTeamPoints.toString(),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold
@@ -192,7 +196,7 @@ fun PlayingScreen(
                             .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
                     ) {
                         Text(
-                            "Team B",
+                            text.teamB,
                             color = MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold
                         )
