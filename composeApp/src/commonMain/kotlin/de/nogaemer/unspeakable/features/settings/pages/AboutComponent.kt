@@ -16,6 +16,6 @@ class DefaultAboutComponent(
 ): AboutComponent {
     override fun onBack() = _onBack()
 
-    override val titleKey:  ((Strings) -> String) = { it.settings.languageStrings.title }
+    override val titleKey:  ((Strings) -> String) = { it.settings.aboutStrings.title }
     override val icon       = Lucide.Info
 }

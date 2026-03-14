@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -21,9 +22,12 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
+import de.nogaemer.unspeakable.core.util.SystemBarAppearance
 import de.nogaemer.unspeakable.core.util.settings.AppSettingsController
 import de.nogaemer.unspeakable.core.util.settings.LocalAppSettings
+import de.nogaemer.unspeakable.core.util.settings.isDark
 import de.nogaemer.unspeakable.db.Graph
 import de.nogaemer.unspeakable.db.getDatabaseBuilder
 import de.nogaemer.unspeakable.db.getRoomDatabase
@@ -33,6 +37,7 @@ import de.nogaemer.unspeakable.features.game.GameScreen
 import de.nogaemer.unspeakable.features.game_settings.SetupScreen
 import de.nogaemer.unspeakable.features.main.MainScreen
 import de.nogaemer.unspeakable.navigation.RootComponent
+import de.nogaemer.unspeakable.theme.rememberWallpaperSeedColor
 import unspeakable.composeapp.generated.resources.Res
 
 
@@ -65,14 +70,19 @@ fun App(root: RootComponent) {
         currentLanguageTag = controller.appSettings.locales.lang
     )
 
+    val wallpaperSeedColor =
+        rememberWallpaperSeedColor(controller.appSettings.isDark) ?: Color(0xFF558FE5)
+    val seedColor =
+        if (controller.appSettings.useDynamicColor) wallpaperSeedColor else controller.appSettings.seedColor
 
     // ######################## Ui ##########################
 
     CompositionLocalProvider(LocalAppSettings provides controller) {
         ProvideStrings(lyricist) {
             AppTheme(
-                seedColor = controller.appSettings.seedColor,
-                darkTheme = controller.appSettings.isDark
+                seedColor = seedColor,
+                darkTheme = controller.appSettings.isDark,
+                isAmoled = controller.appSettings.isAmoled,
             ) {
                 AppContent(root)
             }
@@ -114,17 +124,23 @@ fun AppContent(root: RootComponent) {
 fun AppTheme(
     seedColor: Color = Color(0xFFA9E555),
     darkTheme: Boolean = isSystemInDarkTheme(),
+    isAmoled: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    SystemBarAppearance(darkTheme)
+
     // This magical function generates all 30+ Material 3 color roles!
     val colorScheme = rememberDynamicColorScheme(
         seedColor = seedColor,
         isDark = darkTheme,
-        isAmoled = false
+        isAmoled = isAmoled,
+        style = PaletteStyle.TonalSpot
     )
+
 
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
+        motionScheme = MotionScheme.expressive(),
         content = content
     )
 }

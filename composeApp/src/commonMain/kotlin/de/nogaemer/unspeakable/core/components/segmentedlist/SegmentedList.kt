@@ -25,11 +25,13 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -47,8 +49,13 @@ fun SegmentedLazyColumn(
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
     overscrollEffect: OverscrollEffect? = rememberOverscrollEffect(),
+    segmentTitle: String? = null,
     content: LazyListScope.() -> Unit,
 ) {
+    if (segmentTitle != null) Text(
+        text = segmentTitle,
+        color = MaterialTheme.colorScheme.primary,
+    )
     LazyColumn(
         modifier = modifier.padding(12.dp).clip(RoundedCornerShape(20.dp)),
         state = state,
@@ -71,14 +78,29 @@ fun SegmentedColumn(
         if (!reverseLayout) Arrangement.spacedBy(2.dp, Alignment.Top)
         else Arrangement.spacedBy(2.dp, Alignment.Bottom),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    segmentTitle: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+
+
     Column(
-        modifier = modifier.padding(12.dp).clip(RoundedCornerShape(20.dp)),
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-        content = content,
-    )
+        modifier.padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+    ) {
+        if (segmentTitle != null) Box(modifier = Modifier.padding(horizontal = 4.dp)) {
+            Text(
+                text = segmentTitle,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        Column(
+            modifier = modifier.clip(RoundedCornerShape(20.dp)),
+            horizontalAlignment = horizontalAlignment,
+            verticalArrangement = verticalArrangement,
+            content = content,
+        )
+    }
 }
 
 @Composable
@@ -135,7 +157,7 @@ fun SegmentedListItem(
             trailingContent = trailingContent,
             colors = ListItemDefaults.colors(
                 containerColor = containerColor,
-                headlineColor  = contentColor,
+                headlineColor = contentColor,
             ),
             tonalElevation = tonalElevation,
             shadowElevation = shadowElevation,

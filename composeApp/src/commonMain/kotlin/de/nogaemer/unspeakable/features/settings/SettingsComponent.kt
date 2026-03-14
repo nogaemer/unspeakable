@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import de.nogaemer.unspeakable.core.i18n.Strings
 import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent.SettingsChild.About
@@ -16,8 +17,10 @@ import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent.Settin
 import de.nogaemer.unspeakable.features.settings.pages.AboutComponent
 import de.nogaemer.unspeakable.features.settings.pages.DefaultAboutComponent
 import de.nogaemer.unspeakable.features.settings.pages.DefaultLanguageComponent
+import de.nogaemer.unspeakable.features.settings.pages.DefaultPersonalizationComponent
 import de.nogaemer.unspeakable.features.settings.pages.DefaultSettingsOverviewComponent
 import de.nogaemer.unspeakable.features.settings.pages.LanguageComponent
+import de.nogaemer.unspeakable.features.settings.pages.PersonalizationComponent
 import de.nogaemer.unspeakable.features.settings.pages.SettingsOverviewComponent
 import kotlinx.serialization.Serializable
 
@@ -30,12 +33,14 @@ interface SettingsPage {
 @Serializable
 sealed class SettingsConfig {
     @Serializable data object Overview : SettingsConfig()
+    @Serializable data object Personalization : SettingsConfig()
     @Serializable data object Language : SettingsConfig()
     @Serializable data object About : SettingsConfig()
 }
 
 interface SettingsComponent : ComponentContext {
     val stack: Value<ChildStack<SettingsConfig, DefaultSettingsComponent.SettingsChild>>
+    fun resetToOverview()
     fun goBack()
 }
 
@@ -55,6 +60,7 @@ class DefaultSettingsComponent(
 
     @OptIn(DelicateDecomposeApi::class)
     private fun createChild(config: SettingsConfig, ctx: ComponentContext): SettingsChild {
+        val personalization = DefaultPersonalizationComponent(ctx, _onBack = { navigation.pop() })
         val language = DefaultLanguageComponent(ctx, _onBack = { navigation.pop() })
         val about = DefaultAboutComponent(ctx, _onBack = { navigation.pop() })
 
@@ -62,14 +68,16 @@ class DefaultSettingsComponent(
             is SettingsConfig.Overview -> Overview(
                 DefaultSettingsOverviewComponent(
                     ctx = ctx,
+                    personalization = personalization,
                     language = language,
                     about = about,
                     _onNavigate = { navigation.push(it) }
                 )
             )
 
+            is SettingsConfig.Personalization -> SettingsChild.Personalization(personalization)
             is SettingsConfig.Language -> Language(language)
-            is SettingsConfig.About    -> About(about)
+            is SettingsConfig.About -> About(about)
         }
     }
 
@@ -77,8 +85,13 @@ class DefaultSettingsComponent(
         navigation.pop()
     }
 
+    override fun resetToOverview() {
+        navigation.replaceAll(SettingsConfig.Overview)
+    }
+
     sealed class SettingsChild {
         data class Overview(val component: SettingsOverviewComponent) : SettingsChild()
+        data class Personalization(val component: PersonalizationComponent) : SettingsChild()
         data class Language(val component: LanguageComponent) : SettingsChild()
         data class About(val component: AboutComponent) : SettingsChild()
     }

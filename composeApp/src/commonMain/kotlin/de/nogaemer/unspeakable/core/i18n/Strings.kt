@@ -37,8 +37,9 @@ data class GameStrings(
 
 data class SettingsStrings(
     val title: String,
-    val aboutStrings: SettingsPageStrings,
-    val languageStrings: SettingsPageLanguageStrings
+    val personalizationStrings: SettingsPagePersonalizationStrings,
+    val languageStrings: SettingsPageLanguageStrings,
+    val aboutStrings: SettingsPageStrings
 )
 
 interface SettingsPageStrings {
@@ -46,9 +47,16 @@ interface SettingsPageStrings {
     val description: String?
 }
 
-data class SettingsPageAboutStrings(
+data class SettingsPagePersonalizationStrings(
     override val title: String,
-    override val description: String? = null,
+    override val description: String,
+    val themeSectionTitle: String,
+    val systemModeLabel: String,
+    val lightModeLabel: String,
+    val darkModeLabel: String,
+    val amoledLabel: String,
+    val dynamicColorLabel: String,
+    val dynamicColorDescription: String,
 ) : SettingsPageStrings
 
 data class LanguageEntry(
@@ -60,6 +68,12 @@ data class SettingsPageLanguageStrings(
     override val description: String,
     val languages: Map<Locales, LanguageEntry>
 ): SettingsPageStrings
+
+data class SettingsPageAboutStrings(
+    override val title: String,
+    override val description: String? = null,
+) : SettingsPageStrings
+
 
 
 // ── Root ──────────────────────────────────────────────────────────────────────
@@ -104,8 +118,16 @@ val EnStrings = Strings(
     ),
     settings = SettingsStrings(
         title = "Settings",
-        aboutStrings = SettingsPageAboutStrings(
-            title = "About",
+        personalizationStrings = SettingsPagePersonalizationStrings(
+            title = "Personalization",
+            description = "Change the app theme and colors",
+            themeSectionTitle = "Theme",
+            systemModeLabel = "System",
+            lightModeLabel = "Light",
+            darkModeLabel = "Dark",
+            amoledLabel = "Amoled",
+            dynamicColorLabel = "Dynamic Color",
+            dynamicColorDescription = "Change the color of the app based on the wallpaper",
         ),
         languageStrings = SettingsPageLanguageStrings(
             title = "Language",
@@ -120,7 +142,10 @@ val EnStrings = Strings(
                     translatedName = "German",
                 )
             )
-        )
+        ),
+        aboutStrings = SettingsPageAboutStrings(
+            title = "About",
+        ),
     ),
 )
 
@@ -155,8 +180,16 @@ val DeStrings = Strings(
     ),
     settings = SettingsStrings(
         title = "Einstellungen",
-        aboutStrings = SettingsPageAboutStrings(
-            title = "Über",
+        personalizationStrings = SettingsPagePersonalizationStrings(
+            title = "Personalisierung",
+            description = "Ändern Sie das App-Thema und Farben",
+            themeSectionTitle = "Thema",
+            systemModeLabel = "System",
+            lightModeLabel = "Hell",
+            darkModeLabel = "Dunkel",
+            amoledLabel = "Amoled",
+            dynamicColorLabel = "Dynamische Farben",
+            dynamicColorDescription = "Ändert die App-Farbe basierend auf dem Hintergrundbild",
         ),
         languageStrings = SettingsPageLanguageStrings(
             title = "Sprache",
@@ -171,6 +204,9 @@ val DeStrings = Strings(
                     translatedName = "Deutsch",
                 )
             )
+        ),
+        aboutStrings = SettingsPageAboutStrings(
+            title = "Über",
         ),
     ),
 )

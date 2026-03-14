@@ -11,6 +11,7 @@ androidx-lifecycle = "2.9.6"
 androidx-testExt = "1.3.0"
 composeHotReload = "1.0.0"
 composeMultiplatform = "1.10.1"
+coreKtx = "1.18.0"
 decompose = "3.4.0"
 extensionsCompose = "3.4.0"
 extensionsComposeExperimental = "3.4.0"
@@ -32,6 +33,7 @@ lyricist = "1.8.0"
 
 
 [libraries]
+androidx-core-ktx-v1160 = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 extensions1-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "extensionsCompose" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 extensions1-compose-experimental = { module = "com.arkivanov.decompose:extensions-compose-experimental", version.ref = "extensionsComposeExperimental" }

@@ -54,6 +54,15 @@ class DefaultMainComponent(
 
     override fun onTabSelected(tab: Tab) {
         navigation.select(index = Tab.entries.indexOf(tab))
+
+        // resets when navigating to different tab on navbar
+        if (tab == Tab.SETTINGS) {
+            val settingsChild = pages.value.items
+                .firstOrNull { it.instance is MainComponent.TabChild.Settings }
+                ?.instance as? MainComponent.TabChild.Settings
+            settingsChild?.component?.resetToOverview()
+        }
+
     }
 
     private fun createTab(tab: Tab, ctx: ComponentContext): MainComponent.TabChild =
