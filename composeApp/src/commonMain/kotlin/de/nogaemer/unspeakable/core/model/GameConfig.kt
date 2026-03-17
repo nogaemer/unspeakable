@@ -6,17 +6,23 @@ import kotlinx.serialization.Serializable
 sealed class GameConfig {
 
     @Serializable
-    data object Local : GameConfig()
+    data class Local(
+        val playerName: String,
+        val profilePicture: ProfilePicture,
+        val roundTimeSeconds: Int = 60,
+    ) : GameConfig()
 
     @Serializable
     data class Host(
         val playerName: String,
+        val profilePicture: ProfilePicture,
         val roundTimeSeconds: Int = 60,
     ) : GameConfig()
 
     @Serializable
     data class Join(
         val playerName: String,
+        val profilePicture: ProfilePicture,
         val hostIp: String,
         val roundTimeSeconds: Int = 60,
     ) : GameConfig()

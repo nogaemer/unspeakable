@@ -15,6 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.strings
+import de.nogaemer.unspeakable.core.model.ProfilePicture
+import de.nogaemer.unspeakable.core.model.ProfileShape
+import de.nogaemer.unspeakable.core.util.ImageUtils
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -27,7 +30,8 @@ fun SetupScreen(
     val text = strings.gameSetup
 
     Column(
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 32.dp),
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 16.dp, vertical = 32.dp),
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         if (networkMode == NetworkMode.CLIENT) {
@@ -43,9 +47,18 @@ fun SetupScreen(
                 label = { Text(text.playerName) })
         }
 
+        val profilePicture = ImageUtils.createProfilePicture()
 
         Button(
-            onClick = { component.onStartGame() },
+            onClick = {
+                component.updatePlayerProfilePicture(
+                    ProfilePicture(
+                        ProfileShape.entries.random(),
+                        ImageUtils.imageToBase64(profilePicture)
+                    )
+                )
+                component.onStartGame()
+            },
         ) {
             Text(text.startGame)
         }

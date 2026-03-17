@@ -35,6 +35,11 @@ data class GameStrings(
     val teamB: String,
 )
 
+data class GameLobbyStrings(
+    val joinTeam: String,
+    val startGame: String,
+)
+
 data class SettingsStrings(
     val title: String,
     val personalizationStrings: SettingsPagePersonalizationStrings,
@@ -84,6 +89,7 @@ data class Strings(
     val home: HomeStrings,
     val gameSetup: GameSetupStrings,
     val game: GameStrings,
+    val gameLobby: GameLobbyStrings,
     val settings: SettingsStrings,
 )
 
@@ -115,6 +121,10 @@ val EnStrings = Strings(
     game = GameStrings(
         teamA = "Team A",
         teamB = "Team B",
+    ),
+    gameLobby = GameLobbyStrings(
+        joinTeam = "Join Team",
+        startGame = "Start Game",
     ),
     settings = SettingsStrings(
         title = "Settings",
@@ -177,6 +187,10 @@ val DeStrings = Strings(
     game = GameStrings(
         teamA = "Team A",
         teamB = "Team B",
+    ),
+    gameLobby = GameLobbyStrings(
+        joinTeam = "beitreten",
+        startGame = "Spiel starten",
     ),
     settings = SettingsStrings(
         title = "Einstellungen",

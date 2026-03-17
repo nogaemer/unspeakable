@@ -1,34 +1,75 @@
 package de.nogaemer.unspeakable.core.model
 
 import de.nogaemer.unspeakable.db.UnspeakableCard
-import de.nogaemer.unspeakable.features.game.Player
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class GameEvent {
-    interface HostOnly
+sealed class GameClientEvent() {
+    @Serializable
+    data class JoinGame(
+        val player: Player
+    ) : GameClientEvent()
 
     @Serializable
-    data class JoinGame(val playerName: String) : GameEvent()
-    @Serializable
-    data class AddPlayer(val player: Player) : GameEvent(), HostOnly
+    data object LeaveGame : GameClientEvent()
 
     @Serializable
-    data object StartRound : GameEvent(), HostOnly
-    @Serializable
-    data class Tick(val currentRoundTime: Int) : GameEvent(), HostOnly
-    @Serializable
-    data class SendMaxRoundTime(val maxRoundTime: Int) : GameEvent()
+    data class JoinTeam(val team: Team) : GameClientEvent()
 
     @Serializable
-    data object RequestNewRandomCard : GameEvent()
-    @Serializable
-    data class SendCard(val card: UnspeakableCard) : GameEvent(), HostOnly
+    data object StartGame : GameClientEvent()
 
     @Serializable
-    data object EndGame : GameEvent(), HostOnly
+    data object RequestNewRandomCard : GameClientEvent()
+
     @Serializable
-    data object Buzz : GameEvent()
+    data object Buzz : GameClientEvent()
+
     @Serializable
-    data class Sabotage(val newTabooWord: String) : GameEvent()
+    data object Sabotage : GameClientEvent()
+
+    fun toHostBoundEvent(playerId: String) = HostBoundClientEvent(playerId, this)
+}
+
+@Serializable
+data class HostBoundClientEvent(
+    val playerId: String,
+    val event: GameClientEvent
+)
+
+
+@Serializable
+sealed class GameHostEvent {
+    @Serializable
+    data class Tick(val currentRoundTime: Int) : GameHostEvent()
+
+    @Serializable
+    data class SendMaxRoundTime(val maxRoundTime: Int) : GameHostEvent()
+
+    @Serializable
+    data class SendCard(val card: UnspeakableCard) : GameHostEvent()
+
+    @Serializable
+    data class PlayerJoined(val player: Player) : GameHostEvent()
+
+    @Serializable
+    data class YouJoined(val player: Player) : GameHostEvent()
+
+    @Serializable
+    data class PlayerLeft(val player: Player) : GameHostEvent()
+
+    @Serializable
+    data class PlayerJoinedTeam(val player: Player, val team: Team) : GameHostEvent()
+
+    @Serializable
+    data class SendMatch(val match: Match) : GameHostEvent()
+
+    @Serializable
+    data class StartGame(val match: Match) : GameHostEvent()
+
+    @Serializable
+    data object StartRound : GameHostEvent()
+
+    @Serializable
+    data object EndGame : GameHostEvent()
 }
