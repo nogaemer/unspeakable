@@ -86,6 +86,7 @@ kotlin {
             implementation(libs.lyricist)
             implementation(libs.multiplatform.settings)
 
+            implementation(libs.kermit)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

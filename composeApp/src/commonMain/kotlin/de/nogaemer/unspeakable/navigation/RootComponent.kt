@@ -9,7 +9,6 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import de.nogaemer.unspeakable.features.game.DefaultGameComponent
-import de.nogaemer.unspeakable.features.game.GameComponent
 import de.nogaemer.unspeakable.features.game_settings.DefaultSetupComponent
 import de.nogaemer.unspeakable.features.game_settings.SetupComponent
 import de.nogaemer.unspeakable.features.main.DefaultMainComponent
@@ -69,6 +68,6 @@ class RootComponent(
     sealed class Child {
         data class Main(val component: MainComponent) : Child()
         data class Setup(val component: SetupComponent) : Child()
-        data class Game(val component: GameComponent) : Child()
+        data class Game(val component: DefaultGameComponent) : Child()
     }
 }

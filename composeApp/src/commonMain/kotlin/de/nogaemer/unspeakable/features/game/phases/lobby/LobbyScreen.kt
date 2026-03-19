@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.game.phases
+package de.nogaemer.unspeakable.features.game.phases.lobby
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.lyricist.strings
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
+import com.composables.icons.lucide.Settings
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.toRoundedPolygon
@@ -50,6 +52,7 @@ import de.nogaemer.unspeakable.features.game.GameState
 fun LobbyScreen(
     state: GameState,
     onEvent: (event: GameClientEvent) -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     if (state.match == null) return LoadingIndicator()
     val me = state.me?.id ?: ""
@@ -60,6 +63,14 @@ fun LobbyScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Lobby") },
+                actions = {
+                    if (state.isHost) {
+                        IconButton(onClick = onOpenSettings) {
+                            Icon(Lucide.Settings, contentDescription = "Lobby settings")
+                        }
+                    }
+                }
+
             )
         }
     ) { innerPadding ->
@@ -178,11 +189,11 @@ private fun JoinTeamCard(
     val colors = MaterialTheme.colorScheme
 
     Column(
-        modifier = Modifier.clickable { onJoinTeam() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
-            modifier = Modifier
+            modifier = Modifier.clip(CircleShape)
+                .clickable { onJoinTeam() }
                 .padding(8.dp)
                 .size(48.dp),
             shape = CircleShape,

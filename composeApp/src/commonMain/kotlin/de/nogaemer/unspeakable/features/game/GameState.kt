@@ -15,15 +15,11 @@ data class GameState(
     val rounds: List<Round> = emptyList(),
     val me: Player? = null,
     val match: Match? = null,
-
-    var maxRoundTime: Int? = null,
     var currentRoundTime: Int? = null,
 ) {
     suspend fun applyEvent(event: GameHostEvent): GameState = when (event) {
 
         is GameHostEvent.Tick -> copy(currentRoundTime = event.currentRoundTime - 1)
-
-        is GameHostEvent.SendMaxRoundTime -> copy(maxRoundTime = event.maxRoundTime)
 
         is GameHostEvent.SendCard -> copy(currentCard = event.card)
 
@@ -44,6 +40,7 @@ data class GameState(
         is GameHostEvent.YouJoined -> copy(me = event.player)
 
         is GameHostEvent.StartGame -> copy(match = event.match, phase = GamePhase.PLAYING)
+        is GameHostEvent.SendGameSettings -> copy(match = match?.copy(settings = event.settings))
     }
 
     fun addPlayer(player: Player) =

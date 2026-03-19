@@ -56,6 +56,7 @@ fun PlayingScreen(
     drawRandomCard: () -> Unit
 ) {
 
+    val roundTime = state.match?.settings?.roundTime ?: 0
 
     var progress by remember { mutableStateOf(1f) }
     val text = strings.game
@@ -63,9 +64,9 @@ fun PlayingScreen(
     val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
 
     // Re-run this block if the round time changes
-    LaunchedEffect(state.currentRoundTime, state.maxRoundTime) {
+    LaunchedEffect(state.currentRoundTime, roundTime) {
         val currentSeconds = state.currentRoundTime?.toFloat() ?: 0f
-        val maxSeconds = state.maxRoundTime?.toFloat()?.coerceAtLeast(1f) ?: 1f
+        val maxSeconds = roundTime.toFloat().coerceAtLeast(1f) ?: 1f
 
         // Where the circle should be RIGHT NOW
         val startProgress = currentSeconds / maxSeconds

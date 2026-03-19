@@ -3,19 +3,46 @@ package de.nogaemer.unspeakable.features.game
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.androidPredictiveBackAnimatableV2
+import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import de.nogaemer.unspeakable.core.model.GamePhase
-import de.nogaemer.unspeakable.features.game.phases.LobbyScreen
 import de.nogaemer.unspeakable.features.game.phases.PlayingScreen
+import de.nogaemer.unspeakable.features.game.phases.lobby.LobbyScreen
+import de.nogaemer.unspeakable.features.game.phases.lobby.LobbySettingsScreen
 
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun GameScreen(component: GameComponent) {
+fun GameScreen(component: DefaultGameComponent) {
     val state by component.state.collectAsState()
 
     when (state.phase) {
-        GamePhase.SETUP -> LobbyScreen(
-            state,
-            onEvent = component::onEvent,
-        )
+        GamePhase.SETUP -> Children(
+            stack = component.stack,
+            animation = predictiveBackAnimation(
+                backHandler = component.backHandler,
+                onBack = component::goBack,
+                selector = { backEvent, _, _ -> androidPredictiveBackAnimatableV2(backEvent) },
+                fallbackAnimation = stackAnimation(slide() + fade()),
+            )
+        ) { child ->
+            when (val instance = child.instance) {
+                is GameComponent.GameChild.LobbyChild -> LobbyScreen(
+                    state = state,
+                    onEvent = component::onEvent,
+                    onOpenSettings = component::navigateToLobbySettings,
+                )
+                is GameComponent.GameChild.LobbySettingsChild -> LobbySettingsScreen(
+                    component = instance.component,
+                )
+            }
+        }
+
 
         GamePhase.READY -> TODO()
 

@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import com.arkivanov.decompose.retainedComponent
 import de.nogaemer.unspeakable.db.AndroidAppContext
 import de.nogaemer.unspeakable.navigation.RootComponent
@@ -19,6 +21,10 @@ class MainActivity : ComponentActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        // Configure global logger before creating app components.
+        Logger.setMinSeverity(Severity.Verbose)
+        Logger.setTag("Unspeakable")
 
         AndroidAppContext.application = this.application
         val root = retainedComponent { RootComponent(it) }

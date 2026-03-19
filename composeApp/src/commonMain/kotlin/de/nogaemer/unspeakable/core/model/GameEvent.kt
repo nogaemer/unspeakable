@@ -20,6 +20,9 @@ sealed class GameClientEvent() {
     data object StartGame : GameClientEvent()
 
     @Serializable
+    data class UpdateGameSettings(val settings: GameSettings): GameClientEvent()
+
+    @Serializable
     data object RequestNewRandomCard : GameClientEvent()
 
     @Serializable
@@ -44,9 +47,6 @@ sealed class GameHostEvent {
     data class Tick(val currentRoundTime: Int) : GameHostEvent()
 
     @Serializable
-    data class SendMaxRoundTime(val maxRoundTime: Int) : GameHostEvent()
-
-    @Serializable
     data class SendCard(val card: UnspeakableCard) : GameHostEvent()
 
     @Serializable
@@ -63,6 +63,9 @@ sealed class GameHostEvent {
 
     @Serializable
     data class SendMatch(val match: Match) : GameHostEvent()
+
+    @Serializable
+    data class SendGameSettings(val settings: GameSettings) : GameHostEvent()
 
     @Serializable
     data class StartGame(val match: Match) : GameHostEvent()

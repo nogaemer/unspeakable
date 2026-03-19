@@ -17,6 +17,7 @@ extensionsCompose = "3.4.0"
 extensionsComposeExperimental = "3.4.0"
 iconsLucideCmp = "2.2.1"
 junit = "4.13.2"
+kermit = "2.1.0"
 kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
 kotlinxDatetime = "0.7.1"
@@ -38,6 +39,7 @@ extensions1-compose = { module = "com.arkivanov.decompose:extensions-compose", v
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 extensions1-compose-experimental = { module = "com.arkivanov.decompose:extensions-compose-experimental", version.ref = "extensionsComposeExperimental" }
 icons-lucide-cmp = { module = "com.composables:icons-lucide-cmp", version.ref = "iconsLucideCmp" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }

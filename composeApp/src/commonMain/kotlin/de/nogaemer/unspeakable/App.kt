@@ -14,6 +14,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.lyricist.ProvideStrings
 import cafe.adriel.lyricist.rememberStrings
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
@@ -47,8 +49,12 @@ import unspeakable.composeapp.generated.resources.Res
 )
 @Composable
 fun App(root: RootComponent) {
+    Logger.setMinSeverity(Severity.Verbose)
+    Logger.setTag("Unspeakable")
 
     val controller = remember { AppSettingsController() }
+
+
 
     //DB init
     LaunchedEffect(Unit) {

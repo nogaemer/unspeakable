@@ -17,8 +17,20 @@ data class Team(
 @Serializable
 data class Match(
     val teams: List<Team>,
-    val players: List<Player>
+    val players: List<Player>,
+    val settings: GameSettings = GameSettings(),
 )
+
+@Serializable
+data class GameSettings(
+    val roundTime: Int = 60,
+    val maxRounds: Int = 10,
+)
+
+enum class NetworkMode {
+    LAN ,
+    LOCAL_DEVICE ,
+}
 
 @Serializable
 data class Round(

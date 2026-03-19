@@ -1,5 +1,6 @@
 package de.nogaemer.unspeakable.features.game.session
 
+import co.touchlab.kermit.Logger
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameClientEvent.JoinTeam
 import de.nogaemer.unspeakable.core.model.GameHostEvent
@@ -7,7 +8,6 @@ import de.nogaemer.unspeakable.core.model.GameHostEvent.PlayerJoined
 import de.nogaemer.unspeakable.core.model.GameHostEvent.PlayerJoinedTeam
 import de.nogaemer.unspeakable.core.model.GameHostEvent.PlayerLeft
 import de.nogaemer.unspeakable.core.model.GameHostEvent.SendCard
-import de.nogaemer.unspeakable.core.model.GameHostEvent.SendMaxRoundTime
 import de.nogaemer.unspeakable.core.model.HostBoundClientEvent
 import de.nogaemer.unspeakable.core.model.Match
 import de.nogaemer.unspeakable.core.model.Player
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlin.uuid.ExperimentalUuidApi
 
 class GameAuthority(
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val cardDao: UnspeakableCardsDao,
     private val lang: String,
     hostPlayer: Player,
@@ -49,7 +49,7 @@ class GameAuthority(
                         points = 0,
                         cards = listOf()
                     )
-                )
+                ),
             )
         )
     )
@@ -59,21 +59,21 @@ class GameAuthority(
     private val _broadcastEvents = MutableSharedFlow<GameHostEvent>(extraBufferCapacity = 64)
     val broadcastEvents: SharedFlow<GameHostEvent> = _broadcastEvents.asSharedFlow()
 
-    private val _directEvents = MutableSharedFlow<Pair<String, GameHostEvent>>(extraBufferCapacity = 64)
+    private val _directEvents =
+        MutableSharedFlow<Pair<String, GameHostEvent>>(extraBufferCapacity = 64)
     val directEvents: SharedFlow<Pair<String, GameHostEvent>> = _directEvents.asSharedFlow()
 
-    private val timer = Timer(
-        scope = scope,
-        maxTime = 60,
-        onTick = { tick -> applyAndBroadcast(GameHostEvent.Tick(tick)) }
-    )
+    private lateinit var timer: Timer;
 
     @OptIn(ExperimentalUuidApi::class)
     suspend fun processEvent(boundClientEvent: HostBoundClientEvent) {
+        Logger.d { "Received client event from ${boundClientEvent.playerId}: ${boundClientEvent.event}" }
+
         when (val event = boundClientEvent.event) {
             GameClientEvent.RequestNewRandomCard -> {
+                if (!::timer.isInitialized) return
+
                 timer.reset(); timer.start()
-                applyAndBroadcast(SendMaxRoundTime(timer.maxTime))
                 val card = cardDao.getRandomCard(lang) ?: return
                 applyAndBroadcast(SendCard(card))
             }
@@ -110,10 +110,15 @@ class GameAuthority(
             is GameClientEvent.StartGame -> {
                 if (boundClientEvent.playerId != _state.value.me?.id) return
 
-                applyAndBroadcast(GameHostEvent.StartGame(_state.value.match?: return))
+                timer = Timer(
+                    scope = this.scope,
+                    maxTime = _state.value.match?.settings?.roundTime ?: return,
+                    onTick = { tick -> applyAndBroadcast(GameHostEvent.Tick(tick)) }
+                )
+
+                applyAndBroadcast(GameHostEvent.StartGame(_state.value.match ?: return))
 
                 timer.reset(); timer.start()
-                applyAndBroadcast(SendMaxRoundTime(timer.maxTime))
             }
 
             is GameClientEvent.LeaveGame -> {
@@ -121,16 +126,26 @@ class GameAuthority(
 
                 applyAndBroadcast(PlayerLeft(player))
             }
+
+            is GameClientEvent.UpdateGameSettings -> {
+                if (boundClientEvent.playerId != _state.value.me?.id) return
+
+                applyAndBroadcast(GameHostEvent.SendGameSettings(event.settings))
+            }
         }
 
     }
 
     private suspend fun applyAndBroadcast(event: GameHostEvent) {
+        Logger.d { "Applying/Broadcasting event: $event" }
+
         _state.update { it.applyEvent(event) }
         _broadcastEvents.emit(event)
     }
 
     private suspend fun sendDirect(playerId: String, event: GameHostEvent) {
+        Logger.d { "Sending direct event to $playerId: $event" }
+
         _directEvents.emit(playerId to event)
     }
 
