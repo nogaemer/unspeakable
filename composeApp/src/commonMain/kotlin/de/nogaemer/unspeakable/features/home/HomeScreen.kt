@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.lyricist.strings
+import de.nogaemer.unspeakable.core.model.GameModeCard
+import de.nogaemer.unspeakable.core.model.GameModeCardSmall
 import de.nogaemer.unspeakable.core.util.robotoFlex
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

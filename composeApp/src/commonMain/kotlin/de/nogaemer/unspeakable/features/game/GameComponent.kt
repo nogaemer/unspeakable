@@ -72,6 +72,8 @@ class DefaultGameComponent(
     override fun drawRandomCard() = viewModel.drawRandomCard()
     override fun goBack() = navigation.pop()
 
+    fun closeSession() = viewModel.closeSession()
+
     @OptIn(DelicateDecomposeApi::class)
     fun navigateToLobbySettings() = navigation.push(LobbyConfig.LobbySettings)
 

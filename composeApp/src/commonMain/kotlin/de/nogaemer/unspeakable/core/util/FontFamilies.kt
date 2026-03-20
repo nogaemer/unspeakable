@@ -9,7 +9,7 @@ import unspeakable.composeapp.generated.resources.roboto_flex
 
 @Composable
 fun robotoFlex (
-    fontVariation: FontVariation.Settings = robotoFlexTitleVariation()
+    fontVariation: FontVariation.Settings = robotoFlexTitleVariationNarrow()
 ): FontFamily {
     return FontFamily(
         Font(
@@ -20,12 +20,25 @@ fun robotoFlex (
 }
 
 @Composable
-fun robotoFlexTitleVariation (): FontVariation.Settings {
+fun robotoFlexTitleVariationNarrow (): FontVariation.Settings {
     return FontVariation.Settings(
         FontVariation.slant(-10f),
         FontVariation.grade(-90),
         FontVariation.weight(600),
         FontVariation.width(40f),
+        FontVariation.Setting("opsz", 72f),
+        FontVariation.Setting("XTRA", 450f),
+        FontVariation.Setting("YOPQ", 25f),
+    )
+}
+
+@Composable
+fun robotoFlexTitleVariation (): FontVariation.Settings {
+    return FontVariation.Settings(
+        FontVariation.slant(-10f),
+        FontVariation.grade(-90),
+        FontVariation.weight(700),
+        FontVariation.width(60f),
         FontVariation.Setting("opsz", 72f),
         FontVariation.Setting("XTRA", 450f),
         FontVariation.Setting("YOPQ", 25f),

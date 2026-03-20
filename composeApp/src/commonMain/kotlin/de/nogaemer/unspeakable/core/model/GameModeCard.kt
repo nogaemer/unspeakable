@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.home
+package de.nogaemer.unspeakable.core.model
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,13 +40,13 @@ import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.ArrowRight
 import com.composables.icons.lucide.Lucide
 import de.nogaemer.unspeakable.core.util.robotoFlex
-import de.nogaemer.unspeakable.core.util.robotoFlexTitleVariation
+import de.nogaemer.unspeakable.core.util.robotoFlexTitleVariationNarrow
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun GameModeCard(
     title: String,
-    fontVariation: FontVariation.Settings = robotoFlexTitleVariation(),
+    fontVariation: FontVariation.Settings = robotoFlexTitleVariationNarrow(),
     backgroundShapeModifier: Modifier,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -110,7 +110,7 @@ fun GameModeCard(
 @Composable
 fun GameModeCardSmall(
     title: String,
-    fontVariation: FontVariation.Settings = robotoFlexTitleVariation(),
+    fontVariation: FontVariation.Settings = robotoFlexTitleVariationNarrow(),
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

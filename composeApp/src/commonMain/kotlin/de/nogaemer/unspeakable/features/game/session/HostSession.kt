@@ -1,5 +1,6 @@
 package de.nogaemer.unspeakable.features.game.session
 
+import co.touchlab.kermit.Logger
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameHostEvent
 import de.nogaemer.unspeakable.core.model.Player
@@ -115,6 +116,7 @@ class HostSession(
     }
 
     override fun close() {
+        Logger.d { "Closing host session" }
         authority.close()
         server?.stop(gracePeriodMillis = 1000, timeoutMillis = 2000)
         server = null

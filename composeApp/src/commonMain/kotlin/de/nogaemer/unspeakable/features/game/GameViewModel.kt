@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 
 class GameViewModel(config: GameConfig) : ViewModel() {
 
+    private var isSessionClosed = false
+
     private val session: GameSession = when (config) {
         is GameConfig.Local -> LocalSession(
             playerName = config.playerName,
@@ -52,6 +54,8 @@ class GameViewModel(config: GameConfig) : ViewModel() {
     fun drawRandomCard() = onEvent(GameClientEvent.RequestNewRandomCard)
 
     fun closeSession() {
+        if (isSessionClosed) return
+        isSessionClosed = true
         session.close()
     }
 

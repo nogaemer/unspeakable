@@ -6,12 +6,13 @@ import androidx.graphics.shapes.RoundedPolygon
 import de.nogaemer.unspeakable.db.UnspeakableCard
 import kotlinx.serialization.Serializable
 
+
 @Serializable
 data class Team(
+    val id: String,
     val name: String,
     val players: List<Player>,
-    val points: Int,
-    val cards: List<UnspeakableCard>,
+    val points: Int = 0,
 )
 
 @Serializable
@@ -27,18 +28,28 @@ data class GameSettings(
     val maxRounds: Int = 10,
 )
 
-enum class NetworkMode {
-    LAN ,
-    LOCAL_DEVICE ,
-}
+// Outcome of a single card during a round
+@Serializable
+enum class CardOutcome { CORRECT, SKIPPED, WRONG }
+
+@Serializable
+data class PlayedCard(
+    val card: UnspeakableCard,
+    val outcome: CardOutcome,
+)
 
 @Serializable
 data class Round(
     val roundNumber: Int,
     val explainerTeam: Team,
-    val cards: List<UnspeakableCard>,
-    val points: Int,
-)
+    val explainerPlayer: Player,
+    val playedCards: List<PlayedCard> = emptyList(),
+) {
+    val correct: Int get() = playedCards.count { it.outcome == CardOutcome.CORRECT }
+    val skipped: Int get() = playedCards.count { it.outcome == CardOutcome.SKIPPED }
+    val wrong:   Int get() = playedCards.count { it.outcome == CardOutcome.WRONG }
+    val points:  Int get() = correct
+}
 
 @Serializable
 data class Player(
@@ -53,6 +64,18 @@ data class ProfilePicture(
     val shape: ProfileShape,
     val image: String,
 )
+
+@Serializable
+enum class GamePhase {
+    SETUP,
+    READY,
+    PLAYING,
+    ROUND_SUMMARY,
+    GAME_OVER,
+}
+
+enum class NetworkMode { LAN, LOCAL_DEVICE }
+
 
 enum class ProfileShape {
     CIRCLE,
@@ -129,13 +152,4 @@ fun ProfileShape.toRoundedPolygon(): RoundedPolygon = when (this) {
     ProfileShape.PIXEL_TRIANGLE -> MaterialShapes.PixelTriangle
     ProfileShape.BUN -> MaterialShapes.Bun
     ProfileShape.HEART -> MaterialShapes.Heart
-}
-
-@Serializable
-enum class GamePhase {
-    SETUP,
-    READY,
-    PLAYING,
-    ROUND_SUMMARY,
-    GAME_OVER
 }

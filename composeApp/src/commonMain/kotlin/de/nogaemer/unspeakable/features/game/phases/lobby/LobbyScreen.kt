@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
@@ -62,11 +63,11 @@ fun LobbyScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Lobby") },
+                title = { Text(text.lobbyTitle) },
                 actions = {
                     if (state.isHost) {
                         IconButton(onClick = onOpenSettings) {
-                            Icon(Lucide.Settings, contentDescription = "Lobby settings")
+                            Icon(Lucide.Settings, contentDescription = text.lobbySettingsDescription)
                         }
                     }
                 }
@@ -97,6 +98,7 @@ fun LobbyScreen(
                     FilledTonalButton(
                         modifier = Modifier.fillMaxWidth().height(96.dp),
                         onClick = { onEvent(GameClientEvent.StartGame) },
+                        shapes = ButtonDefaults.shapesFor(96.dp),
                     ) {
                         Text(
                             text = text.startGame,
@@ -220,7 +222,7 @@ private fun JoinTeamCard(
             ) {
                 Icon(
                     imageVector = Lucide.Plus,
-                    contentDescription = "Join team",
+                    contentDescription = text.joinTeamDescription,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

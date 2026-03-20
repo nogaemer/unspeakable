@@ -67,7 +67,7 @@ class DefaultSetupComponent(
                 profilePicture = playerProfilePicture.value,
                 hostIp = ipAddress.value
             )
-        } as GameConfig
+        }
 
         onGameStarted(config)
     }

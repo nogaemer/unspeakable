@@ -62,6 +62,10 @@ class RootComponent(
     }
 
     fun goBack() {
+        val activeChild = stack.value.active.instance
+        if (activeChild is Game) {
+            activeChild.component.closeSession()
+        }
         navigation.pop()
     }
 

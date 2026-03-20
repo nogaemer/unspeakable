@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import cafe.adriel.lyricist.strings
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedColumn
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedListItem
 import de.nogaemer.unspeakable.core.model.GameClientEvent
@@ -34,9 +35,10 @@ import kotlin.math.roundToInt
 @Composable
 fun LobbySettingsScreen(component: LobbySettingsComponent) {
     val state by component.state.collectAsState()
+    val text = strings.gameLobbySettings
 
     DefaultTopAppBar(
-        title = "Lobby Settings",
+        title = text.lobbySettingsTitle,
         onBack = component::goBack,
     ) {
         Column(
@@ -45,7 +47,7 @@ fun LobbySettingsScreen(component: LobbySettingsComponent) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             SegmentedColumn(
-                segmentTitle = "Rounds Settings"
+                segmentTitle = text.roundsSettings
             ) {
                 val timeAnchors = listOf(0, 30, 60, 120, 300, 600, 1800)
                 var roundTime by remember { mutableIntStateOf(state.match?.settings?.roundTime ?: 30) }
@@ -60,7 +62,7 @@ fun LobbySettingsScreen(component: LobbySettingsComponent) {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text("Round time")
+                            Text(text.roundTime)
                             Text(
                                 text = formatDuration(roundTime),
                                 style = MaterialTheme.typography.labelLarge,
@@ -92,10 +94,10 @@ fun LobbySettingsScreen(component: LobbySettingsComponent) {
                         }
                     ),
                     headlineContent = {
-                        Text("Rounds per team")
+                        Text(text.roundsPerTeam)
                     },
                     supportingContent = {
-                        Text("Select the number of rounds per team")
+                        Text(text.roundsPerTeamDescription)
                     }
                 )
 
@@ -182,5 +184,3 @@ fun Int.toSliderPosition(anchors: List<Int>): Float {
     val fraction = (this - anchors[lo]).toFloat() / (anchors[hi] - anchors[lo])
     return (lo + fraction) / (anchors.size - 1)
 }
-
-

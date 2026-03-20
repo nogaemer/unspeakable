@@ -15,6 +15,7 @@ import de.nogaemer.unspeakable.core.model.GamePhase
 import de.nogaemer.unspeakable.features.game.phases.PlayingScreen
 import de.nogaemer.unspeakable.features.game.phases.lobby.LobbyScreen
 import de.nogaemer.unspeakable.features.game.phases.lobby.LobbySettingsScreen
+import de.nogaemer.unspeakable.features.game.phases.ready.GameReadyScreen
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
@@ -44,7 +45,10 @@ fun GameScreen(component: DefaultGameComponent) {
         }
 
 
-        GamePhase.READY -> TODO()
+        GamePhase.READY -> GameReadyScreen(
+            state = state,
+            onEvent = component::onEvent,
+        )
 
         GamePhase.PLAYING -> PlayingScreen(
             state = state,

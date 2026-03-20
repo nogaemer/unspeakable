@@ -35,9 +35,27 @@ data class GameStrings(
     val teamB: String,
 )
 
+data class GameReadyStrings(
+    val readyTitle: String,
+    val readySubtitle: String,
+    val waitingFor: String,
+    val startTurnDescription: String,
+)
+
 data class GameLobbyStrings(
+    val lobbyTitle: String,
+    val lobbySettingsDescription: String,
+    val joinTeamDescription: String,
     val joinTeam: String,
     val startGame: String,
+)
+
+data class GameLobbySettingsStrings(
+    val lobbySettingsTitle: String,
+    val roundsSettings: String,
+    val roundTime: String,
+    val roundsPerTeam: String,
+    val roundsPerTeamDescription: String,
 )
 
 data class SettingsStrings(
@@ -89,7 +107,9 @@ data class Strings(
     val home: HomeStrings,
     val gameSetup: GameSetupStrings,
     val game: GameStrings,
+    val gameReady: GameReadyStrings,
     val gameLobby: GameLobbyStrings,
+    val gameLobbySettings: GameLobbySettingsStrings,
     val settings: SettingsStrings,
 )
 
@@ -122,9 +142,25 @@ val EnStrings = Strings(
         teamA = "Team A",
         teamB = "Team B",
     ),
+    gameReady = GameReadyStrings(
+        readyTitle = "READY ?",
+        readySubtitle = "start your turn",
+        waitingFor = "Waiting for",
+        startTurnDescription = "Start turn",
+    ),
     gameLobby = GameLobbyStrings(
+        lobbyTitle = "Lobby",
+        lobbySettingsDescription = "Lobby settings",
+        joinTeamDescription = "Join team",
         joinTeam = "Join Team",
         startGame = "Start Game",
+    ),
+    gameLobbySettings = GameLobbySettingsStrings(
+        lobbySettingsTitle = "Lobby Settings",
+        roundsSettings = "Rounds Settings",
+        roundTime = "Round time",
+        roundsPerTeam = "Rounds per team",
+        roundsPerTeamDescription = "Select the number of rounds per team",
     ),
     settings = SettingsStrings(
         title = "Settings",
@@ -188,9 +224,25 @@ val DeStrings = Strings(
         teamA = "Team A",
         teamB = "Team B",
     ),
+    gameReady = GameReadyStrings(
+        readyTitle = "BEREIT?",
+        readySubtitle = "Starte deinen Zug",
+        waitingFor = "Warten auf",
+        startTurnDescription = "Zug starten",
+    ),
     gameLobby = GameLobbyStrings(
+        lobbyTitle = "Lobby",
+        lobbySettingsDescription = "Lobby-Einstellungen",
+        joinTeamDescription = "Team beitreten",
         joinTeam = "beitreten",
         startGame = "Spiel starten",
+    ),
+    gameLobbySettings = GameLobbySettingsStrings(
+        lobbySettingsTitle = "Lobby-Einstellungen",
+        roundsSettings = "Rundeneinstellungen",
+        roundTime = "Rundenzeit",
+        roundsPerTeam = "Runden pro Team",
+        roundsPerTeamDescription = "Waehle die Anzahl der Runden pro Team",
     ),
     settings = SettingsStrings(
         title = "Einstellungen",

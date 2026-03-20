@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -66,7 +66,7 @@ fun PlayingScreen(
     // Re-run this block if the round time changes
     LaunchedEffect(state.currentRoundTime, roundTime) {
         val currentSeconds = state.currentRoundTime?.toFloat() ?: 0f
-        val maxSeconds = roundTime.toFloat().coerceAtLeast(1f) ?: 1f
+        val maxSeconds = roundTime.toFloat().coerceAtLeast(1f)
 
         // Where the circle should be RIGHT NOW
         val startProgress = currentSeconds / maxSeconds
@@ -316,13 +316,14 @@ fun PlayingScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                FilledTonalIconButton(
+                FilledTonalButton(
                     onClick = { TODO() },
                     modifier = Modifier.size(96.dp),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                    colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
+                    shapes = ButtonDefaults.shapesFor(96.dp),
                     content = {
                         Icon(
                             imageVector = Lucide.X,
@@ -330,10 +331,11 @@ fun PlayingScreen(
                         )
                     }
                 )
-                FilledTonalIconButton(
+                FilledTonalButton(
                     onClick = { TODO() },
                     modifier = Modifier.size(96.dp),
-                    shape = RoundedCornerShape(28.dp),
+                    shapes = ButtonDefaults.shapes(shape = RoundedCornerShape(28.dp),
+                        ButtonDefaults.extraLargePressedShape),
                     content = {
                         Icon(
                             imageVector = Lucide.Check,
@@ -341,13 +343,14 @@ fun PlayingScreen(
                         )
                     }
                 )
-                FilledTonalIconButton(
+                FilledTonalButton(
                     onClick = drawRandomCard,
                     modifier = Modifier.size(96.dp),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                    colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
+                    shapes = ButtonDefaults.shapesFor(96.dp),
                     content = {
                         Icon(
                             imageVector = Lucide.SkipForward,
