@@ -12,9 +12,10 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import de.nogaemer.unspeakable.core.model.GamePhase
-import de.nogaemer.unspeakable.features.game.phases.PlayingScreen
 import de.nogaemer.unspeakable.features.game.phases.lobby.LobbyScreen
 import de.nogaemer.unspeakable.features.game.phases.lobby.LobbySettingsScreen
+import de.nogaemer.unspeakable.features.game.phases.overview.RoundOverviewScreen
+import de.nogaemer.unspeakable.features.game.phases.playing.PlayingScreen
 import de.nogaemer.unspeakable.features.game.phases.ready.GameReadyScreen
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -56,7 +57,10 @@ fun GameScreen(component: DefaultGameComponent) {
             drawRandomCard = component::drawRandomCard
         )
 
-        GamePhase.ROUND_SUMMARY -> TODO()
+        GamePhase.ROUND_SUMMARY -> RoundOverviewScreen(
+            state = state,
+            onEvent = component::onEvent,
+        )
 
         GamePhase.GAME_OVER -> TODO()
     }

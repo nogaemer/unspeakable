@@ -1,5 +1,6 @@
 package de.nogaemer.unspeakable.features.game
 
+import co.touchlab.kermit.Logger
 import de.nogaemer.unspeakable.core.model.GameHostEvent
 import de.nogaemer.unspeakable.core.model.GamePhase
 import de.nogaemer.unspeakable.core.model.Match
@@ -68,15 +69,13 @@ data class GameState(
             val updated = currentRound?.copy(
                 playedCards = currentRound.playedCards + event.playedCard
             )
+            Logger.d { "Card played: ${updated?.playedCards}" }
             copy(currentRound = updated, currentCard = null)
         }
 
         is GameHostEvent.EndRound ->
             copy(
                 rounds = rounds + event.completedRound,
-                currentRound = null,
-                currentCard = null,
-                currentRoundTime = null,
                 phase = GamePhase.ROUND_SUMMARY,
             )
 

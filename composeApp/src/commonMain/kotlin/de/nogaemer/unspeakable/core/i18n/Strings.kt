@@ -58,6 +58,13 @@ data class GameLobbySettingsStrings(
     val roundsPerTeamDescription: String,
 )
 
+data class RoundOverviewStrings(
+    val timeUpTitle: String,
+    val correctLabel: String,
+    val wrongLabel: String,
+    val skippedLabel: String,
+)
+
 data class SettingsStrings(
     val title: String,
     val personalizationStrings: SettingsPagePersonalizationStrings,
@@ -110,6 +117,7 @@ data class Strings(
     val gameReady: GameReadyStrings,
     val gameLobby: GameLobbyStrings,
     val gameLobbySettings: GameLobbySettingsStrings,
+    val roundOverview: RoundOverviewStrings,
     val settings: SettingsStrings,
 )
 
@@ -161,6 +169,12 @@ val EnStrings = Strings(
         roundTime = "Round time",
         roundsPerTeam = "Rounds per team",
         roundsPerTeamDescription = "Select the number of rounds per team",
+    ),
+    roundOverview = RoundOverviewStrings(
+        timeUpTitle = "Time’s Up",
+        correctLabel = "Correct",
+        wrongLabel = "Wrong",
+        skippedLabel = "Skipped",
     ),
     settings = SettingsStrings(
         title = "Settings",
@@ -243,6 +257,12 @@ val DeStrings = Strings(
         roundTime = "Rundenzeit",
         roundsPerTeam = "Runden pro Team",
         roundsPerTeamDescription = "Waehle die Anzahl der Runden pro Team",
+    ),
+    roundOverview = RoundOverviewStrings(
+        timeUpTitle = "Zeit ist um",
+        correctLabel = "Richtig",
+        wrongLabel = "Falsch",
+        skippedLabel = "Uebersprungen",
     ),
     settings = SettingsStrings(
         title = "Einstellungen",

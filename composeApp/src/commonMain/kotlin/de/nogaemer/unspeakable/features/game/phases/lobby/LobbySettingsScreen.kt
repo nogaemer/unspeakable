@@ -1,6 +1,9 @@
 package de.nogaemer.unspeakable.features.game.phases.lobby
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +23,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -115,6 +120,7 @@ fun AnchoredSlider(
     onValueChange: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    var isDragging by remember { mutableStateOf(false) }
 
     var liveValue by remember { mutableIntStateOf(selectedValue) }
 
@@ -123,23 +129,42 @@ fun AnchoredSlider(
         steps = 0,
         valueRange = 0f..1f,
         onValueChangeFinished = {
+            isDragging = false
             onValueSelected(liveValue)
         }
     )
 
-    liveValue = state.value.toAnchoredValue(anchors)
-    onValueChange(liveValue)
 
-    LaunchedEffect(selectedValue) {
-        state.value = selectedValue.toSliderPosition(anchors)
-        liveValue = selectedValue
+    val interactionSource = remember { MutableInteractionSource() }
+
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is DragInteraction.Start, is PressInteraction.Press -> isDragging = true
+            }
+        }
     }
 
-    Box(
-        modifier = modifier.fillMaxWidth().padding(top = 8.dp),
-    ) {
+    LaunchedEffect(Unit) {
+        snapshotFlow { state.value }
+            .collect { sliderValue ->
+                val anchored = sliderValue.toAnchoredValue(anchors)
+                liveValue = anchored
+                onValueChange(anchored)
+            }
+    }
+
+    // only sync from server when not dragging - need this if ill later show the settings to the clients.
+    LaunchedEffect(selectedValue) {
+        if (!isDragging) {
+            state.value = selectedValue.toSliderPosition(anchors)
+        }
+    }
+
+    Box(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
         Slider(
             state = state,
+            interactionSource = interactionSource,
             track = { sliderState ->
                 SliderDefaults.Track(
                     sliderState = sliderState,
@@ -151,6 +176,7 @@ fun AnchoredSlider(
         )
     }
 }
+
 
 
 fun formatDuration(seconds: Int): String = when {

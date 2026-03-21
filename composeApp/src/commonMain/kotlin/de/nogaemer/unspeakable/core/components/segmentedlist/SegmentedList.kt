@@ -73,6 +73,7 @@ fun SegmentedLazyColumn(
 @Composable
 fun SegmentedColumn(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(12.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
         if (!reverseLayout) Arrangement.spacedBy(2.dp, Alignment.Top)
@@ -84,7 +85,7 @@ fun SegmentedColumn(
 
 
     Column(
-        modifier.padding(12.dp),
+        Modifier.padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
     ) {
         if (segmentTitle != null) Box(modifier = Modifier.padding(horizontal = 4.dp)) {
@@ -112,17 +113,7 @@ fun SegmentedListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    colors: ListItemColors = ListItemDefaults.colors(
-        containerColor = if (selected)
-            MaterialTheme.colorScheme.secondaryContainer
-        else
-            MaterialTheme.colorScheme.surfaceContainer,
-        headlineColor = if (selected)
-            MaterialTheme.colorScheme.onSecondaryContainer
-        else
-            MaterialTheme.colorScheme.onSurface,
-    ),
-
+    colors: ListItemColors? = null,
     tonalElevation: Dp = 0.dp,
     shadowElevation: Dp = 0.dp
 ) {
@@ -142,6 +133,11 @@ fun SegmentedListItem(
         label = "SegmentedListItemContentColor"
     )
 
+    val resolvedColors = colors ?: ListItemDefaults.colors(
+        containerColor = containerColor,
+        headlineColor = contentColor,
+    )
+
 
     Box(
         modifier = modifier.clip(
@@ -150,15 +146,12 @@ fun SegmentedListItem(
     ) {
         ListItem(
             headlineContent = headlineContent,
-            modifier = modifier.background(containerColor).padding(2.dp),
+            modifier = modifier.background(resolvedColors.containerColor).padding(2.dp),
             overlineContent = overlineContent,
             supportingContent = supportingContent,
             leadingContent = leadingContent,
             trailingContent = trailingContent,
-            colors = ListItemDefaults.colors(
-                containerColor = containerColor,
-                headlineColor = contentColor,
-            ),
+            colors = resolvedColors,
             tonalElevation = tonalElevation,
             shadowElevation = shadowElevation,
         )

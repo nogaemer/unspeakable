@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.game.phases
+package de.nogaemer.unspeakable.features.game.phases.playing
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +15,8 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +40,7 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SkipForward
 import com.composables.icons.lucide.X
+import de.nogaemer.unspeakable.core.components.TeamPoints
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.util.robotoFlex
 import de.nogaemer.unspeakable.core.util.robotoFlexCardItems
@@ -109,91 +108,12 @@ fun PlayingScreen(
             Modifier.fillMaxWidth()
                 .padding(horizontal = 10.dp, vertical = 28.dp),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-
-                //Left Team indicator
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(
-                        Modifier
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                shape = RoundedCornerShape(
-                                    topStart = 16.dp,
-                                    topEnd = 8.dp,
-                                    bottomStart = 16.dp,
-                                    bottomEnd = 8.dp
-                                )
-                            )
-                            .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
-                    ) {
-                        Text(
-                            text.teamA,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Box(
-                        modifier = Modifier.size(40.dp).clip(MaterialShapes.Pentagon.toShape())
-                            .background(
-                                MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            leftTeamPoints.toString(),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
-                //Right Team indicator
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        modifier = Modifier.size(40.dp).clip(MaterialShapes.Pentagon.toShape())
-                            .background(
-                                MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            rightTeamPoints.toString(),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Column(
-                        Modifier
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                shape = RoundedCornerShape(
-                                    topStart = 8.dp,
-                                    topEnd = 16.dp,
-                                    bottomStart = 8.dp,
-                                    bottomEnd = 16.dp
-                                )
-                            )
-                            .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
-                    ) {
-                        Text(
-                            text.teamB,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
+            TeamPoints(
+                teamAName = text.teamA,
+                teamBName = text.teamB,
+                leftTeamPoints = leftTeamPoints,
+                rightTeamPoints = rightTeamPoints,
+            )
             Box(
                 Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -317,7 +237,7 @@ fun PlayingScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FilledTonalButton(
-                    onClick = { TODO() },
+                    onClick = { onEvent(GameClientEvent.CardWrong) },
                     modifier = Modifier.size(96.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -332,10 +252,12 @@ fun PlayingScreen(
                     }
                 )
                 FilledTonalButton(
-                    onClick = { TODO() },
+                    onClick = { onEvent(GameClientEvent.CardCorrect) },
                     modifier = Modifier.size(96.dp),
-                    shapes = ButtonDefaults.shapes(shape = RoundedCornerShape(28.dp),
-                        ButtonDefaults.extraLargePressedShape),
+                    shapes = ButtonDefaults.shapes(
+                        shape = RoundedCornerShape(28.dp),
+                        ButtonDefaults.extraLargePressedShape
+                    ),
                     content = {
                         Icon(
                             imageVector = Lucide.Check,
@@ -344,7 +266,7 @@ fun PlayingScreen(
                     }
                 )
                 FilledTonalButton(
-                    onClick = drawRandomCard,
+                    onClick = { onEvent(GameClientEvent.CardSkipped) },
                     modifier = Modifier.size(96.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
