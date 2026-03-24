@@ -7,27 +7,43 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,18 +51,29 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import cafe.adriel.lyricist.strings
+import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
+import com.composables.icons.lucide.QrCode
 import com.composables.icons.lucide.Settings
+import de.nogaemer.unspeakable.AppTheme
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.toRoundedPolygon
 import de.nogaemer.unspeakable.core.util.ImageUtils
+import de.nogaemer.unspeakable.core.util.getLocalIpAddress
+import de.nogaemer.unspeakable.core.util.ipToCode
+import de.nogaemer.unspeakable.core.util.toClipEntry
 import de.nogaemer.unspeakable.features.game.GameState
+import de.nogaemer.unspeakable.features.game.preview.GameStatePreviewData
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -54,20 +81,80 @@ fun LobbyScreen(
     state: GameState,
     onEvent: (event: GameClientEvent) -> Unit,
     onOpenSettings: () -> Unit,
+    onBack: () -> Unit = {},
 ) {
     if (state.match == null) return LoadingIndicator()
     val me = state.me?.id ?: ""
 
+    val lobbyCode = remember {
+        val ip = getLocalIpAddress() ?: "127.0.0.1"
+        ipToCode(ip)
+    }
+    val clipboardManager = LocalClipboard.current
+
     val text = strings.gameLobby
+
+    var showConnectionSheet by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text.lobbyTitle) },
+                navigationIcon = {
+                    TooltipBox(
+                        positionProvider =
+                            TooltipDefaults.rememberTooltipPositionProvider(
+                                TooltipAnchorPosition.Above
+                            ),
+                        tooltip = { PlainTooltip { Text("Back") } },
+                        state = rememberTooltipState(),
+                    ) {
+                        IconButton(
+                            onClick = onBack,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)).zIndex(1f),
+                        ) {
+                            Icon(
+                                imageVector = Lucide.ArrowLeft,
+                                contentDescription = strings.common.back,
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                },
                 actions = {
-                    if (state.isHost) {
-                        IconButton(onClick = onOpenSettings) {
-                            Icon(Lucide.Settings, contentDescription = text.lobbySettingsDescription)
+
+                    Row {
+                        IconButton(
+                            onClick = { showConnectionSheet = true },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            )
+                        ) {
+                            Icon(
+                                Lucide.QrCode,
+                                contentDescription = text.lobbySettingsDescription,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        if (state.isHost) {
+                            IconButton(
+                                onClick = onOpenSettings,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                                )
+                            ) {
+                                Icon(
+                                    Lucide.Settings,
+                                    contentDescription = text.lobbySettingsDescription,
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }
@@ -75,11 +162,35 @@ fun LobbyScreen(
             )
         }
     ) { innerPadding ->
+        if (showConnectionSheet) {
+            ModalBottomSheet(
+                modifier = Modifier.wrapContentHeight(),
+                onDismissRequest = { showConnectionSheet = false },
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                sheetState = rememberModalBottomSheetState(
+                    skipPartiallyExpanded = true
+                ),
+                contentWindowInsets = { WindowInsets(0, 0, 0, 0) }
+            ) {
+                LobbyConnectionScreen(
+                    qrData = lobbyCode,
+                    modifier = Modifier,
+                    onCopyClicked = {
+                        scope.launch {
+                            clipboardManager.setClipEntry(
+                                clipEntry = lobbyCode.toClipEntry()
+                            )
+                        }
+                    },
+                )
+            }
+        }
+
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column{
+            Column {
                 state.match.teams.forEach { team ->
                     PlayersContainer(
                         title = team.name,
@@ -93,16 +204,17 @@ fun LobbyScreen(
 
             if (state.isHost) {
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 28.dp).padding(bottom = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 28.dp)
+                        .padding(bottom = 16.dp),
                 ) {
-                    FilledTonalButton(
+                    Button(
                         modifier = Modifier.fillMaxWidth().height(96.dp),
                         onClick = { onEvent(GameClientEvent.StartGame) },
                         shapes = ButtonDefaults.shapesFor(96.dp),
                     ) {
                         Text(
                             text = text.startGame,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Normal
                         )
@@ -232,6 +344,18 @@ private fun JoinTeamCard(
             color = colors.onSurfaceVariant,
             text = text.joinTeam,
             fontSize = 14.sp,
+        )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun LobbyScreenPreview() {
+    AppTheme {
+        LobbyScreen(
+            state = GameStatePreviewData.lobby,
+            onEvent = {},
+            onOpenSettings = {},
         )
     }
 }

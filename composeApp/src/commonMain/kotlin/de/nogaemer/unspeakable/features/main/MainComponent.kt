@@ -8,7 +8,7 @@ import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.operator.map
-import de.nogaemer.unspeakable.features.game_settings.NetworkMode
+import de.nogaemer.unspeakable.features.game_setup.NetworkMode
 import de.nogaemer.unspeakable.features.home.DefaultHomeComponent
 import de.nogaemer.unspeakable.features.home.HomeComponent
 import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent

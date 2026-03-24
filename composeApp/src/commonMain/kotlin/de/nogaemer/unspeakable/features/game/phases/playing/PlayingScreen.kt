@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -239,10 +240,6 @@ fun PlayingScreen(
                 FilledTonalButton(
                     onClick = { onEvent(GameClientEvent.CardWrong) },
                     modifier = Modifier.size(96.dp),
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    ),
                     shapes = ButtonDefaults.shapesFor(96.dp),
                     content = {
                         Icon(
@@ -251,7 +248,7 @@ fun PlayingScreen(
                         )
                     }
                 )
-                FilledTonalButton(
+                Button(
                     onClick = { onEvent(GameClientEvent.CardCorrect) },
                     modifier = Modifier.size(96.dp),
                     shapes = ButtonDefaults.shapes(
@@ -268,10 +265,6 @@ fun PlayingScreen(
                 FilledTonalButton(
                     onClick = { onEvent(GameClientEvent.CardSkipped) },
                     modifier = Modifier.size(96.dp),
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    ),
                     shapes = ButtonDefaults.shapesFor(96.dp),
                     content = {
                         Icon(

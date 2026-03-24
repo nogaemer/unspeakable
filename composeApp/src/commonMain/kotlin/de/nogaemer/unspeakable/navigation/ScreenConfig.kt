@@ -1,7 +1,7 @@
 package de.nogaemer.unspeakable.navigation
 
 import de.nogaemer.unspeakable.core.model.GameConfig
-import de.nogaemer.unspeakable.features.game_settings.NetworkMode
+import de.nogaemer.unspeakable.features.game_setup.NetworkMode
 import kotlinx.serialization.Serializable
 
 @Serializable

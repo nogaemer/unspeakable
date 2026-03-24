@@ -9,8 +9,8 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import de.nogaemer.unspeakable.features.game.DefaultGameComponent
-import de.nogaemer.unspeakable.features.game_settings.DefaultSetupComponent
-import de.nogaemer.unspeakable.features.game_settings.SetupComponent
+import de.nogaemer.unspeakable.features.game_setup.DefaultSetupComponent
+import de.nogaemer.unspeakable.features.game_setup.SetupComponent
 import de.nogaemer.unspeakable.features.main.DefaultMainComponent
 import de.nogaemer.unspeakable.features.main.MainComponent
 import de.nogaemer.unspeakable.navigation.RootComponent.Child.Game

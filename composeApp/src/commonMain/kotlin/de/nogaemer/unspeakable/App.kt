@@ -36,7 +36,7 @@ import de.nogaemer.unspeakable.db.getRoomDatabase
 import de.nogaemer.unspeakable.db.isDatabaseFileCopied
 import de.nogaemer.unspeakable.db.writeDatabaseFile
 import de.nogaemer.unspeakable.features.game.GameScreen
-import de.nogaemer.unspeakable.features.game_settings.SetupScreen
+import de.nogaemer.unspeakable.features.game_setup.SetupScreen
 import de.nogaemer.unspeakable.features.main.MainScreen
 import de.nogaemer.unspeakable.navigation.RootComponent
 import de.nogaemer.unspeakable.theme.rememberWallpaperSeedColor
@@ -53,7 +53,6 @@ fun App(root: RootComponent) {
     Logger.setTag("Unspeakable")
 
     val controller = remember { AppSettingsController() }
-
 
 
     //DB init
@@ -116,8 +115,8 @@ fun AppContent(root: RootComponent) {
         ) { child ->
             when (val instance = child.instance) {
                 is RootComponent.Child.Main -> MainScreen(instance.component)
-                is RootComponent.Child.Setup -> SetupScreen(instance.component)
-                is RootComponent.Child.Game -> GameScreen(instance.component)
+                is RootComponent.Child.Setup -> SetupScreen(instance.component, onBack = root::goBack)
+                is RootComponent.Child.Game -> GameScreen(instance.component, onBack = root::goBack)
             }
         }
     }

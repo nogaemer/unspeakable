@@ -10,6 +10,10 @@ data class CommonStrings(
     val appTagline: String,
     val start: String,
     val back: String,
+    val or: String,
+    val copy: String,
+    val share: String,
+    val next: String,
 )
 
 data class NavigationStrings(
@@ -24,7 +28,17 @@ data class HomeStrings(
     val local: String,
 )
 
+data class QrStrings(
+    val title: String,
+    val scanToJoin: String,
+    val description: String,
+    val enterCode: String,
+    val joinLobby: String,
+)
+
 data class GameSetupStrings(
+    val whatsYourName: String,
+    val typePlaceholder: String,
     val playerName: String,
     val ipAddress: String,
     val startGame: String
@@ -112,6 +126,7 @@ data class Strings(
     val common: CommonStrings,
     val nav: NavigationStrings,
     val home: HomeStrings,
+    val qr: QrStrings,
     val gameSetup: GameSetupStrings,
     val game: GameStrings,
     val gameReady: GameReadyStrings,
@@ -130,6 +145,10 @@ val EnStrings = Strings(
         appTagline = "THE ULTIMATE WORD GAME",
         start = "Start",
         back = "Back",
+        or = "or",
+        copy = "Copy",
+        share = "Share",
+        next = "Next",
     ),
     nav = NavigationStrings(
         home = "Home",
@@ -141,7 +160,16 @@ val EnStrings = Strings(
         joinAGame = "Join  a\nGame",
         local = "Local",
     ),
+    qr = QrStrings(
+        title = "Invite Players",
+        scanToJoin = "Scan to Join",
+        description = "Scan the QR to join friends in this game lobby.",
+        enterCode = "Enter Code",
+        joinLobby = "Join Lobby",
+    ),
     gameSetup = GameSetupStrings(
+        whatsYourName = "What's your name?",
+        typePlaceholder = "Type",
         playerName = "Player Name",
         ipAddress = "IP Address",
         startGame = "Start Game",
@@ -218,6 +246,10 @@ val DeStrings = Strings(
         appTagline = "DAS ULTIMATIVE WORTSPIEL",
         start = "Starten",
         back = "Zurück",
+        or = "oder",
+        copy = "Kopieren",
+        share = "Teilen",
+        next = "Weiter",
     ),
     nav = NavigationStrings(
         home = "Start",
@@ -229,7 +261,16 @@ val DeStrings = Strings(
         joinAGame = "Spiel\nbeitreten",
         local = "Lokal",
     ),
+    qr = QrStrings(
+        title = "Spieler einladen",
+        scanToJoin = "QR scannen",
+        description = "Scan den QR-Code, um Freunden in dieser Spiel-Lobby beizutreten",
+        enterCode = "Code eingeben",
+        joinLobby = "Lobby beitreten",
+    ),
     gameSetup = GameSetupStrings(
+        whatsYourName = "Wie heißt du?",
+        typePlaceholder = "Tippen",
         playerName = "Spielername",
         ipAddress = "IP-Adresse",
         startGame = "Spiel starten",
@@ -262,7 +303,7 @@ val DeStrings = Strings(
         timeUpTitle = "Zeit ist um",
         correctLabel = "Richtig",
         wrongLabel = "Falsch",
-        skippedLabel = "Uebersprungen",
+        skippedLabel = "Übersprungen",
     ),
     settings = SettingsStrings(
         title = "Einstellungen",

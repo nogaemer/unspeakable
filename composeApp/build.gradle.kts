@@ -87,6 +87,8 @@ kotlin {
             implementation(libs.multiplatform.settings)
 
             implementation(libs.kermit)
+
+            implementation(libs.qr.kit)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

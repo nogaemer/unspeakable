@@ -1,8 +1,11 @@
 package de.nogaemer.unspeakable.features.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,8 +22,11 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import cafe.adriel.lyricist.strings
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.stack.Children
@@ -126,8 +132,20 @@ fun DefaultTopAppBar(
                             tooltip = { PlainTooltip { Text("Back") } },
                             state = rememberTooltipState(),
                         ) {
-                            IconButton(onClick = onBack) {
-                                Icon(imageVector = Lucide.ArrowLeft, contentDescription = "Back")
+                            IconButton(
+                                onClick = onBack,
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)).zIndex(1f),
+                            ) {
+                                Icon(
+                                    imageVector = Lucide.ArrowLeft,
+                                    contentDescription = strings.common.back,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         }
                     },

@@ -20,7 +20,7 @@ import de.nogaemer.unspeakable.features.game.phases.ready.GameReadyScreen
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun GameScreen(component: DefaultGameComponent) {
+fun GameScreen(component: DefaultGameComponent, onBack: () -> Unit) {
     val state by component.state.collectAsState()
 
     when (state.phase) {
@@ -38,7 +38,9 @@ fun GameScreen(component: DefaultGameComponent) {
                     state = state,
                     onEvent = component::onEvent,
                     onOpenSettings = component::navigateToLobbySettings,
+                    onBack = onBack,
                 )
+
                 is GameComponent.GameChild.LobbySettingsChild -> LobbySettingsScreen(
                     component = instance.component,
                 )

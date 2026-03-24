@@ -10,6 +10,8 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameConfig
+import de.nogaemer.unspeakable.features.game.GameComponent.GameChild.LobbyChild
+import de.nogaemer.unspeakable.features.game.GameComponent.GameChild.LobbySettingsChild
 import de.nogaemer.unspeakable.features.game.phases.lobby.DefaultLobbySettingsComponent
 import de.nogaemer.unspeakable.features.game.phases.lobby.LobbySettingsComponent
 import kotlinx.coroutines.flow.StateFlow
@@ -57,8 +59,8 @@ class DefaultGameComponent(
 
     private fun createChild(config: LobbyConfig, ctx: ComponentContext): GameComponent.GameChild =
         when (config) {
-            LobbyConfig.Lobby -> GameComponent.GameChild.LobbyChild(this)
-            LobbyConfig.LobbySettings -> GameComponent.GameChild.LobbySettingsChild(
+            LobbyConfig.Lobby -> LobbyChild(this)
+            LobbyConfig.LobbySettings -> LobbySettingsChild(
                 DefaultLobbySettingsComponent(
                     ctx = ctx,
                     state = viewModel.state,

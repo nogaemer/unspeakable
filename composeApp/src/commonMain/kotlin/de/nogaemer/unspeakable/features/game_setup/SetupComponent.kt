@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.game_settings
+package de.nogaemer.unspeakable.features.game_setup
 
 import com.arkivanov.decompose.ComponentContext
 import de.nogaemer.unspeakable.core.model.GameConfig

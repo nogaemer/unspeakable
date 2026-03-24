@@ -1,7 +1,7 @@
 package de.nogaemer.unspeakable.features.home
 
 import com.arkivanov.decompose.ComponentContext
-import de.nogaemer.unspeakable.features.game_settings.NetworkMode
+import de.nogaemer.unspeakable.features.game_setup.NetworkMode
 
 interface HomeComponent {
     fun onHostClicked()
