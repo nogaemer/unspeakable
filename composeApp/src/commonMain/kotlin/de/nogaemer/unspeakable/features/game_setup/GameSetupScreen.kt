@@ -58,7 +58,7 @@ fun SetupScreen(
 
 
     fun goBack() {
-        if (step == SetupStep.ENTER_NAME) {
+        if (step == SetupStep.ENTER_NAME && networkMode == NetworkMode.CLIENT) {
             step = SetupStep.LOBBY_CODE
         } else {
             onBack()
