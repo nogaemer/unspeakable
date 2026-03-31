@@ -36,6 +36,9 @@ import de.nogaemer.unspeakable.core.util.settings.LocalAppSettings
 import de.nogaemer.unspeakable.core.util.settings.isDark
 import kotlin.math.roundToInt
 
+/**
+ * Provides a draggable hue slider for theme personalization.
+ */
 @Composable
 fun RainbowSlider(
     hue: Float,
@@ -45,8 +48,6 @@ fun RainbowSlider(
     val interactionSource = remember { MutableInteractionSource() }
     val isDragged by interactionSource.collectIsDraggedAsState()
 
-    // Animate the hole size / stroke width
-    // When dragged: stroke is thick (hole small). When idle: stroke thin (hole big).
     val strokeWidth by animateFloatAsState(targetValue = if (isDragged) 6f else 2f)
 
     BoxWithConstraints(
@@ -59,7 +60,6 @@ fun RainbowSlider(
         val thumbRadius = with(density) { 16.dp.toPx() } // Corrected: thumbRadius is px
         val trackHeight = with(density) { 32.dp.toPx() }
 
-        // Ensure we can drag comfortably
         val sliderWidth = width - (thumbRadius * 2)
         val offset = (hue / 360f) * sliderWidth
 
@@ -79,7 +79,6 @@ fun RainbowSlider(
 
 
 
-        // Gradient Track
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -87,7 +86,6 @@ fun RainbowSlider(
                 .background(Brush.linearGradient(colors = gradientColors))
         )
 
-        // Thumb
         Box(
             modifier = Modifier
                 .offset { IntOffset(offset.roundToInt(), 0) }
@@ -105,13 +103,6 @@ fun RainbowSlider(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            // Draw the inner color circle with the changing hole size
-            // Actually, simplest is to draw circle with color, and maybe a white ring punch out?
-            // The requirement was: White Ring (Background), Inner Color Circle
-            // "We reduce the radius by the currentStrokeWidth to make the 'hole' smaller as the border gets thicker"
-
-            // So we draw a colored circle inside the white circle.
-            // Radius of inner circle = thumbRadius - strokeWidth
 
             val innerColor = MaterialTheme.colorScheme.primary
 

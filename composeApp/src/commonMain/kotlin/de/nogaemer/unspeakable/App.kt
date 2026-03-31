@@ -116,7 +116,11 @@ fun AppContent(root: RootComponent) {
             when (val instance = child.instance) {
                 is RootComponent.Child.Main -> MainScreen(instance.component)
                 is RootComponent.Child.Setup -> SetupScreen(instance.component, onBack = root::goBack)
-                is RootComponent.Child.Game -> GameScreen(instance.component, onBack = root::goBack)
+                is RootComponent.Child.Game -> GameScreen(
+                    component = instance.component,
+                    onBack = root::goBack,
+                    onGoHome = root::goHome,
+                )
             }
         }
     }

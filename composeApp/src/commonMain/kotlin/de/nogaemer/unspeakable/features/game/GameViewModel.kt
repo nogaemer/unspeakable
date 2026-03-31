@@ -12,6 +12,9 @@ import de.nogaemer.unspeakable.features.game.session.LocalSession
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Creates the appropriate game session and exposes its state to UI.
+ */
 class GameViewModel(config: GameConfig) : ViewModel() {
 
     private var isSessionClosed = false

@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.game.phases.lobby
+package de.nogaemer.unspeakable.features.game.phases.lobby.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.DragInteraction
@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -31,86 +33,91 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import cafe.adriel.lyricist.strings
+import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.Lucide
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedColumn
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedListItem
 import de.nogaemer.unspeakable.core.model.GameClientEvent
-import de.nogaemer.unspeakable.features.settings.DefaultTopAppBar
 import kotlin.math.roundToInt
 
+/**
+ * Renders round-related lobby settings and navigation to deeper settings pages.
+ */
 @Composable
-fun LobbySettingsScreen(component: LobbySettingsComponent) {
+fun GameSettingsOverviewScreen(component: GameSettingsOverviewComponent<GameSettingsConfig>) {
     val state by component.state.collectAsState()
-    val text = strings.gameLobbySettings
+    val roundSettings = strings.gameLobbySettings.gameRoundSettingsStrings
+    val lobbySettings = strings.gameLobbySettings
 
-    DefaultTopAppBar(
-        title = text.lobbySettingsTitle,
-        onBack = component::goBack,
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            SegmentedColumn(
-                segmentTitle = text.roundsSettings
-            ) {
-                val timeAnchors = listOf(0, 30, 60, 120, 300, 600, 1800)
-                var roundTime by remember { mutableIntStateOf(state.match?.settings?.roundTime ?: 30) }
-                SegmentedListItem(
-                    modifier = Modifier.clickable(
-                        onClick = {
+        SegmentedColumn(segmentTitle = strings.gameLobbySettings.roundsSettings) {
+            val timeAnchors = listOf(0, 30, 60, 120, 300, 600, 1800)
+            var roundTime by remember {
+                mutableIntStateOf(
+                    state.match?.settings?.roundTime ?: 30
+                )
+            }
 
-                        }
-                    ),
-                    headlineContent = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(text.roundTime)
-                            Text(
-                                text = formatDuration(roundTime),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    },
-                    supportingContent = {
+            SegmentedListItem(
+                headlineContent = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(roundSettings.roundTime)
+                        Text(
+                            text = formatDuration(roundTime),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                },
+                supportingContent = {
+                    Column {
+                        Spacer(modifier = Modifier.height(8.dp))
                         AnchoredSlider(
                             anchors = timeAnchors,
                             selectedValue = roundTime,
                             onValueSelected = {
                                 component.onEvent(
                                     GameClientEvent.UpdateGameSettings(
-                                        state.match?.settings?.copy(
-                                            roundTime = it
-                                        ) ?: return@AnchoredSlider
+                                        state.match?.settings?.copy(roundTime = it)
+                                            ?: return@AnchoredSlider
                                     )
                                 )
                             },
                             onValueChange = { roundTime = it },
                         )
                     }
-                )
+                }
+            )
 
-                SegmentedListItem(
-                    modifier = Modifier.clickable(
-                        onClick = {
-                        }
-                    ),
-                    headlineContent = {
-                        Text(text.roundsPerTeam)
-                    },
-                    supportingContent = {
-                        Text(text.roundsPerTeamDescription)
-                    }
-                )
-
-            }
+            SegmentedListItem(
+                modifier = Modifier.clickable {
+                    component.navigateTo(GameSettingsConfig.RoundCount)
+                },
+                headlineContent = { Text(lobbySettings.roundsPerTeam) },
+                supportingContent = { Text(lobbySettings.roundsPerTeamDescription) },
+                trailingContent = {
+                    Icon(
+                        imageVector = Lucide.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            )
         }
     }
 }
 
+
+/**
+ * Provides an anchored round-time slider with snap behavior.
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnchoredSlider(
@@ -122,25 +129,24 @@ fun AnchoredSlider(
 ) {
     var isDragging by remember { mutableStateOf(false) }
 
-    var liveValue by remember { mutableIntStateOf(selectedValue) }
-
     val state = rememberSliderState(
         value = selectedValue.toSliderPosition(anchors),
         steps = 0,
         valueRange = 0f..1f,
-        onValueChangeFinished = {
-            isDragging = false
-            onValueSelected(liveValue)
-        }
     )
 
+    state.onValueChangeFinished = {
+        isDragging = false
+        onValueSelected(state.value.toAnchoredValue(anchors))
+    }
 
     val interactionSource = remember { MutableInteractionSource() }
 
     LaunchedEffect(interactionSource) {
         interactionSource.interactions.collect { interaction ->
             when (interaction) {
-                is DragInteraction.Start, is PressInteraction.Press -> isDragging = true
+                is DragInteraction.Start,
+                is PressInteraction.Press -> isDragging = true
             }
         }
     }
@@ -148,20 +154,17 @@ fun AnchoredSlider(
     LaunchedEffect(Unit) {
         snapshotFlow { state.value }
             .collect { sliderValue ->
-                val anchored = sliderValue.toAnchoredValue(anchors)
-                liveValue = anchored
-                onValueChange(anchored)
+                onValueChange(sliderValue.toAnchoredValue(anchors))
             }
     }
 
-    // only sync from server when not dragging - need this if ill later show the settings to the clients.
     LaunchedEffect(selectedValue) {
         if (!isDragging) {
             state.value = selectedValue.toSliderPosition(anchors)
         }
     }
 
-    Box(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
+    Box(modifier = modifier.fillMaxWidth()) {
         Slider(
             state = state,
             interactionSource = interactionSource,
@@ -177,14 +180,14 @@ fun AnchoredSlider(
     }
 }
 
-
-
+/** Formats seconds into compact duration labels for settings UI. */
 fun formatDuration(seconds: Int): String = when {
     seconds < 60 -> "${seconds}s"
     seconds % 60 == 0 -> "${seconds / 60}m"
     else -> "${seconds / 60}m ${seconds % 60}s"
 }
 
+/** Maps normalized slider progress to the nearest anchored duration. */
 fun Float.toAnchoredValue(anchors: List<Int>): Int {
     val scaled = this * (anchors.size - 1)
     val lo = scaled.toInt().coerceIn(0, anchors.size - 2)
@@ -201,8 +204,8 @@ fun Float.toAnchoredValue(anchors: List<Int>): Int {
     }
 }
 
+/** Maps a duration back to slider position to keep external updates in sync. */
 fun Int.toSliderPosition(anchors: List<Int>): Float {
-    // Find which segment this value falls in
     val lo = anchors.indexOfLast { it <= this }.coerceAtLeast(0)
     val hi = (lo + 1).coerceAtMost(anchors.lastIndex)
     if (lo == hi) return lo.toFloat() / (anchors.size - 1)

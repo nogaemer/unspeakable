@@ -22,6 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+/**
+ * Displays mirrored team labels and scores for in-game scoreboards.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TeamPoints(
@@ -36,7 +39,6 @@ fun TeamPoints(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        //Left Team indicator
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
@@ -76,7 +78,6 @@ fun TeamPoints(
             }
         }
 
-        //Right Team indicator
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,

@@ -49,6 +49,9 @@ import kotlinx.coroutines.launch
 import qrscanner.CameraLens
 import qrscanner.QrScanner
 
+/**
+ * Hosts camera/image QR scanning and returns detected join payloads.
+ */
 @Composable
 fun QrScannerView(onNavigate: (String) -> Unit) {
     var qrCodeURL by remember { mutableStateOf("") }

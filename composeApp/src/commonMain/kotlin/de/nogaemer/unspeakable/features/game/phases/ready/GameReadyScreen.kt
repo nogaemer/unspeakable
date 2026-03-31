@@ -30,6 +30,9 @@ import de.nogaemer.unspeakable.core.util.robotoFlex
 import de.nogaemer.unspeakable.core.util.robotoFlexTitleVariation
 import de.nogaemer.unspeakable.features.game.GameState
 
+/**
+ * Shows pre-round readiness UI for the active explainer and waiting players.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun GameReadyScreen(

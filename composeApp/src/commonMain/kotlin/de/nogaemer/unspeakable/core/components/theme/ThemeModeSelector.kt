@@ -35,6 +35,9 @@ import cafe.adriel.lyricist.LocalStrings
 import de.nogaemer.unspeakable.core.util.settings.ThemeMode
 import kotlin.math.pow
 
+/**
+ * Applies overshoot easing to the theme-selector pill alignment transition.
+ */
 private val BackOutAlignmentEasing = Easing { t ->
     val s = 1.2f
     val p = t - 1f
@@ -48,6 +51,9 @@ private fun shapeFor(t: Float): Pair<Float, Float> {
     return w.toFloat() to h.toFloat()
 }
 
+/**
+ * Lets users switch between system, light, and dark theme modes.
+ */
 @Composable
 fun ThemeModeSelector(
     selected: ThemeMode,
@@ -87,7 +93,6 @@ fun ThemeModeSelector(
         val maxWidth = maxWidth
         val itemWidth = maxWidth / 3
 
-        // Calculate bias: -1 (left), 0 (center), 1 (right)
         val biasTarget = when(selectedIndex) {
             0 -> -1f
             1 -> 0f
@@ -104,7 +109,6 @@ fun ThemeModeSelector(
 
         val (wMul, hMul) = shapeFor(shapeAnim.value)
 
-        // Bouncy Pill
         Box(
             modifier = Modifier
                 .height(maxHeight * hMul)
@@ -113,7 +117,6 @@ fun ThemeModeSelector(
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
         )
 
-        // Labels
         Row(modifier = Modifier.fillMaxSize()) {
             items.forEachIndexed { index, (mode, label) ->
                 Box(

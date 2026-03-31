@@ -12,10 +12,12 @@ import androidx.compose.ui.graphics.toArgb
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 
+/** Defines user-selectable theme behavior modes. */
 enum class ThemeMode {
     SYSTEM, LIGHT, DARK
 }
 
+/** Holds persisted user preferences that drive language and theming. */
 data class AppSettings(
     val locales: Locales = Locales.EN,
 
@@ -35,6 +37,7 @@ val AppSettings.isDark: Boolean
         ThemeMode.DARK -> true
     }
 
+/** Manages settings persistence and exposes reactive in-memory app settings. */
 class AppSettingsController() {
     private val settings = Settings()
 
@@ -64,7 +67,6 @@ class AppSettingsController() {
 
     fun setHue(hue: Float) {
         settings["app_hue"] = hue
-        // Simple saturation/value for seed. Material 3 will adapt.
         val seed = Color.hsv(hue, 1f, 1f)
         settings["seed_color"] = seed.toArgb().toLong()
         appSettings = appSettings.copy(hue = hue, seedColor = seed)
@@ -86,6 +88,7 @@ class AppSettingsController() {
     }
 }
 
+/** Provides `AppSettingsController` to composables via CompositionLocal. */
 val LocalAppSettings = compositionLocalOf<AppSettingsController> {
     error("No AppSettingsController provided")
 }

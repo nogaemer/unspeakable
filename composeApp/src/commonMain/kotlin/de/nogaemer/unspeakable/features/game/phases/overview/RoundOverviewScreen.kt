@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,9 @@ import de.nogaemer.unspeakable.core.util.robotoFlexTitleVariation
 import de.nogaemer.unspeakable.features.game.GameState
 import de.nogaemer.unspeakable.features.game.preview.GameStatePreviewData
 
+/**
+ * Displays end-of-round results and card outcomes before advancing.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RoundOverviewScreen(
@@ -61,15 +65,21 @@ fun RoundOverviewScreen(
     val text = strings.roundOverview
     val gameText = strings.game
 
+    val leftTeamPoints = state.match?.teams?.getOrNull(0)?.points ?: 0
+    val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
+
     Scaffold(
         floatingActionButton = {
-            MediumFloatingActionButton(
-                onClick = {},
-            ) {
-                Icon(
-                    imageVector = Lucide.ArrowRight,
-                    contentDescription = null,
-                )
+            if (state.isHost) {
+                MediumFloatingActionButton(
+                    onClick = { onEvent(GameClientEvent.NextRoundOrEndGame) },
+                    shape = FloatingActionButtonDefaults.mediumShape,
+                ) {
+                    Icon(
+                        imageVector = Lucide.ArrowRight,
+                        contentDescription = null,
+                    )
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -132,8 +142,8 @@ fun RoundOverviewScreen(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     teamAName = gameText.teamA,
                     teamBName = gameText.teamB,
-                    leftTeamPoints = 12,
-                    rightTeamPoints = 8,
+                    leftTeamPoints = leftTeamPoints,
+                    rightTeamPoints = rightTeamPoints,
                 )
             }
 

@@ -12,7 +12,6 @@ import de.nogaemer.unspeakable.features.game_setup.NetworkMode
 import de.nogaemer.unspeakable.features.home.DefaultHomeComponent
 import de.nogaemer.unspeakable.features.home.HomeComponent
 import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent
-import de.nogaemer.unspeakable.features.settings.SettingsComponent
 import de.nogaemer.unspeakable.features.words.DefaultWordsComponent
 import de.nogaemer.unspeakable.features.words.WordsComponent
 import kotlinx.serialization.Serializable
@@ -29,7 +28,7 @@ interface MainComponent {
     sealed class TabChild {
         data class Home(val component: HomeComponent)         : TabChild()
         data class Words(val component: WordsComponent)       : TabChild()
-        data class Settings(val component: SettingsComponent) : TabChild()
+        data class Settings(val component: DefaultSettingsComponent) : TabChild()
     }
 }
 

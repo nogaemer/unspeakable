@@ -5,6 +5,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Runs a cancellable second-based countdown used for round timing.
+ */
 class Timer(
     private val scope: CoroutineScope,
     val maxTime: Int,

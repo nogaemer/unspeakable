@@ -25,6 +25,9 @@ import qrgenerator.qrkitpainter.rememberQrKitPainter
 import qrgenerator.qrkitpainter.solidBrush
 
 
+/**
+ * Renders a stylized QR code for sharing lobby join data.
+ */
 @Composable
 fun QrGeneratorView(
     data: String,

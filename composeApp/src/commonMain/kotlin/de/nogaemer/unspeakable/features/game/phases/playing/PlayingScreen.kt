@@ -48,6 +48,9 @@ import de.nogaemer.unspeakable.core.util.robotoFlexCardItems
 import de.nogaemer.unspeakable.core.util.robotoFlexClock
 import de.nogaemer.unspeakable.features.game.GameState
 
+/**
+ * Renders the active round UI with timer, card content, and outcome actions.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlayingScreen(
@@ -63,23 +66,17 @@ fun PlayingScreen(
     val leftTeamPoints = state.match?.teams?.getOrNull(0)?.points ?: 0
     val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
 
-    // Re-run this block if the round time changes
     LaunchedEffect(state.currentRoundTime, roundTime) {
         val currentSeconds = state.currentRoundTime?.toFloat() ?: 0f
         val maxSeconds = roundTime.toFloat().coerceAtLeast(1f)
 
-        // Where the circle should be RIGHT NOW
         val startProgress = currentSeconds / maxSeconds
-        // Where the circle should be ONE SECOND FROM NOW
         val endProgress = ((currentSeconds - 1).coerceAtLeast(0f)) / maxSeconds
 
-        // If we have time left to animate...
         if (currentSeconds > 0) {
             val startTimeNanos = withFrameNanos { it }
-            val oneSecondNanos = 1_000_000_000L // 1 second in nanoseconds
+            val oneSecondNanos = 1_000_000_000L
 
-            // Loop forever until the coroutine is cancelled (which happens
-            // when the server sends the next 1-second tick!)
             while (true) {
                 withFrameNanos { frameTimeNanos ->
                     val elapsedNanos = frameTimeNanos - startTimeNanos
@@ -87,9 +84,7 @@ fun PlayingScreen(
                     if (elapsedNanos >= oneSecondNanos) {
                         progress = endProgress
                     } else {
-                        // Calculate exact percentage between the start and end of this second
                         val fraction = elapsedNanos.toFloat() / oneSecondNanos
-                        // Linear interpolation
                         progress = startProgress + (endProgress - startProgress) * fraction
                     }
                 }

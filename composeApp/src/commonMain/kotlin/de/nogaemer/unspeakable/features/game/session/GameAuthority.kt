@@ -8,6 +8,7 @@ import de.nogaemer.unspeakable.core.model.CardOutcome.WRONG
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameClientEvent.JoinTeam
 import de.nogaemer.unspeakable.core.model.GameHostEvent
+import de.nogaemer.unspeakable.core.model.GamePhase
 import de.nogaemer.unspeakable.core.model.HostBoundClientEvent
 import de.nogaemer.unspeakable.core.model.Match
 import de.nogaemer.unspeakable.core.model.PlayedCard
@@ -26,6 +27,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.uuid.ExperimentalUuidApi
 
+/**
+ * Applies client events, manages round progression, and emits host events.
+ */
 class GameAuthority(
     private val scope: CoroutineScope,
     private val cardDao: UnspeakableCardsDao,
@@ -47,7 +51,6 @@ class GameAuthority(
     )
     val state: StateFlow<GameState> = _state.asStateFlow()
 
-    //HostSession subscribes to it
     private val _broadcastEvents = MutableSharedFlow<GameHostEvent>(extraBufferCapacity = 64)
     val broadcastEvents: SharedFlow<GameHostEvent> = _broadcastEvents.asSharedFlow()
 
@@ -83,7 +86,11 @@ class GameAuthority(
 
             is JoinTeam -> {
                 val player = _state.value.getPlayer(boundClientEvent.playerId) ?: return
-                applyAndBroadcast(GameHostEvent.PlayerJoinedTeam(player, event.team))
+                val team = _state.value.getTeam(event.team.id) ?: return
+                val currentTeam = _state.value.getTeamByPlayer(player)
+                if (currentTeam?.id == team.id) return
+
+                applyAndBroadcast(GameHostEvent.PlayerJoinedTeam(player, team))
             }
 
             is GameClientEvent.UpdateGameSettings -> {
@@ -99,13 +106,11 @@ class GameAuthority(
             }
 
             GameClientEvent.RequestNewRandomCard -> {
-                // Only valid mid-round
                 if (_state.value.currentRound == null) return
                 val card = cardDao.getRandomCard(lang) ?: return
                 applyAndBroadcast(GameHostEvent.SendCard(card))
             }
 
-            // ── Card outcome events ───────────────────────────────────────
 
             GameClientEvent.CardCorrect -> handleCardOutcome(CORRECT)
             GameClientEvent.CardSkipped -> handleCardOutcome(SKIPPED)
@@ -117,6 +122,12 @@ class GameAuthority(
 
             GameClientEvent.ReadyToStartMyTurn -> {
                 startRound();
+            }
+
+            GameClientEvent.NextRoundOrEndGame -> {
+                if (boundClientEvent.playerId != _state.value.me?.id) return
+                if (_state.value.phase != GamePhase.ROUND_SUMMARY) return
+                initNextRound()
             }
         }
     }
@@ -179,17 +190,19 @@ class GameAuthority(
 
     private suspend fun endCurrentRound() {
         val completedRound = _state.value.currentRound ?: return
+        val elapsedSeconds = (timer.maxTime - timer.timeLeft).coerceIn(0, timer.maxTime)
+        val completedRoundWithDuration = completedRound.copy(durationSeconds = elapsedSeconds)
         timer.reset()
 
         val match = _state.value.match ?: return
         val updatedTeams = match.teams.map { team ->
-            if (team.id == completedRound.explainerTeam.id)
-                team.copy(points = team.points + completedRound.points)
+            if (team.id == completedRoundWithDuration.explainerTeam.id)
+                team.copy(points = team.points + completedRoundWithDuration.points)
             else team
         }
         _state.update { it.copy(match = match.copy(teams = updatedTeams)) }
 
-        applyAndBroadcast(GameHostEvent.EndRound(completedRound))
+        applyAndBroadcast(GameHostEvent.EndRound(completedRoundWithDuration, updatedTeams))
     }
 
 

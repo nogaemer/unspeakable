@@ -8,6 +8,9 @@ import de.nogaemer.unspeakable.features.game.GameState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * Runs a same-device game session by routing events directly through authority.
+ */
 class LocalSession(
     playerName: String,
     profilePicture: ProfilePicture,

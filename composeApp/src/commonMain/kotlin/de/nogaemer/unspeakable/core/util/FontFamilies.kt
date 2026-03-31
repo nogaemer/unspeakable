@@ -7,6 +7,7 @@ import org.jetbrains.compose.resources.Font
 import unspeakable.composeapp.generated.resources.Res
 import unspeakable.composeapp.generated.resources.roboto_flex
 
+/** Builds a Roboto Flex family with configurable variation settings. */
 @Composable
 fun robotoFlex (
     fontVariation: FontVariation.Settings = robotoFlexTitleVariationNarrow()
@@ -19,6 +20,7 @@ fun robotoFlex (
     )
 }
 
+/** Defines a narrow title variation preset for display headings. */
 @Composable
 fun robotoFlexTitleVariationNarrow (): FontVariation.Settings {
     return FontVariation.Settings(
@@ -32,6 +34,7 @@ fun robotoFlexTitleVariationNarrow (): FontVariation.Settings {
     )
 }
 
+/** Defines the default title variation preset used by headline cards. */
 @Composable
 fun robotoFlexTitleVariation (): FontVariation.Settings {
     return FontVariation.Settings(
@@ -45,6 +48,7 @@ fun robotoFlexTitleVariation (): FontVariation.Settings {
     )
 }
 
+/** Builds the condensed numeric-friendly variant used by countdown clocks. */
 @Composable
 fun robotoFlexClock (): FontFamily {
     return FontFamily(
@@ -63,6 +67,7 @@ fun robotoFlexClock (): FontFamily {
     )
 }
 
+/** Builds the compact readable variant used by card/body UI text. */
 @Composable
 fun robotoFlexCardItems (): FontFamily {
     return FontFamily(

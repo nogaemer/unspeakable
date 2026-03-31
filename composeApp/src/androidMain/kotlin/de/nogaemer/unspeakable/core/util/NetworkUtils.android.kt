@@ -3,6 +3,10 @@ package de.nogaemer.unspeakable.core.util
 import java.net.Inet4Address
 import java.net.NetworkInterface
 
+/**
+ * Finds a non-loopback IPv4 address for Android LAN game flows.
+ * Android: iterates `NetworkInterface` addresses and returns first IPv4 hit.
+ */
 actual fun getLocalIpAddress(): String? {
     try {
         val interfaces = NetworkInterface.getNetworkInterfaces()

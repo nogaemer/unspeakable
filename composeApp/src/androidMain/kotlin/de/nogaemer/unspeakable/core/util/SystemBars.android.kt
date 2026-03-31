@@ -6,6 +6,10 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+/**
+ * Updates Android status-bar icon contrast to match app theme.
+ * Android: uses `WindowCompat` insets controller to toggle light status-bar icons.
+ */
 @Composable
 actual fun SystemBarAppearance(darkTheme: Boolean) {
     val view = LocalView.current

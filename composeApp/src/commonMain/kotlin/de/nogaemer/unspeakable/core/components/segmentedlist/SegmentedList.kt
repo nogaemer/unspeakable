@@ -35,6 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Renders a lazy segmented container with optional section title styling.
+ */
 @Composable
 fun SegmentedLazyColumn(
     modifier: Modifier = Modifier,
@@ -70,6 +73,9 @@ fun SegmentedLazyColumn(
     )
 }
 
+/**
+ * Renders a non-lazy segmented container with consistent section styling.
+ */
 @Composable
 fun SegmentedColumn(
     modifier: Modifier = Modifier,
@@ -104,6 +110,9 @@ fun SegmentedColumn(
     }
 }
 
+/**
+ * Renders a segmented list row with optional selected-state emphasis.
+ */
 @Composable
 fun SegmentedListItem(
     headlineContent: @Composable () -> Unit,

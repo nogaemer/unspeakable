@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun AboutScreen(
-    component: AboutComponent
+    _component: DefaultAboutComponent
 ) {
     Surface(
 

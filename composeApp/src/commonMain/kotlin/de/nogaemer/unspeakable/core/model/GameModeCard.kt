@@ -42,6 +42,9 @@ import com.composables.icons.lucide.Lucide
 import de.nogaemer.unspeakable.core.util.robotoFlex
 import de.nogaemer.unspeakable.core.util.robotoFlexTitleVariationNarrow
 
+/**
+ * Renders the large stylized game-mode card used on primary selection screens.
+ */
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun GameModeCard(
@@ -106,6 +109,9 @@ fun GameModeCard(
     }
 }
 
+/**
+ * Renders a compact game-mode card variant for dense lists.
+ */
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun GameModeCardSmall(
@@ -161,6 +167,9 @@ fun GameModeCardSmall(
 // Posted by tyg, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-03-09, License - CC BY-SA 4.0
 
+/**
+ * Draws outlined text by layering stroke and fill text passes.
+ */
 @ExperimentalComposeUiApi
 @Composable
 fun OutlinedText(

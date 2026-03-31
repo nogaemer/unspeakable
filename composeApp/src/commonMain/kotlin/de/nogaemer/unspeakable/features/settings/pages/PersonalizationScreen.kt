@@ -33,7 +33,7 @@ import de.nogaemer.unspeakable.core.util.settings.isDark
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PersonalizationScreen(
-    component: PersonalizationComponent
+    component: DefaultPersonalizationComponent
 ) {
     val controller = LocalAppSettings.current
     val strings = LocalStrings.current

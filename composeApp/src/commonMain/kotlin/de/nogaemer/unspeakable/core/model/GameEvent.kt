@@ -3,6 +3,9 @@ package de.nogaemer.unspeakable.core.model
 import de.nogaemer.unspeakable.db.UnspeakableCard
 import kotlinx.serialization.Serializable
 
+/**
+ * Defines commands clients send to the host during match flow.
+ */
 @Serializable
 sealed class GameClientEvent() {
     @Serializable data class JoinGame(val player: Player) : GameClientEvent()
@@ -13,6 +16,7 @@ sealed class GameClientEvent() {
 
     @Serializable data object RequestNewRandomCard : GameClientEvent()
     @Serializable data object ReadyToStartMyTurn : GameClientEvent()
+    @Serializable data object NextRoundOrEndGame : GameClientEvent()
 
     @Serializable data object CardCorrect : GameClientEvent()
     @Serializable data object CardSkipped : GameClientEvent()
@@ -25,12 +29,18 @@ sealed class GameClientEvent() {
 
 }
 
+/**
+ * Wraps client events with sender identity for host-side routing.
+ */
 @Serializable
 data class HostBoundClientEvent(
     val playerId: String, val event: GameClientEvent
 )
 
 
+/**
+ * Defines updates and commands emitted by the host to clients.
+ */
 @Serializable
 sealed class GameHostEvent {
     @Serializable data class Tick(val currentRoundTime: Int) : GameHostEvent()
@@ -46,7 +56,7 @@ sealed class GameHostEvent {
     @Serializable data class InitNewRound(val round: Round) : GameHostEvent()
     @Serializable data object StartRound : GameHostEvent()
     @Serializable data class CardPlayed(val playedCard: PlayedCard) : GameHostEvent()
-    @Serializable data class EndRound(val completedRound: Round) : GameHostEvent()
+    @Serializable data class EndRound(val completedRound: Round, val updatedTeams: List<Team>) : GameHostEvent()
 
     @Serializable data object EndGame : GameHostEvent()
 }

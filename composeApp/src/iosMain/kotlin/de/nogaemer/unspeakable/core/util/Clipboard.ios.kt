@@ -8,5 +8,9 @@ import androidx.compose.ui.platform.ClipEntry
 // Retrieved 2026-03-21, License - CC BY-SA 4.0
 
 @OptIn(ExperimentalComposeUiApi::class)
+/**
+ * Converts text into a Compose clipboard payload for iOS targets.
+ * iOS: uses `ClipEntry.withPlainText` from Compose UI.
+ */
 actual fun String.toClipEntry() =
     ClipEntry.withPlainText(this)

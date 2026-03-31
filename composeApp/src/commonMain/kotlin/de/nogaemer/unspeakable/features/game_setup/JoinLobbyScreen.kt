@@ -21,6 +21,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -57,6 +59,7 @@ import qrscanner.CameraLens
 import qrscanner.OverlayShape
 import qrscanner.QrScanner
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun JoinLobbyScreen(
     lobbyCode: String,
@@ -233,7 +236,7 @@ fun JoinLobbyScreen(
                 .fillMaxWidth()
                 .height(64.dp)
                 .padding(bottom = 8.dp),
-            shape = RoundedCornerShape(32.dp),
+            shapes = ButtonDefaults.shapesFor(64.dp),
         ) {
             Text(
                 text = text.qr.joinLobby,

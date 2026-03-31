@@ -22,7 +22,6 @@ import de.nogaemer.unspeakable.features.game.GameState
  * Reusable fixture states for Compose previews.
  */
 object GameStatePreviewData {
-    // Generate a valid dummy base64 image string to avoid rendering errors in previews
     private val dummyImage = run {
         val size = 16
         val bitmap = ImageBitmap(size, size)
@@ -173,6 +172,18 @@ object GameStatePreviewData {
         playedCards = previewPlayedCards,
     )
 
+    private val previewRoundTeamB = Round(
+        roundNumber = 4,
+        explainerTeam = teamB,
+        explainerPlayer = playerC,
+        playedCards = listOf(
+            PlayedCard(card = previewCard2, outcome = CardOutcome.CORRECT),
+            PlayedCard(card = previewCard, outcome = CardOutcome.WRONG),
+            PlayedCard(card = skippedCard, outcome = CardOutcome.SKIPPED),
+            PlayedCard(card = previousCard, outcome = CardOutcome.CORRECT),
+        ),
+    )
+
     val lobby: GameState = GameState(
         phase = GamePhase.SETUP,
         isHost = true,
@@ -208,6 +219,15 @@ object GameStatePreviewData {
                 outcome = CardOutcome.CORRECT
             )
         ),
+        currentCard = null,
+        currentRoundTime = null,
+    )
+
+    val gameOver: GameState = lobby.copy(
+        phase = GamePhase.GAME_OVER,
+        rounds = listOf(previewRound, previewRoundTeamB),
+        match = previewMatch,
+        currentRound = null,
         currentCard = null,
         currentRoundTime = null,
     )

@@ -30,10 +30,10 @@ import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Settings
+import de.nogaemer.unspeakable.core.components.menu.MenuChild
 import de.nogaemer.unspeakable.core.util.settings.LocalAppSettings
 import de.nogaemer.unspeakable.core.util.settings.isDark
 import de.nogaemer.unspeakable.features.home.HomeScreen
-import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent
 import de.nogaemer.unspeakable.features.settings.SettingsScreen
 import de.nogaemer.unspeakable.features.words.WordsScreen
 
@@ -46,12 +46,12 @@ fun MainScreen(component: MainComponent) {
     val text = strings.nav
 
     val showBottomBar = when (active) {
-        is MainComponent.TabChild.Settings -> active.component.stack.subscribeAsState().value
-            .active.instance is DefaultSettingsComponent.SettingsChild.Overview
-
+        is MainComponent.TabChild.Settings -> {
+            val child = active.component.stack.subscribeAsState().value.active.instance
+            child is MenuChild.Overview
+        }
         else -> true
     }
-
 
     Scaffold(
         bottomBar = {

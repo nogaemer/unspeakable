@@ -6,7 +6,9 @@ import androidx.graphics.shapes.RoundedPolygon
 import de.nogaemer.unspeakable.db.UnspeakableCard
 import kotlinx.serialization.Serializable
 
-
+/**
+ * Represents a team roster and score within the current match.
+ */
 @Serializable
 data class Team(
     val id: String,
@@ -15,6 +17,9 @@ data class Team(
     val points: Int = 0,
 )
 
+/**
+ * Represents full lobby composition and active game settings.
+ */
 @Serializable
 data class Match(
     val teams: List<Team>,
@@ -22,13 +27,15 @@ data class Match(
     val settings: GameSettings = GameSettings(),
 )
 
+/**
+ * Holds tunable settings synchronized across all participants.
+ */
 @Serializable
 data class GameSettings(
     val roundTime: Int = 60,
     val maxRounds: Int = 10,
 )
 
-// Outcome of a single card during a round
 @Serializable
 enum class CardOutcome { CORRECT, SKIPPED, WRONG }
 
@@ -38,12 +45,16 @@ data class PlayedCard(
     val outcome: CardOutcome,
 )
 
+/**
+ * Captures immutable state and outcomes for a single round.
+ */
 @Serializable
 data class Round(
     val roundNumber: Int,
     val explainerTeam: Team,
     val explainerPlayer: Player,
     val playedCards: List<PlayedCard> = emptyList(),
+    val durationSeconds: Int = 0,
 ) {
     val correct: Int get() = playedCards.count { it.outcome == CardOutcome.CORRECT }
     val skipped: Int get() = playedCards.count { it.outcome == CardOutcome.SKIPPED }
@@ -72,6 +83,7 @@ enum class GamePhase {
     PLAYING,
     ROUND_SUMMARY,
     GAME_OVER,
+    CONNECTION_LOST,
 }
 
 enum class NetworkMode { LAN, LOCAL_DEVICE }
@@ -115,6 +127,9 @@ enum class ProfileShape {
     HEART,
 }
 
+/**
+ * Maps profile-shape presets to Material rounded polygons for avatar rendering.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun ProfileShape.toRoundedPolygon(): RoundedPolygon = when (this) {
     ProfileShape.CIRCLE -> MaterialShapes.Circle

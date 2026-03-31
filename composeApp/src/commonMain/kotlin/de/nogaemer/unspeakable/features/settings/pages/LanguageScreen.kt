@@ -16,7 +16,7 @@ import de.nogaemer.unspeakable.core.util.settings.LocalAppSettings
 import de.nogaemer.unspeakable.core.util.settings.Locales
 
 @Composable
-fun LanguageScreen(component: LanguageComponent) {
+fun LanguageScreen(component: DefaultLanguageComponent) {
     val appSettings = LocalAppSettings.current
     val currentTag = appSettings.appSettings.locales
     val s = strings.settings.languageStrings.languages
@@ -24,30 +24,6 @@ fun LanguageScreen(component: LanguageComponent) {
 
     Surface {
         SegmentedLazyColumn {
-            items(Locales.entries, key = { it.lang + "asdf" }) { locale ->
-                val text = s[locale]!!
-                val selected = false
-
-                SegmentedListItem(
-                    selected = selected,
-                    headlineContent = { Text("Test") },
-                    supportingContent = { Text("Test description") },
-                    trailingContent = {
-                        if (selected) {
-                            Icon(
-                                imageVector = Lucide.Check,
-                                contentDescription = null
-                            )
-                        }
-
-                    },
-                    modifier = Modifier.clickable {
-                        appSettings.setLanguage(locale)
-                        component.onLanguageSelected(locale)
-                    }
-
-                )
-            }
             items(Locales.entries, key = { it.lang }) { locale ->
                 val text = s[locale]!!
                 val selected = locale == currentTag

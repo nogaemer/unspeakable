@@ -11,11 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,6 +37,7 @@ import cafe.adriel.lyricist.rememberStrings
 import cafe.adriel.lyricist.strings
 import de.nogaemer.unspeakable.AppTheme
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EnterNameScreen(
     playerName: String,
@@ -131,7 +133,7 @@ fun EnterNameScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp),
-                shape = RoundedCornerShape(32.dp),
+                shapes = ButtonDefaults.shapesFor(64.dp),
             ) {
                 Text(
                     text = s.common.next,

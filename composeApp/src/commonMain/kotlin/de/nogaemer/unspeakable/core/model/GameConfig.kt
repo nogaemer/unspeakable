@@ -2,6 +2,9 @@ package de.nogaemer.unspeakable.core.model
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Captures setup payloads for local, host, and join game starts.
+ */
 @Serializable
 sealed class GameConfig {
 

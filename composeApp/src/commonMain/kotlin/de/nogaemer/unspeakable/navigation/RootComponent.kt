@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import de.nogaemer.unspeakable.features.game.DefaultGameComponent
 import de.nogaemer.unspeakable.features.game_setup.DefaultSetupComponent
@@ -67,6 +68,14 @@ class RootComponent(
             activeChild.component.closeSession()
         }
         navigation.pop()
+    }
+
+    fun goHome() {
+        val activeChild = stack.value.active.instance
+        if (activeChild is Game) {
+            activeChild.component.closeSession()
+        }
+        navigation.replaceAll(ScreenConfig.Main)
     }
 
     sealed class Child {

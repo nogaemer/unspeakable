@@ -75,6 +75,9 @@ import de.nogaemer.unspeakable.features.game.GameState
 import de.nogaemer.unspeakable.features.game.preview.GameStatePreviewData
 import kotlinx.coroutines.launch
 
+/**
+ * Renders team assignment and host controls while waiting in the game lobby.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LobbyScreen(
@@ -83,7 +86,13 @@ fun LobbyScreen(
     onOpenSettings: () -> Unit,
     onBack: () -> Unit = {},
 ) {
-    if (state.match == null) return LoadingIndicator()
+    if (state.match == null) return Box(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        LoadingIndicator()
+    }
+
     val me = state.me?.id ?: ""
 
     val lobbyCode = remember {
@@ -116,7 +125,8 @@ fun LobbyScreen(
                                 .padding(16.dp)
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)).zIndex(1f),
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f))
+                                .zIndex(1f),
                         ) {
                             Icon(
                                 imageVector = Lucide.ArrowLeft,
@@ -196,7 +206,8 @@ fun LobbyScreen(
                         title = team.name,
                         players = team.players,
                         me = me,
-                        onJoinTeam = { onEvent(GameClientEvent.JoinTeam(team)) }
+                        onJoinTeam = { onEvent(GameClientEvent.JoinTeam(team)) },
+                        errorMessage = text.noPlayersInTeam(team.name)
                     )
                 }
 
@@ -228,6 +239,7 @@ fun LobbyScreen(
 @Composable
 private fun PlayersContainer(
     title: String,
+    errorMessage: String,
     players: List<Player>,
     me: String,
     onJoinTeam: () -> Unit = {},
@@ -236,11 +248,21 @@ private fun PlayersContainer(
         Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
     ) {
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+            )
+            if (players.isEmpty()) Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.Bold,
+            )
+        }
         FlowRow(
             modifier = Modifier
                 .fillMaxWidth()

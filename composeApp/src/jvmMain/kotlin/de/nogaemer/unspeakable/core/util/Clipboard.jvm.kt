@@ -8,5 +8,9 @@ import androidx.compose.ui.platform.ClipEntry
 // Retrieved 2026-03-21, License - CC BY-SA 4.0
 
 @OptIn(ExperimentalComposeUiApi::class)
+/**
+ * Converts text into a desktop clipboard payload for shared Compose calls.
+ * JVM: wraps `StringSelection` in a Compose `ClipEntry`.
+ */
 actual fun String.toClipEntry() =
     ClipEntry(java.awt.datatransfer.StringSelection(this))

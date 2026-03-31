@@ -37,6 +37,9 @@ import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedListItem
 import de.nogaemer.unspeakable.core.util.getRandomTestIp
 import de.nogaemer.unspeakable.core.util.ipToCode
 
+/**
+ * Shows QR/code invite details for joining the current lobby.
+ */
 @Composable
 fun LobbyConnectionScreen(
     qrData: String = ipToCode(getRandomTestIp()),

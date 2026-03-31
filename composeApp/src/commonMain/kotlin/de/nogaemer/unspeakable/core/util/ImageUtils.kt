@@ -8,6 +8,9 @@ import androidx.compose.ui.graphics.decodeToImageBitmap
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
+/**
+ * Groups image helpers for avatar placeholders and serialization.
+ */
 class ImageUtils {
     companion object {
 
@@ -78,7 +81,6 @@ class ImageUtils {
                 putByte((value ushr 24) and 0xFF)
             }
 
-            // BITMAPFILEHEADER
             putByte('B'.code)
             putByte('M'.code)
             putIntLE(totalSize)
@@ -86,7 +88,6 @@ class ImageUtils {
             putShortLE(0)
             putIntLE(fileHeaderSize + dibHeaderSize)
 
-            // BITMAPINFOHEADER (negative height => top-down rows)
             putIntLE(dibHeaderSize)
             putIntLE(width)
             putIntLE(-height)

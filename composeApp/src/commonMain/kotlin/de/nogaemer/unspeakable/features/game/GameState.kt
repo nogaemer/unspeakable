@@ -9,18 +9,19 @@ import de.nogaemer.unspeakable.core.model.Round
 import de.nogaemer.unspeakable.core.model.Team
 import de.nogaemer.unspeakable.db.UnspeakableCard
 
+/**
+ * Represents current client-visible game state derived from host events.
+ */
 data class GameState(
     val phase: GamePhase = GamePhase.SETUP,
     val isHost: Boolean = false,
     val me: Player? = null,
     val match: Match? = null,
 
-    // Active round tracking
     val currentRound: Round? = null,
     val currentCard: UnspeakableCard? = null,
     val currentRoundTime: Int? = null,
 
-    // Completed rounds history
     val rounds: List<Round> = emptyList(),
 ) {
     val currentRoundNumber: Int get() = (rounds.size + 1)
@@ -76,6 +77,7 @@ data class GameState(
         is GameHostEvent.EndRound ->
             copy(
                 rounds = rounds + event.completedRound,
+                match = match?.copy(teams = event.updatedTeams),
                 phase = GamePhase.ROUND_SUMMARY,
             )
 
@@ -88,18 +90,23 @@ data class GameState(
 
 
     fun addPlayer(player: Player) =
-        this.copy(match = this.match?.copy(players = this.match.players + player))
+        this.copy(
+            match = this.match?.copy(
+                players = this.match.players
+                    .filterNot { it.id == player.id } + player
+            )
+        )
 
     fun removePlayer(player: Player): GameState {
         val currentMatch = match ?: return this
 
         val updatedTeams = currentMatch.teams.map { team ->
-            team.copy(players = team.players - player)
+            team.copy(players = team.players.filterNot { it.id == player.id })
         }
 
         return copy(
             match = currentMatch.copy(
-                players = currentMatch.players - player,
+                players = currentMatch.players.filterNot { it.id == player.id },
                 teams = updatedTeams
             )
         )
@@ -110,8 +117,17 @@ data class GameState(
 
         val updatedTeams = currentMatch.teams.map { existingTeam ->
             when {
-                existingTeam == team -> existingTeam.copy(players = (existingTeam.players - player) + player)
-                player in existingTeam.players -> existingTeam.copy(players = existingTeam.players - player)
+                existingTeam.id == team.id -> {
+                    existingTeam.copy(
+                        players = existingTeam.players
+                            .filterNot { it.id == player.id } + player
+                    )
+                }
+
+                existingTeam.players.any { it.id == player.id } -> {
+                    existingTeam.copy(players = existingTeam.players.filterNot { it.id == player.id })
+                }
+
                 else -> existingTeam
             }
         }
@@ -126,7 +142,8 @@ data class GameState(
     fun getTeamsWithoutCurrent(): List<Team> =
         match?.teams?.filter { it.id != currentExplainerTeam?.id } ?: emptyList()
 
-    fun getTeamByPlayer(player: Player): Team? = match?.teams?.find { player in it.players }
+    fun getTeamByPlayer(player: Player): Team? =
+        match?.teams?.find { team -> team.players.any { it.id == player.id } }
 
     fun getTeamByPlayerId(playerId: String): Team? =
         getPlayer(playerId)?.let { getTeamByPlayer(it) }

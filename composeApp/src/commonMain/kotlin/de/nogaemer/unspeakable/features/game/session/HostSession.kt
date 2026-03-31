@@ -25,6 +25,9 @@ import kotlinx.serialization.json.Json
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/**
+ * Hosts multiplayer authority and websocket server for LAN clients.
+ */
 class HostSession(
     playerName: String,
     profilePicture: ProfilePicture,
@@ -48,10 +51,8 @@ class HostSession(
     override suspend fun start() {
         if (server != null) return
 
-        // add host player before ws starts
         authority.processEvent(GameClientEvent.JoinGame(me).toHostBoundEvent(me.id))
 
-        // subscribe to broadcast events
         scope.launch {
             authority.broadcastEvents.collect { event -> broadcast(event) }
         }
@@ -73,11 +74,10 @@ class HostSession(
                                 is GameClientEvent.JoinGame -> {
                                     client = event.player.copy(
                                         id = Uuid.random().toString(),
-                                        isHost = true
+                                        isHost = false
                                     )
                                     connections[client.id] = this
 
-                                    // give the new client a full snapshot before broadcasting AddPlayer
                                     authority.processEvent(
                                         GameClientEvent.JoinGame(client)
                                             .toHostBoundEvent(client.id)
@@ -94,7 +94,7 @@ class HostSession(
                     } finally {
                         if (client != null) {
                             authority.processEvent(GameClientEvent.LeaveGame.toHostBoundEvent(client.id))
-                            client.let { connections.remove(it.name) }
+                            client.let { connections.remove(it.id) }
                         }
                     }
                 }
@@ -102,17 +102,29 @@ class HostSession(
         }.apply { start(wait = false) }
     }
 
-    // host player - client interaction -> goes to authority skipping ws
     override suspend fun sendEvent(event: GameClientEvent) =
         authority.processEvent(event.toHostBoundEvent(me.id))
 
     private suspend fun sendDirect(playerId: String, event: GameHostEvent) {
-        connections[playerId]?.send(Json.encodeToString(event))
+        val session = connections[playerId] ?: return
+        val payload = Json.encodeToString(event)
+
+        val sent = runCatching { session.send(payload) }.isSuccess
+        if (!sent) {
+            connections.remove(playerId)
+        }
     }
 
     private suspend fun broadcast(event: GameHostEvent) {
         val json = Json.encodeToString(event)
-        connections.values.forEach { it.send(json) }
+
+        val deadConnectionIds = mutableListOf<String>()
+        connections.forEach { (id, session) ->
+            val sent = runCatching { session.send(json) }.isSuccess
+            if (!sent) deadConnectionIds += id
+        }
+
+        deadConnectionIds.forEach(connections::remove)
     }
 
     override fun close() {
