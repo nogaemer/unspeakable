@@ -205,6 +205,12 @@ data class Strings(
     val connectionLost: ConnectionLostStrings,
     val gameOver: GameOverStrings,
     val settings: SettingsStrings,
+    val gamePlaying: GamePlayingStrings,
+)
+
+data class GamePlayingStrings(
+    val title: String,
+    val subtitle: String,
 )
 
 /** English localization bundle used as default strings. */
@@ -348,6 +354,9 @@ val EnStrings = Strings(
             title = "About",
         ),
     ),
+    gamePlaying = GamePlayingStrings(title = "GUESS!",
+        subtitle = "find the target word"
+    ),
 )
 
 /** German localization bundle. */
@@ -490,5 +499,8 @@ val DeStrings = Strings(
         aboutStrings = SettingsPageAboutStrings(
             title = "Über",
         ),
+    ),
+    gamePlaying = GamePlayingStrings(title = "RATE!",
+        subtitle = "errate das gesuchte Wort"
     ),
 )

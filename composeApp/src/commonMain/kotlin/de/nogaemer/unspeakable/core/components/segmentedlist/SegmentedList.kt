@@ -155,7 +155,7 @@ fun SegmentedListItem(
     ) {
         ListItem(
             headlineContent = headlineContent,
-            modifier = modifier.background(resolvedColors.containerColor).padding(2.dp),
+            modifier = modifier.background(resolvedColors.containerColor),
             overlineContent = overlineContent,
             supportingContent = supportingContent,
             leadingContent = leadingContent,

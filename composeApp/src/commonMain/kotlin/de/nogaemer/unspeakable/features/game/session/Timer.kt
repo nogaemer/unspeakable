@@ -36,6 +36,14 @@ class Timer(
         }
     }
 
+    fun resume(){
+        isRunning = true
+    }
+
+    fun pause(){
+        isRunning = false
+    }
+
     fun reset() {
         isRunning = false
         timeLeft = maxTime

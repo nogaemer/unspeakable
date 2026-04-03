@@ -35,7 +35,7 @@ class ClientSession(
     private val scope: CoroutineScope,
 ) : GameSession {
 
-    private val _state = MutableStateFlow(GameState())
+    private val _state = MutableStateFlow(GameState(hostIp = hostIp))
     override val state: StateFlow<GameState> = _state.asStateFlow()
 
     private val client = HttpClient {

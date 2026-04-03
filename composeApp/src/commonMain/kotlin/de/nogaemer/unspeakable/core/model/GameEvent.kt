@@ -21,6 +21,7 @@ sealed class GameClientEvent() {
     @Serializable data object CardCorrect : GameClientEvent()
     @Serializable data object CardSkipped : GameClientEvent()
     @Serializable data object CardWrong : GameClientEvent()
+    @Serializable data class CardWrongByOpponent(val word: String) : GameClientEvent()
 
     @Serializable data object Buzz : GameClientEvent()
     @Serializable data object Sabotage : GameClientEvent()
@@ -53,10 +54,13 @@ sealed class GameHostEvent {
     @Serializable data class SendGameSettings(val settings: GameSettings) : GameHostEvent()
     @Serializable data class StartGame(val match: Match) : GameHostEvent()
 
-    @Serializable data class InitNewRound(val round: Round) : GameHostEvent()
-    @Serializable data object StartRound : GameHostEvent()
+    @Serializable data class InitNewRound(val round: Round, val role: GameRole) : GameHostEvent()
+    @Serializable data object StartRound: GameHostEvent()
+    @Serializable data class ForbiddenWordViolated(val word: String, val durationMs: Long) : GameHostEvent()
     @Serializable data class CardPlayed(val playedCard: PlayedCard) : GameHostEvent()
     @Serializable data class EndRound(val completedRound: Round, val updatedTeams: List<Team>) : GameHostEvent()
 
     @Serializable data object EndGame : GameHostEvent()
 }
+
+

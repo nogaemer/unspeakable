@@ -106,6 +106,8 @@ class HostSession(
         authority.processEvent(event.toHostBoundEvent(me.id))
 
     private suspend fun sendDirect(playerId: String, event: GameHostEvent) {
+        Logger.d { "Sending direct event to $playerId: $event" }
+        Logger.d { "Connections: $connections" }
         val session = connections[playerId] ?: return
         val payload = Json.encodeToString(event)
 

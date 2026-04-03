@@ -3,6 +3,7 @@ package de.nogaemer.unspeakable.features.game
 import co.touchlab.kermit.Logger
 import de.nogaemer.unspeakable.core.model.GameHostEvent
 import de.nogaemer.unspeakable.core.model.GamePhase
+import de.nogaemer.unspeakable.core.model.GameRole
 import de.nogaemer.unspeakable.core.model.Match
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.Round
@@ -14,13 +15,17 @@ import de.nogaemer.unspeakable.db.UnspeakableCard
  */
 data class GameState(
     val phase: GamePhase = GamePhase.SETUP,
+    val role: GameRole? = null,
     val isHost: Boolean = false,
+    val hostIp: String? = null,
     val me: Player? = null,
     val match: Match? = null,
 
     val currentRound: Round? = null,
     val currentCard: UnspeakableCard? = null,
     val currentRoundTime: Int? = null,
+    val violatedForbiddenWord: String? = null,
+    val violatedForbiddenWordDurationMs: Long = 0L,
 
     val rounds: List<Round> = emptyList(),
 ) {
@@ -35,7 +40,11 @@ data class GameState(
             copy(currentRoundTime = event.currentRoundTime)
 
         is GameHostEvent.SendCard ->
-            copy(currentCard = event.card)
+            copy(
+                currentCard = event.card,
+                violatedForbiddenWord = null,
+                violatedForbiddenWordDurationMs = 0L,
+            )
 
         is GameHostEvent.PlayerJoined ->
             addPlayer(event.player)
@@ -63,7 +72,16 @@ data class GameState(
                 currentRound = event.round,
                 currentCard = null,
                 currentRoundTime = match?.settings?.roundTime,
+                violatedForbiddenWord = null,
+                violatedForbiddenWordDurationMs = 0L,
                 phase = GamePhase.READY,
+                role = event.role
+            )
+
+        is GameHostEvent.ForbiddenWordViolated ->
+            copy(
+                violatedForbiddenWord = event.word,
+                violatedForbiddenWordDurationMs = event.durationMs,
             )
 
         is GameHostEvent.CardPlayed -> {
@@ -71,18 +89,24 @@ data class GameState(
                 playedCards = currentRound.playedCards + event.playedCard
             )
             Logger.d { "Card played: ${updated?.playedCards}" }
-            copy(currentRound = updated, currentCard = null)
+            copy(currentRound = updated)
         }
 
         is GameHostEvent.EndRound ->
             copy(
                 rounds = rounds + event.completedRound,
                 match = match?.copy(teams = event.updatedTeams),
+                violatedForbiddenWord = null,
+                violatedForbiddenWordDurationMs = 0L,
                 phase = GamePhase.ROUND_SUMMARY,
             )
 
         is GameHostEvent.EndGame ->
-            copy(phase = GamePhase.GAME_OVER)
+            copy(
+                phase = GamePhase.GAME_OVER,
+                violatedForbiddenWord = null,
+                violatedForbiddenWordDurationMs = 0L,
+            )
 
         is GameHostEvent.StartRound ->
             copy(phase = GamePhase.PLAYING)

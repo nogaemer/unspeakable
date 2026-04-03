@@ -8,7 +8,17 @@ import de.nogaemer.unspeakable.core.model.CardOutcome.WRONG
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameClientEvent.JoinTeam
 import de.nogaemer.unspeakable.core.model.GameHostEvent
+import de.nogaemer.unspeakable.core.model.GameHostEvent.ForbiddenWordViolated
+import de.nogaemer.unspeakable.core.model.GameHostEvent.PlayerJoined
+import de.nogaemer.unspeakable.core.model.GameHostEvent.PlayerJoinedTeam
+import de.nogaemer.unspeakable.core.model.GameHostEvent.PlayerLeft
+import de.nogaemer.unspeakable.core.model.GameHostEvent.SendCard
+import de.nogaemer.unspeakable.core.model.GameHostEvent.SendGameSettings
+import de.nogaemer.unspeakable.core.model.GameHostEvent.SendMatch
+import de.nogaemer.unspeakable.core.model.GameHostEvent.StartGame
+import de.nogaemer.unspeakable.core.model.GameHostEvent.YouJoined
 import de.nogaemer.unspeakable.core.model.GamePhase
+import de.nogaemer.unspeakable.core.model.GameRole
 import de.nogaemer.unspeakable.core.model.HostBoundClientEvent
 import de.nogaemer.unspeakable.core.model.Match
 import de.nogaemer.unspeakable.core.model.PlayedCard
@@ -18,6 +28,7 @@ import de.nogaemer.unspeakable.core.model.Team
 import de.nogaemer.unspeakable.db.UnspeakableCardsDao
 import de.nogaemer.unspeakable.features.game.GameState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -25,6 +36,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 
 /**
@@ -58,10 +70,11 @@ class GameAuthority(
         MutableSharedFlow<Pair<String, GameHostEvent>>(extraBufferCapacity = 64)
     val directEvents: SharedFlow<Pair<String, GameHostEvent>> = _directEvents.asSharedFlow()
 
-    private lateinit var timer: Timer;
+    private lateinit var timer: Timer
 
     private var nextExplainerTeamIndex = 0
     private val nextExplainerIndexPerTeam = mutableMapOf<String, Int>()
+    private var resolvingWrongByOpponent = false
 
 
     @OptIn(ExperimentalUuidApi::class)
@@ -71,17 +84,17 @@ class GameAuthority(
         when (val event = boundClientEvent.event) {
 
             is GameClientEvent.JoinGame -> {
-                applyAndBroadcast(GameHostEvent.PlayerJoined(event.player))
+                applyAndBroadcast(PlayerJoined(event.player))
                 processEvent(
                     JoinTeam(_state.value.match!!.teams.first()).toHostBoundEvent(event.player.id)
                 )
-                sendDirect(event.player.id, GameHostEvent.SendMatch(_state.value.match!!))
-                sendDirect(event.player.id, GameHostEvent.YouJoined(event.player))
+                sendDirect(event.player.id, SendMatch(_state.value.match!!))
+                sendDirect(event.player.id, YouJoined(event.player))
             }
 
             is GameClientEvent.LeaveGame -> {
                 val player = _state.value.getPlayer(boundClientEvent.playerId) ?: return
-                applyAndBroadcast(GameHostEvent.PlayerLeft(player))
+                applyAndBroadcast(PlayerLeft(player))
             }
 
             is JoinTeam -> {
@@ -90,44 +103,92 @@ class GameAuthority(
                 val currentTeam = _state.value.getTeamByPlayer(player)
                 if (currentTeam?.id == team.id) return
 
-                applyAndBroadcast(GameHostEvent.PlayerJoinedTeam(player, team))
+                applyAndBroadcast(PlayerJoinedTeam(player, team))
             }
 
             is GameClientEvent.UpdateGameSettings -> {
                 if (boundClientEvent.playerId != _state.value.me?.id) return
-                applyAndBroadcast(GameHostEvent.SendGameSettings(event.settings))
+                applyAndBroadcast(SendGameSettings(event.settings))
             }
 
             is GameClientEvent.StartGame -> {
+                Logger.d { "boundClientEvent.playerId: ${boundClientEvent.playerId}, _state.value.me?.id: ${_state.value.me?.id}" }
                 if (boundClientEvent.playerId != _state.value.me?.id) return
                 val match = _state.value.match ?: return
-                applyAndBroadcast(GameHostEvent.StartGame(match))
+                applyAndBroadcast(StartGame(match))
                 initNextRound()
             }
 
             GameClientEvent.RequestNewRandomCard -> {
                 if (_state.value.currentRound == null) return
                 val card = cardDao.getRandomCard(lang) ?: return
-                applyAndBroadcast(GameHostEvent.SendCard(card))
+                applyAndBroadcast(SendCard(card))
             }
 
 
-            GameClientEvent.CardCorrect -> handleCardOutcome(CORRECT)
-            GameClientEvent.CardSkipped -> handleCardOutcome(SKIPPED)
-            GameClientEvent.CardWrong -> handleCardOutcome(WRONG)
+            GameClientEvent.CardCorrect -> {
+                if (resolvingWrongByOpponent) return
+                if (boundClientEvent.playerId != _state.value.currentExplainer?.id) return
+
+                handleCardOutcome(CORRECT)
+            }
+            GameClientEvent.CardSkipped -> {
+                if (resolvingWrongByOpponent) return
+                if (boundClientEvent.playerId != _state.value.currentExplainer?.id) return
+
+                handleCardOutcome(SKIPPED)
+            }
+            GameClientEvent.CardWrong -> {
+                if (resolvingWrongByOpponent) return
+                if (boundClientEvent.playerId != _state.value.currentExplainer?.id) return
+
+                handleCardOutcome(WRONG)
+            }
 
             is GameClientEvent.Buzz -> TODO()
 
             is GameClientEvent.Sabotage -> TODO()
 
             GameClientEvent.ReadyToStartMyTurn -> {
-                startRound();
+                startRound()
             }
 
             GameClientEvent.NextRoundOrEndGame -> {
                 if (boundClientEvent.playerId != _state.value.me?.id) return
                 if (_state.value.phase != GamePhase.ROUND_SUMMARY) return
                 initNextRound()
+            }
+
+            is GameClientEvent.CardWrongByOpponent -> {
+                if (!::timer.isInitialized || !timer.isRunning) return
+                if (resolvingWrongByOpponent) return
+                if (_state.value.phase != GamePhase.PLAYING) return
+
+                val currentCard = _state.value.currentCard ?: return
+                val senderTeam = _state.value.getTeamByPlayerId(boundClientEvent.playerId) ?: return
+                val explainerTeamId = _state.value.currentExplainerTeam?.id ?: return
+                if (senderTeam.id == explainerTeamId) return
+
+                val isForbiddenWord = listOf(
+                    currentCard.forbidden1,
+                    currentCard.forbidden2,
+                    currentCard.forbidden3,
+                    currentCard.forbidden4,
+                    currentCard.forbidden5,
+                ).any { it.equals(event.word, ignoreCase = true) }
+                if (!isForbiddenWord) return
+
+                resolvingWrongByOpponent = true
+                val durationMs = 700L
+                val violatedWord = event.word.uppercase()
+
+                applyAndBroadcast(ForbiddenWordViolated(violatedWord, durationMs))
+
+                scope.launch {
+                    delay(durationMs)
+                    handleCardOutcome(WRONG)
+                    resolvingWrongByOpponent = false
+                }
             }
         }
     }
@@ -146,6 +207,7 @@ class GameAuthority(
         if (teams.isEmpty()) return
 
         val explainerTeam = teams[nextExplainerTeamIndex % teams.size]
+        val opponentTeams = _state.value.match?.teams?.filter { it.id != explainerTeam.id } ?: return
         nextExplainerTeamIndex++
 
         val teamPlayers = explainerTeam.players
@@ -166,7 +228,12 @@ class GameAuthority(
             onFinish = { endCurrentRound() }
         )
 
-        applyAndBroadcast(GameHostEvent.InitNewRound(round))
+        // Send round to all teams with appropriate role assignment
+        opponentTeams.forEach { sendToTeam(it.id, GameHostEvent.InitNewRound(round,GameRole.OPPONENT)) }
+        explainerTeam.players.filter { it.id != explainerPlayer.id }.forEach { player ->
+            sendDirect(player.id, GameHostEvent.InitNewRound(round,GameRole.GUESSER))
+        }
+        sendDirect(explainerPlayer.id, GameHostEvent.InitNewRound(round,GameRole.EXPLAINER))
 
         val card = cardDao.getRandomCard(lang)
         if (card != null) applyAndBroadcast(GameHostEvent.SendCard(card))
@@ -213,8 +280,17 @@ class GameAuthority(
         _broadcastEvents.emit(event)
     }
 
+    private suspend fun sendToTeam(teamId: String, event: GameHostEvent) {
+        Logger.d { "Sending event to team $teamId: $event" }
+
+        _state.value.getTeam(teamId)?.players?.forEach { player ->
+            sendDirect(player.id, event)
+        }
+    }
+
     private suspend fun sendDirect(playerId: String, event: GameHostEvent) {
         Logger.d { "Sending direct event to $playerId: $event" }
+        if (playerId == _state.value.me?.id) _state.update { it.applyEvent(event) }
 
         _directEvents.emit(playerId to event)
     }

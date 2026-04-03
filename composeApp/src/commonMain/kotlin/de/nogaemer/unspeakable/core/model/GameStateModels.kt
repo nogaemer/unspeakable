@@ -86,6 +86,13 @@ enum class GamePhase {
     CONNECTION_LOST,
 }
 
+@Serializable
+enum class GameRole {
+    GUESSER,
+    EXPLAINER,
+    OPPONENT,
+}
+
 enum class NetworkMode { LAN, LOCAL_DEVICE }
 
 

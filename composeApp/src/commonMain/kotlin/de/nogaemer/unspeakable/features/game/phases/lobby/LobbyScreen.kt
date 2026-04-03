@@ -24,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PlainTooltip
@@ -64,6 +63,7 @@ import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.QrCode
 import com.composables.icons.lucide.Settings
 import de.nogaemer.unspeakable.AppTheme
+import de.nogaemer.unspeakable.core.components.LoadingScreen
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.toRoundedPolygon
@@ -86,17 +86,12 @@ fun LobbyScreen(
     onOpenSettings: () -> Unit,
     onBack: () -> Unit = {},
 ) {
-    if (state.match == null) return Box(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        LoadingIndicator()
-    }
+    if (state.match == null) return LoadingScreen()
 
     val me = state.me?.id ?: ""
 
     val lobbyCode = remember {
-        val ip = getLocalIpAddress() ?: "127.0.0.1"
+        val ip = (if (state.isHost) getLocalIpAddress() else state.hostIp) ?: "127.0.0.1"
         ipToCode(ip)
     }
     val clipboardManager = LocalClipboard.current
