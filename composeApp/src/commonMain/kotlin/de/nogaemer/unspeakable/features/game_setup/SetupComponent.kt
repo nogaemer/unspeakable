@@ -32,7 +32,7 @@ class DefaultSetupComponent(
             image = ""
         )
     )
-    private val _ipAddress = MutableStateFlow("192.168.178.63")
+    private val _ipAddress = MutableStateFlow("")
 
     override val playerName = _playerName.asStateFlow()
     override val playerProfilePicture = _playerProfilePicture.asStateFlow()
@@ -51,6 +51,7 @@ class DefaultSetupComponent(
     }
 
     override fun onStartGame() {
+
         val config: GameConfig = when (networkMode) {
             NetworkMode.LOCAL -> GameConfig.Local(
                 playerName = playerName.value,

@@ -68,6 +68,13 @@ fun RoundOverviewScreen(
     val leftTeamPoints = state.match?.teams?.getOrNull(0)?.points ?: 0
     val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
 
+    val playedCards = state.currentRound?.playedCards?.size ?: 0
+    val correctCards =
+        state.currentRound?.playedCards?.count { it.outcome == CardOutcome.CORRECT } ?: 0
+    val wrongCards = state.currentRound?.playedCards?.count { it.outcome == CardOutcome.WRONG } ?: 0
+    val skippedCards =
+        state.currentRound?.playedCards?.count { it.outcome == CardOutcome.SKIPPED } ?: 0
+
     Scaffold(
         floatingActionButton = {
             if (state.isHost) {
@@ -163,13 +170,22 @@ fun RoundOverviewScreen(
                             )
                         },
                         headlineContent = {
-                            Text(
-                                text = text.correctLabel,
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = text.correctLabel,
+                                )
+                                Text(
+                                    text = "${correctCards}/${playedCards}",
+                                )
+                            }
                         },
                     )
 
-                    SegmentedListItem(
+                    if (correctCards > 0) SegmentedListItem(
                         headlineContent = {
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
@@ -196,13 +212,22 @@ fun RoundOverviewScreen(
                             )
                         },
                         headlineContent = {
-                            Text(
-                                text = text.wrongLabel,
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = text.wrongLabel,
+                                )
+                                Text(
+                                    text = "${wrongCards}/${playedCards}",
+                                )
+                            }
                         },
                     )
 
-                    SegmentedListItem(
+                    if (wrongCards > 0) SegmentedListItem(
                         headlineContent = {
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
@@ -228,13 +253,22 @@ fun RoundOverviewScreen(
                             )
                         },
                         headlineContent = {
-                            Text(
-                                text = text.skippedLabel,
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = text.skippedLabel,
+                                )
+                                Text(
+                                    text = "${skippedCards}/${playedCards}",
+                                )
+                            }
                         },
                     )
 
-                    SegmentedListItem(
+                    if (skippedCards > 0) SegmentedListItem(
                         headlineContent = {
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),

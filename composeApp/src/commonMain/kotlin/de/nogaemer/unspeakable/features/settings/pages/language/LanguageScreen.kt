@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.settings.pages
+package de.nogaemer.unspeakable.features.settings.pages.language
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.items

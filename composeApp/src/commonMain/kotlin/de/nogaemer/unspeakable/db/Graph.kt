@@ -7,6 +7,11 @@ object Graph {
 
     lateinit var settings: AppSettingsController
 
+    @Suppress("unused")
     val dao: UnspeakableCardsDao
         get() = database.unspeakableCardsDao()
+
+    @Suppress("unused")
+    val categoriesDao: UnspeakableCategoriesDao
+        get() = database.unspeakableCategoriesDao()
 }

@@ -34,6 +34,8 @@ data class Match(
 data class GameSettings(
     val roundTime: Int = 60,
     val maxRounds: Int = 10,
+    val enabledModeIds: Set<String> = emptySet(),
+    val selectedCategoryIds: Set<String> = emptySet(),
 )
 
 @Serializable
@@ -68,7 +70,12 @@ data class Player(
     val name: String,
     val profilePicture: ProfilePicture,
     val isHost: Boolean,
-)
+    val teamId: String,
+) {
+    override fun toString(): String {
+        return "(Name: $name | ID: $id | Team: $teamId | Avatar: ${profilePicture.shape} | Host: $isHost)"
+    }
+}
 
 @Serializable
 data class ProfilePicture(

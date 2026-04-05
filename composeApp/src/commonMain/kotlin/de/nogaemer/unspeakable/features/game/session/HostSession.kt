@@ -39,7 +39,13 @@ class HostSession(
 
     @OptIn(ExperimentalUuidApi::class)
     private val me =
-        Player(Uuid.random().toString(), playerName, isHost = true, profilePicture = profilePicture)
+        Player(
+            Uuid.random().toString(),
+            playerName,
+            isHost = true,
+            profilePicture = profilePicture,
+            teamId = ""
+        )
     private val authority = GameAuthority(scope, cardDao, lang, me)
 
     override val state: StateFlow<GameState> = authority.state

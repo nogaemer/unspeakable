@@ -19,7 +19,12 @@ class LocalSession(
     lang: String,
 ) : GameSession {
 
-    private val me = Player("", playerName, isHost = true, profilePicture = profilePicture)
+    private val me = Player(
+        "",
+        playerName,
+        isHost = true,
+        profilePicture = profilePicture,
+        teamId = "")
     private val authority = GameAuthority(scope, cardDao, lang, me)
 
     override val state: StateFlow<GameState> = authority.state

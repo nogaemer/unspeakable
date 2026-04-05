@@ -40,3 +40,15 @@ Clone the repository and open it in **Android Studio** or **IntelliJ**.
 **To run on Android:**
 ```bash
 ./gradlew :composeApp:installDebug
+```
+
+**To run on Desktop (JVM):**
+```bash
+./gradlew :composeApp:run
+```
+
+## Documentation
+
+- `docs/README.md` - docs index.
+- `docs/quickstart.md` - fast local run and first match setup.
+- `docs/user_tutorial.md` - full user walkthrough.

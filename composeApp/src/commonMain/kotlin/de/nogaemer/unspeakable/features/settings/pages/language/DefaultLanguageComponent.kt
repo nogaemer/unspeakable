@@ -1,4 +1,4 @@
-package de.nogaemer.unspeakable.features.settings.pages
+package de.nogaemer.unspeakable.features.settings.pages.language
 
 import com.arkivanov.decompose.ComponentContext
 import com.composables.icons.lucide.Globe

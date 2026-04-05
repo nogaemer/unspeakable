@@ -190,41 +190,52 @@ fun JoinLobbyScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        BasicTextField(
-            value = lobbyCode,
-            onValueChange = { if (it.length <= 10) onCodeChange(it.uppercase()) },
-            textStyle = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Normal,
-                color = colorScheme.primary,
-                textAlign = TextAlign.Center,
-                letterSpacing = 2.sp
-            ),
-            cursorBrush = SolidColor(colorScheme.primary),
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Characters,
-                imeAction = ImeAction.Go
-            ),
-            keyboardActions = KeyboardActions(
-                onGo = { if (canJoin) onJoin() }
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            decorationBox = { innerTextField ->
-                Box(contentAlignment = Alignment.Center) {
-                    if (lobbyCode.isEmpty()) {
-                        Text(
-                            text = "CODE",
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                fontWeight = FontWeight.Normal,
-                                color = colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
-                                textAlign = TextAlign.Center,
-                                letterSpacing = 2.sp
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(28.dp),
+                )
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            BasicTextField(
+                value = lobbyCode,
+                onValueChange = { if (it.length <= 10) onCodeChange(it.uppercase()) },
+                textStyle = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Normal,
+                    color = colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    letterSpacing = 2.sp
+                ),
+                cursorBrush = SolidColor(colorScheme.primary),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Characters,
+                    imeAction = ImeAction.Go
+                ),
+                keyboardActions = KeyboardActions(
+                    onGo = { if (canJoin) onJoin() }
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                decorationBox = { innerTextField ->
+                    Box(contentAlignment = Alignment.Center) {
+                        if (lobbyCode.isEmpty()) {
+                            Text(
+                                text = "CODE",
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    fontWeight = FontWeight.Normal,
+                                    color = colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                                    textAlign = TextAlign.Center,
+                                    letterSpacing = 2.sp
+                                )
                             )
-                        )
+                        }
+                        innerTextField()
                     }
-                    innerTextField()
                 }
-            }
-        )
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
         Spacer(modifier = Modifier.weight(1f))

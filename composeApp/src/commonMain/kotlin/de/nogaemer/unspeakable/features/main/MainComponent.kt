@@ -12,12 +12,11 @@ import de.nogaemer.unspeakable.features.game_setup.NetworkMode
 import de.nogaemer.unspeakable.features.home.DefaultHomeComponent
 import de.nogaemer.unspeakable.features.home.HomeComponent
 import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent
-import de.nogaemer.unspeakable.features.words.DefaultWordsComponent
 import de.nogaemer.unspeakable.features.words.WordsComponent
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Tab { HOME, WORDS, SETTINGS }
+enum class Tab { HOME, /*WORDS,*/ SETTINGS }
 
 
 interface MainComponent {
@@ -69,7 +68,7 @@ class DefaultMainComponent(
             Tab.HOME     -> MainComponent.TabChild.Home(
                 DefaultHomeComponent(ctx, onSelect = onSelect)
             )
-            Tab.WORDS    -> MainComponent.TabChild.Words(DefaultWordsComponent(ctx))
+//            Tab.WORDS    -> MainComponent.TabChild.Words(DefaultWordsComponent(ctx))
             Tab.SETTINGS -> MainComponent.TabChild.Settings(DefaultSettingsComponent(ctx))
         }
 }

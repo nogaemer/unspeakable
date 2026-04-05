@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 fun SegmentedLazyColumn(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(12.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
         if (!reverseLayout) Arrangement.spacedBy(2.dp, Alignment.Top)
@@ -55,22 +55,29 @@ fun SegmentedLazyColumn(
     segmentTitle: String? = null,
     content: LazyListScope.() -> Unit,
 ) {
-    if (segmentTitle != null) Text(
-        text = segmentTitle,
-        color = MaterialTheme.colorScheme.primary,
-    )
-    LazyColumn(
-        modifier = modifier.padding(12.dp).clip(RoundedCornerShape(20.dp)),
-        state = state,
-        contentPadding = contentPadding,
-        flingBehavior = flingBehavior,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-        reverseLayout = reverseLayout,
-        userScrollEnabled = userScrollEnabled,
-        overscrollEffect = overscrollEffect,
-        content = content,
-    )
+    Column(
+        Modifier.padding(contentPadding),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+    ) {
+        if (segmentTitle != null) Box(modifier = Modifier.padding(horizontal = 4.dp)) {
+            Text(
+                text = segmentTitle,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        LazyColumn(
+            modifier = modifier.clip(RoundedCornerShape(20.dp)),
+            state = state,
+            flingBehavior = flingBehavior,
+            horizontalAlignment = horizontalAlignment,
+            verticalArrangement = verticalArrangement,
+            reverseLayout = reverseLayout,
+            userScrollEnabled = userScrollEnabled,
+            overscrollEffect = overscrollEffect,
+            content = content,
+        )
+    }
 }
 
 /**
@@ -117,6 +124,7 @@ fun SegmentedColumn(
 fun SegmentedListItem(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(2.dp),
     selected: Boolean = false,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -151,11 +159,11 @@ fun SegmentedListItem(
     Box(
         modifier = modifier.clip(
             RoundedCornerShape(cornerRadius)
-        )
+        ).background(containerColor)
     ) {
         ListItem(
             headlineContent = headlineContent,
-            modifier = modifier.background(resolvedColors.containerColor),
+            modifier = modifier.background(resolvedColors.containerColor).padding(contentPadding),
             overlineContent = overlineContent,
             supportingContent = supportingContent,
             leadingContent = leadingContent,

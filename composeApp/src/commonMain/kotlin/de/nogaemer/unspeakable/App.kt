@@ -88,6 +88,7 @@ fun App(root: RootComponent) {
                 seedColor = seedColor,
                 darkTheme = controller.appSettings.isDark,
                 isAmoled = controller.appSettings.isAmoled,
+                paletteStyle = controller.appSettings.paletteStyle,
             ) {
                 AppContent(root)
             }
@@ -134,6 +135,7 @@ fun AppTheme(
     seedColor: Color = Color(0xFFA9E555),
     darkTheme: Boolean = isSystemInDarkTheme(),
     isAmoled: Boolean = false,
+    paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
     content: @Composable () -> Unit
 ) {
     SystemBarAppearance(darkTheme)
@@ -143,7 +145,7 @@ fun AppTheme(
         seedColor = seedColor,
         isDark = darkTheme,
         isAmoled = isAmoled,
-        style = PaletteStyle.TonalSpot
+        style = paletteStyle
     )
 
 

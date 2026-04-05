@@ -36,6 +36,16 @@ class Timer(
         }
     }
 
+    /**
+     * Adds (or subtracts) seconds from the live countdown.
+     * Clamped to a minimum of 1 so the timer never silently goes negative.
+     * [onFinish] is still the only thing that ends the round.
+     */
+    fun addTime(seconds: Int) {
+        timeLeft = (timeLeft + seconds).coerceAtLeast(1)
+    }
+
+
     fun resume(){
         isRunning = true
     }

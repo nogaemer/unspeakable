@@ -27,7 +27,11 @@ data class GameState(
     val violatedForbiddenWord: String? = null,
     val violatedForbiddenWordDurationMs: Long = 0L,
 
+    val lastSabotage: GameHostEvent.SabotageUsed? = null,
+    val contaminatedWords: List<String> = emptyList(),
+
     val rounds: List<Round> = emptyList(),
+
 ) {
     val currentRoundNumber: Int get() = (rounds.size + 1)
     val currentExplainer: Player? get() = currentRound?.explainerPlayer
@@ -75,7 +79,8 @@ data class GameState(
                 violatedForbiddenWord = null,
                 violatedForbiddenWordDurationMs = 0L,
                 phase = GamePhase.READY,
-                role = event.role
+                role = event.role,
+                lastSabotage = null,
             )
 
         is GameHostEvent.ForbiddenWordViolated ->
@@ -110,6 +115,30 @@ data class GameState(
 
         is GameHostEvent.StartRound ->
             copy(phase = GamePhase.PLAYING)
+
+        is GameHostEvent.SabotageDenied -> {
+            this
+        } //TODO
+
+        is GameHostEvent.SabotageUsed -> {
+            val updatedCard = currentCard?.copy(
+                forbiddenWords = currentCard.forbiddenWords + event.newTabooWord
+            )
+            copy(
+                currentCard = updatedCard,
+                lastSabotage = event,
+            )
+        }
+
+        is GameHostEvent.ContaminationUpdated ->
+            copy(contaminatedWords = event.contaminatedWords)
+
+        is GameHostEvent.ModeConflict -> {
+            this
+        } //TODO
+        is GameHostEvent.ModeWarning -> {
+            this
+        } //TODO
     }
 
 
@@ -141,6 +170,10 @@ data class GameState(
 
         val updatedTeams = currentMatch.teams.map { existingTeam ->
             when {
+                existingTeam.players.any { it.id == player.id } -> {
+                    existingTeam.copy(players = existingTeam.players.filterNot { it.id == player.id })
+                }
+
                 existingTeam.id == team.id -> {
                     existingTeam.copy(
                         players = existingTeam.players
@@ -148,15 +181,21 @@ data class GameState(
                     )
                 }
 
-                existingTeam.players.any { it.id == player.id } -> {
-                    existingTeam.copy(players = existingTeam.players.filterNot { it.id == player.id })
-                }
-
                 else -> existingTeam
             }
         }
 
-        return copy(match = currentMatch.copy(teams = updatedTeams))
+        val updatedPlayer = player.copy(teamId = team.id)
+        val updatedPlayers = currentMatch.players.filterNot { it.id == player.id } + updatedPlayer
+        val updatedMe = if (me?.id == player.id) updatedPlayer else me
+
+        return copy(
+            match = currentMatch.copy(
+                teams = updatedTeams,
+                players = updatedPlayers,
+            ),
+            me = updatedMe
+        )
     }
 
     fun getPlayer(id: String): Player? = match?.players?.find { it.id == id }

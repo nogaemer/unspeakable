@@ -21,10 +21,11 @@ import de.nogaemer.unspeakable.core.components.menu.OverviewItem
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedColumn
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedListItem
 import de.nogaemer.unspeakable.features.settings.SettingsConfig
+import de.nogaemer.unspeakable.features.settings.SettingsOverviewComponent
 
 @Composable
 fun SettingsOverviewScreen(
-    component: SettingsOverviewComponent
+    component: SettingsOverviewComponent<SettingsConfig>
 ) {
     SettingsOverviewContent(
         items = component.items,

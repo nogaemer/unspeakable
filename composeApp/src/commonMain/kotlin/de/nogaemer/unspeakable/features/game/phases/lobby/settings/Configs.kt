@@ -9,6 +9,9 @@ import kotlinx.serialization.Serializable
 sealed class GameSettingsConfig  {
     @Serializable data object Overview   : GameSettingsConfig ()
     @Serializable data object RoundCount   : GameSettingsConfig ()
+
+    @Serializable data object ModeSettings   : GameSettingsConfig ()
+    @Serializable data object CardsSettings   : GameSettingsConfig ()
 }
 
 /**
@@ -19,4 +22,3 @@ sealed class GameRoundConfig  {
     @Serializable data object Overview   : GameRoundConfig ()
     @Serializable data object CustomRoundSettings   : GameRoundConfig ()
 }
-

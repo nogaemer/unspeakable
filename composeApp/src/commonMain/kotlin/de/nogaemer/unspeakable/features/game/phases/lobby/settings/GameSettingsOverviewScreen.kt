@@ -99,8 +99,48 @@ fun GameSettingsOverviewScreen(component: GameSettingsOverviewComponent<GameSett
                 modifier = Modifier.clickable {
                     component.navigateTo(GameSettingsConfig.RoundCount)
                 },
-                headlineContent = { Text(lobbySettings.roundsPerTeam) },
-                supportingContent = { Text(lobbySettings.roundsPerTeamDescription) },
+                headlineContent = { Text(lobbySettings.gameRoundSettingsStrings.title) },
+                supportingContent = { Text(lobbySettings.gameRoundSettingsStrings.description) },
+                trailingContent = {
+                    Icon(
+                        imageVector = Lucide.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            )
+        }
+
+        SegmentedColumn(
+            segmentTitle = strings.gameLobbySettings.gameModeSettings
+        ) {
+            SegmentedListItem(
+                modifier = Modifier.clickable {
+                    component.navigateTo(GameSettingsConfig.ModeSettings)
+                },
+                headlineContent = { Text(lobbySettings.gameModeSettingsStrings.title) },
+                supportingContent = { Text(lobbySettings.gameModeSettingsStrings.description) },
+                trailingContent = {
+                    Icon(
+                        imageVector = Lucide.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            )
+        }
+
+        SegmentedColumn(
+            segmentTitle = lobbySettings.categoriesSettingsStrings.title
+        ) {
+            SegmentedListItem(
+                modifier = Modifier.clickable {
+                    component.navigateTo(GameSettingsConfig.CardsSettings)
+                },
+                headlineContent = { Text(lobbySettings.categoriesSettingsStrings.title) },
+                supportingContent = { Text(lobbySettings.categoriesSettingsStrings.description) },
                 trailingContent = {
                     Icon(
                         imageVector = Lucide.ChevronRight,

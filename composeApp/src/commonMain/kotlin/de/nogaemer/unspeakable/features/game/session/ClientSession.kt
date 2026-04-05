@@ -50,7 +50,7 @@ class ClientSession(
         try {
             session = client.webSocketSession("ws://$hostIp:8080/game")
 
-            val me = Player("", playerName, profilePicture, isHost = false)
+            val me = Player("", playerName, profilePicture, isHost = false, "")
             sendEvent(GameClientEvent.JoinGame(me))
         } catch (_: Exception) {
             onHostDisconnected()

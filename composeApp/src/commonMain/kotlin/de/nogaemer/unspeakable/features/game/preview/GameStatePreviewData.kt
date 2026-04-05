@@ -36,6 +36,7 @@ object GameStatePreviewData {
         name = "Host",
         profilePicture = ProfilePicture(shape = ProfileShape.CIRCLE, image = dummyImage),
         isHost = true,
+        teamId = "team_1",
     )
 
     private val playerB = Player(
@@ -43,6 +44,7 @@ object GameStatePreviewData {
         name = "Player 1",
         profilePicture = ProfilePicture(shape = ProfileShape.SQUARE, image = dummyImage),
         isHost = false,
+        teamId = "team_2",
     )
 
     private val playerC = Player(
@@ -50,6 +52,7 @@ object GameStatePreviewData {
         name = "Player 2",
         profilePicture = ProfilePicture(shape = ProfileShape.HEART, image = dummyImage),
         isHost = false,
+        teamId = "team_1",
     )
 
     private val playerD = Player(
@@ -57,6 +60,7 @@ object GameStatePreviewData {
         name = "Player 3",
         profilePicture = ProfilePicture(shape = ProfileShape.DIAMOND, image = dummyImage),
         isHost = false,
+        teamId = "team_2",
     )
 
     private val teamA = Team(
@@ -87,11 +91,7 @@ object GameStatePreviewData {
         word = "Kotlin",
         category = "Programming",
         language = "en",
-        forbidden1 = "JetBrains",
-        forbidden2 = "JVM",
-        forbidden3 = "Android",
-        forbidden4 = "Coroutines",
-        forbidden5 = "Compose",
+        forbiddenWords = listOf("JVM", "Android", "Programming", "JetBrains", "Language"),
     )
 
     private val previousCard = UnspeakableCard(
@@ -99,11 +99,7 @@ object GameStatePreviewData {
         word = "Compiler",
         category = "Programming",
         language = "en",
-        forbidden1 = "Code",
-        forbidden2 = "Parse",
-        forbidden3 = "Build",
-        forbidden4 = "Kotlin",
-        forbidden5 = "JVM",
+        forbiddenWords = listOf("Code", "Parse", "Build", "Kotlin", "JVM"),
     )
 
     private val previewCard2 = UnspeakableCard(
@@ -111,11 +107,7 @@ object GameStatePreviewData {
         word = "Debugger",
         category = "Programming",
         language = "en",
-        forbidden1 = "Breakpoints",
-        forbidden2 = "Step",
-        forbidden3 = "IDE",
-        forbidden4 = "Error",
-        forbidden5 = "Inspect",
+        forbiddenWords = listOf("Breakpoints", "Step", "IDE", "Error", "Inspect"),
     )
 
     private val previewCard3 = UnspeakableCard(
@@ -123,11 +115,7 @@ object GameStatePreviewData {
         word = "Compiler",
         category = "Programming",
         language = "en",
-        forbidden1 = "Code",
-        forbidden2 = "Parse",
-        forbidden3 = "Build",
-        forbidden4 = "Kotlin",
-        forbidden5 = "JVM",
+        forbiddenWords = listOf("Code", "Parse", "Build", "Kotlin", "JVM"),
     )
 
     private val previewCard4 = UnspeakableCard(
@@ -135,11 +123,7 @@ object GameStatePreviewData {
         word = "House",
         category = "Animals",
         language = "en",
-        forbidden1 = "Cat",
-        forbidden2 = "Dog",
-        forbidden3 = "Bird",
-        forbidden4 = "Fish",
-        forbidden5 = "Rabbit",
+        forbiddenWords = listOf("Cat", "Dog", "Bird", "Fish", "Rabbit"),
     )
 
     private val skippedCard = UnspeakableCard(
@@ -147,11 +131,7 @@ object GameStatePreviewData {
         word = "Debugger",
         category = "Programming",
         language = "en",
-        forbidden1 = "Breakpoints",
-        forbidden2 = "Step",
-        forbidden3 = "IDE",
-        forbidden4 = "Error",
-        forbidden5 = "Inspect",
+        forbiddenWords = listOf("Breakpoints", "Step", "IDE", "Error", "Inspect"),
     )
 
     private val previewPlayedCards = listOf(

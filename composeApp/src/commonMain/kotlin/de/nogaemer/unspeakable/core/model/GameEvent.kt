@@ -1,5 +1,6 @@
 package de.nogaemer.unspeakable.core.model
 
+import de.nogaemer.unspeakable.core.mode.SoftConflictWarning
 import de.nogaemer.unspeakable.db.UnspeakableCard
 import kotlinx.serialization.Serializable
 
@@ -23,8 +24,7 @@ sealed class GameClientEvent() {
     @Serializable data object CardWrong : GameClientEvent()
     @Serializable data class CardWrongByOpponent(val word: String) : GameClientEvent()
 
-    @Serializable data object Buzz : GameClientEvent()
-    @Serializable data object Sabotage : GameClientEvent()
+    @Serializable data class Sabotage(val newTabooWord: String) : GameClientEvent()
 
     fun toHostBoundEvent(playerId: String) = HostBoundClientEvent(playerId, this)
 
@@ -44,6 +44,9 @@ data class HostBoundClientEvent(
  */
 @Serializable
 sealed class GameHostEvent {
+    @Serializable data class ModeConflict(val conflictingModeIds: List<String>) : GameHostEvent()
+    @Serializable data class ModeWarning(val warningMessages: List<SoftConflictWarning>) : GameHostEvent()
+
     @Serializable data class Tick(val currentRoundTime: Int) : GameHostEvent()
     @Serializable data class SendCard(val card: UnspeakableCard) : GameHostEvent()
     @Serializable data class PlayerJoined(val player: Player) : GameHostEvent()
@@ -58,6 +61,13 @@ sealed class GameHostEvent {
     @Serializable data object StartRound: GameHostEvent()
     @Serializable data class ForbiddenWordViolated(val word: String, val durationMs: Long) : GameHostEvent()
     @Serializable data class CardPlayed(val playedCard: PlayedCard) : GameHostEvent()
+
+    @Serializable data class SabotageUsed(val byPlayer: Player, val newTabooWord: String) : GameHostEvent()
+    @Serializable data class SabotageDenied(val byPlayer: Player) : GameHostEvent()
+
+    @Serializable
+    data class ContaminationUpdated(val contaminatedWords: List<String>) : GameHostEvent()
+
     @Serializable data class EndRound(val completedRound: Round, val updatedTeams: List<Team>) : GameHostEvent()
 
     @Serializable data object EndGame : GameHostEvent()

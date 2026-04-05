@@ -20,6 +20,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +46,8 @@ import cafe.adriel.lyricist.strings
 import de.nogaemer.unspeakable.core.components.TeamPoints
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedColumn
 import de.nogaemer.unspeakable.core.components.segmentedlist.SegmentedListItem
+import de.nogaemer.unspeakable.core.i18n.SabotageGameModeStrings
+import de.nogaemer.unspeakable.core.mode.modes.SabotageMode
 import de.nogaemer.unspeakable.core.util.robotoFlex
 import de.nogaemer.unspeakable.core.util.robotoFlexClock
 import de.nogaemer.unspeakable.features.game.GameState
@@ -55,12 +60,25 @@ internal fun PlayingRoundContent(
     actions: @Composable () -> Unit,
 ) {
     val text = strings.game
+    val sabotageText = strings.game.gameModesStrings[SabotageMode.id]!! as SabotageGameModeStrings
     val leftTeamPoints = state.match?.teams?.getOrNull(0)?.points ?: 0
     val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
     val roundTime = state.match?.settings?.roundTime ?: 0
     val progress = rememberRoundProgress(state.currentRoundTime, roundTime)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.lastSabotage) {
+        val sabotage = state.lastSabotage ?: return@LaunchedEffect
+        snackbarHostState.showSnackbar(
+            message = sabotageText.toastMessage(sabotage.byPlayer.name, sabotage.newTabooWord),
+            duration = SnackbarDuration.Short,
+            withDismissAction = true,
+        )
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { padding ->
         Column(
@@ -160,13 +178,7 @@ internal fun PlayingRoundContent(
                                     ),
                                 )
 
-                                val forbiddenWords = listOf(
-                                    state.currentCard.forbidden1,
-                                    state.currentCard.forbidden2,
-                                    state.currentCard.forbidden3,
-                                    state.currentCard.forbidden4,
-                                    state.currentCard.forbidden5,
-                                )
+                                val forbiddenWords = state.currentCard.forbiddenWords
 
                                 SegmentedColumn(
                                     Modifier.fillMaxWidth()

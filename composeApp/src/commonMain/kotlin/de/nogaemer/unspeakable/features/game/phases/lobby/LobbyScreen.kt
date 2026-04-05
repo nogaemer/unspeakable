@@ -76,7 +76,7 @@ import de.nogaemer.unspeakable.features.game.preview.GameStatePreviewData
 import kotlinx.coroutines.launch
 
 /**
- * Renders team assignment and host controls while waiting in the game lobby.
+ * Main lobby screen for managing players and starting the game.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +111,7 @@ fun LobbyScreen(
                             TooltipDefaults.rememberTooltipPositionProvider(
                                 TooltipAnchorPosition.Above
                             ),
-                        tooltip = { PlainTooltip { Text("Back") } },
+                        tooltip = { PlainTooltip { Text(strings.common.back) } },
                         state = rememberTooltipState(),
                     ) {
                         IconButton(

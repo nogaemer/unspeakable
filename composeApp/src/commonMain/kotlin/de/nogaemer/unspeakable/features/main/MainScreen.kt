@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.strings
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Settings
@@ -88,12 +87,12 @@ fun MainScreen(component: MainComponent) {
                                 Icon(
                                     imageVector = when (tab) {
                                         Tab.HOME -> Lucide.House
-                                        Tab.WORDS -> Lucide.BookOpen
+//                                        Tab.WORDS -> Lucide.BookOpen
                                         Tab.SETTINGS -> Lucide.Settings
                                     },
                                     contentDescription = when (tab) {
                                         Tab.HOME -> text.home
-                                        Tab.WORDS -> text.words
+//                                        Tab.WORDS -> text.words
                                         Tab.SETTINGS -> text.settings
                                     }
                                 )
@@ -102,7 +101,7 @@ fun MainScreen(component: MainComponent) {
                                 Text(
                                     when (tab) {
                                         Tab.HOME -> text.home
-                                        Tab.WORDS -> text.words
+//                                        Tab.WORDS -> text.words
                                         Tab.SETTINGS -> text.settings
                                     }
                                 )

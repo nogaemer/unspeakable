@@ -18,6 +18,6 @@ class DefaultCustomRoundCountComponent(
     override val state: StateFlow<GameState>,
     override val onEvent: (GameClientEvent) -> Unit,
 ) : AbstractMenuPage(ctx, onBack), GameSettingsComponent {
-    override val titleKey = { s: Strings -> s.gameLobbySettings.gameRoundSettingsStrings.customRoundsPageTitle }
+    override val titleKey = { s: Strings -> s.gameLobbySettings.gameRoundSettingsStrings.title }
     override val icon = Lucide.Clock
 }

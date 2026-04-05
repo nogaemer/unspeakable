@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.materialkolor.PaletteStyle
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 
@@ -26,6 +27,7 @@ data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val useDynamicColor: Boolean = true,
     val isAmoled: Boolean = false,
+    val paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
 )
 
 val AppSettings.isDark: Boolean
@@ -49,7 +51,10 @@ class AppSettingsController() {
             seedColor   = Color(settings.getLong("seed_color", 0xFF55C8E5).toInt()),
             hue         = settings.getFloat("app_hue", 210f),
             useDynamicColor = settings.getBoolean("dynamic_color", true),
-            isAmoled = settings.getBoolean("amoled", false)
+            isAmoled = settings.getBoolean("amoled", false),
+            paletteStyle = PaletteStyle.valueOf(
+                settings.getString("palette_style", PaletteStyle.TonalSpot.name)
+            ),
         )
     )
         private set
@@ -85,6 +90,11 @@ class AppSettingsController() {
     fun setAmoled(amoled: Boolean) {
         settings["amoled"] = amoled
         appSettings = appSettings.copy(isAmoled = amoled)
+    }
+
+    fun setPaletteStyle(style: PaletteStyle) {
+        settings["palette_style"] = style.name
+        appSettings = appSettings.copy(paletteStyle = style)
     }
 }
 
