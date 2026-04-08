@@ -89,6 +89,8 @@ kotlin {
             implementation(libs.kermit)
 
             implementation(libs.qr.kit)
+
+            implementation(libs.colormath)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

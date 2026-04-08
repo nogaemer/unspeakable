@@ -16,6 +16,7 @@ data class CommonStrings(
     val copy: String,
     val share: String,
     val next: String,
+    val cancel: String,
 )
 
 /** Holds navigation tab labels. */
@@ -94,6 +95,7 @@ data class GameReadyStrings(
     val readySubtitle: String,
     val waitingFor: String,
     val startTurnDescription: String,
+    val yourTurn: String,
 )
 
 /** Holds lobby labels for team assignment and game start. */
@@ -104,6 +106,11 @@ data class GameLobbyStrings(
     val joinTeam: String,
     val startGame: String,
     val noPlayersInTeam: (String) -> String,
+    val addPlayerTitle: (String) -> String,
+    val nameLabel: String,
+    val addButton: String,
+    val moveToOtherTeamDescription: String,
+    val addPlayerDescription: String,
 )
 
 /** Holds lobby settings labels and nested round-setting strings. */
@@ -345,6 +352,7 @@ val EnStrings = Strings(
         copy = "Copy",
         share = "Share",
         next = "Next",
+        cancel = "Cancel",
     ),
     nav = NavigationStrings(
         home = "Home",
@@ -400,6 +408,7 @@ val EnStrings = Strings(
         readySubtitle = "start your turn",
         waitingFor = "Waiting for",
         startTurnDescription = "Start turn",
+        yourTurn = "Your turn is about to start,",
     ),
     gameLobby = GameLobbyStrings(
         lobbyTitle = "Lobby",
@@ -408,6 +417,11 @@ val EnStrings = Strings(
         joinTeam = "Join Team",
         startGame = "Start Game",
         noPlayersInTeam = { teamName -> "No players in $teamName" },
+        addPlayerTitle = { teamName -> "Add player to $teamName" },
+        nameLabel = "Name",
+        addButton = "Add",
+        moveToOtherTeamDescription = "Move to other team",
+        addPlayerDescription = "Add player",
     ),
     gameLobbySettings = GameSettingsStrings(
         lobbySettingsTitle = "Lobby Settings",
@@ -526,6 +540,7 @@ val DeStrings = Strings(
         copy = "Kopieren",
         share = "Teilen",
         next = "Weiter",
+        cancel = "Abbrechen",
     ),
     nav = NavigationStrings(
         home = "Start",
@@ -581,6 +596,7 @@ val DeStrings = Strings(
         readySubtitle = "Starte deinen Zug",
         waitingFor = "Warten auf",
         startTurnDescription = "Zug starten",
+        yourTurn = "Dein Zug started gleich,",
     ),
     gameLobby = GameLobbyStrings(
         lobbyTitle = "Lobby",
@@ -589,6 +605,11 @@ val DeStrings = Strings(
         joinTeam = "beitreten",
         startGame = "Spiel starten",
         noPlayersInTeam = { teamName -> "Keine Spieler in $teamName" },
+        addPlayerTitle = { teamName -> "Spieler zu $teamName hinzufügen" },
+        nameLabel = "Name",
+        addButton = "Hinzufügen",
+        moveToOtherTeamDescription = "In anderes Team verschieben",
+        addPlayerDescription = "Spieler hinzufügen",
     ),
     gameLobbySettings = GameSettingsStrings(
         lobbySettingsTitle = "Lobby-Einstellungen",

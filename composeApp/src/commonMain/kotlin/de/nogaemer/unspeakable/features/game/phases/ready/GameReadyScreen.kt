@@ -37,9 +37,10 @@ import de.nogaemer.unspeakable.features.game.GameState
 @Composable
 fun GameReadyScreen(
     state: GameState,
-    onEvent: (event: GameClientEvent) -> Unit,
+    onEventAs: (event: GameClientEvent, String) -> Unit,
 ) {
-    val isMyTurn = state.currentExplainer?.id == state.me?.id
+    val currentExplainer = state.currentExplainer
+    val isMyTurn = state.isLocalGame || currentExplainer?.id == state.me?.id
     val text = strings.gameReady
     val commonText = strings.common
 
@@ -52,19 +53,36 @@ fun GameReadyScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (isMyTurn) {
-                Text(
-                    text = text.readyTitle,
-                    style = TextStyle(
-                        fontSize = 72.sp,
-                        fontFamily = robotoFlex(robotoFlexTitleVariation()),
-                        color = MaterialTheme.colorScheme.tertiary,
-                        textAlign = TextAlign.Center,
+                if (state.isLocalGame) {
+                    Text(
+                        text = text.yourTurn,
+                        style = MaterialTheme.typography.titleLarge,
                     )
-                )
-                Text(
-                    text = text.readySubtitle,
-                    style = MaterialTheme.typography.titleLarge,
-                )
+                    Text(
+                        text = state.currentExplainer?.name ?: "...",
+                        style = TextStyle(
+                            fontSize = 72.sp,
+                            fontFamily = robotoFlex(robotoFlexTitleVariation()),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+
+                } else {
+                    Text(
+                        text = text.readyTitle,
+                        style = TextStyle(
+                            fontSize = 72.sp,
+                            fontFamily = robotoFlex(robotoFlexTitleVariation()),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                    Text(
+                        text = text.readySubtitle,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
             } else {
 
                 Text(
@@ -90,7 +108,7 @@ fun GameReadyScreen(
         ) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onEvent(GameClientEvent.ReadyToStartMyTurn) },
+                onClick = { onEventAs(GameClientEvent.ReadyToStartMyTurn, currentExplainer?.id ?: "") },
                 shapes = ButtonDefaults.shapesFor(96.dp),
                 contentPadding = ButtonDefaults.ExtraLargeContentPadding,
             ) {

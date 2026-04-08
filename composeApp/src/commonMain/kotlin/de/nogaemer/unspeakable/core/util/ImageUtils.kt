@@ -2,6 +2,7 @@ package de.nogaemer.unspeakable.core.util
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.decodeToImageBitmap
@@ -16,13 +17,21 @@ class ImageUtils {
 
         @Composable
         fun createProfilePicture(): ImageBitmap {
+            return createProfilePicture(MaterialTheme.colorScheme.primary)
+        }
+
+        @Composable
+        fun createProfilePictureByHue(hue: Float): ImageBitmap {
+            return createProfilePicture(MaterialTheme.colorScheme.primary.withHue(hue))
+        }
+
+        fun createProfilePicture(color: Color): ImageBitmap {
             val size = 64
-            val bgColor = MaterialTheme.colorScheme.primary
 
             val bitmap = ImageBitmap(size, size)
             val canvas = androidx.compose.ui.graphics.Canvas(bitmap)
 
-            val bgPaint = Paint().apply { color = bgColor }
+            val bgPaint = Paint().apply { this.color = color }
             canvas.drawRect(
                 left = 0f, top = 0f,
                 right = size.toFloat(), bottom = size.toFloat(),

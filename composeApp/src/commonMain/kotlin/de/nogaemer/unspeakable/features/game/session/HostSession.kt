@@ -46,7 +46,7 @@ class HostSession(
             profilePicture = profilePicture,
             teamId = ""
         )
-    private val authority = GameAuthority(scope, cardDao, lang, me)
+    private val authority = GameAuthority(scope, cardDao, lang, me, false)
 
     override val state: StateFlow<GameState> = authority.state
 

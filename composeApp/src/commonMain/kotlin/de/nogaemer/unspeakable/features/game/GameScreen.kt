@@ -44,6 +44,7 @@ fun GameScreen(component: DefaultGameComponent, onBack: () -> Unit, onGoHome: ()
                 is GameComponent.GameChild.LobbyChild -> LobbyScreen(
                     state = state,
                     onEvent = component::onEvent,
+                    onEventAs = component::onEventAs,
                     onOpenSettings = component::navigateToLobbySettings,
                     onBack = onBack,
                 )
@@ -61,7 +62,7 @@ fun GameScreen(component: DefaultGameComponent, onBack: () -> Unit, onGoHome: ()
 
         GamePhase.READY -> GameReadyScreen(
             state = state,
-            onEvent = component::onEvent,
+            onEventAs = component::onEventAs,
         )
 
         GamePhase.PLAYING -> PlayingScreen(

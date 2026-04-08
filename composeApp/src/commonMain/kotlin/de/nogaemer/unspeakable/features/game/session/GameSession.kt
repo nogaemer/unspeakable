@@ -11,5 +11,6 @@ interface GameSession {
     val state: StateFlow<GameState>
     suspend fun start()
     suspend fun sendEvent(event: GameClientEvent)
+    suspend fun sendEventAs(event: GameClientEvent, playerId: String) = sendEvent(event)
     fun close()
 }

@@ -52,6 +52,7 @@ class GameAuthority(
     private val cardDao: UnspeakableCardsDao,
     private val lang: String,
     hostPlayer: Player,
+    private val isLocalGame: Boolean,
 ) {
     private val _state = MutableStateFlow(
         GameState(
@@ -63,7 +64,8 @@ class GameAuthority(
                     Team(id = "team_1", name = "Team 1", players = listOf()),
                     Team(id = "team_2", name = "Team 2", players = listOf()),
                 ),
-            )
+            ),
+            isLocalGame = isLocalGame
         )
     )
     val state: StateFlow<GameState> = _state.asStateFlow()
@@ -227,6 +229,15 @@ class GameAuthority(
                     handleCardOutcome(WRONG)
                     resolvingWrongByOpponent = false
                 }
+            }
+
+            is GameClientEvent.AddLocalPlayer -> {
+                if (!isLocalGame) return
+                applyAndBroadcast(PlayerJoined(event.player))
+                val team = _state.value.match!!.teams
+                    .firstOrNull { it.id == event.player.teamId }
+                    ?: _state.value.match!!.teams.first()
+                applyAndBroadcast(PlayerJoinedTeam(event.player, team))
             }
         }
     }

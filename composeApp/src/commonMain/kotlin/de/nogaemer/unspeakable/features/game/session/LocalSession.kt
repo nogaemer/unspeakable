@@ -25,7 +25,7 @@ class LocalSession(
         isHost = true,
         profilePicture = profilePicture,
         teamId = "")
-    private val authority = GameAuthority(scope, cardDao, lang, me)
+    private val authority = GameAuthority(scope, cardDao, lang, me, true)
 
     override val state: StateFlow<GameState> = authority.state
 
@@ -33,7 +33,11 @@ class LocalSession(
         authority.processEvent(GameClientEvent.JoinGame(me).toHostBoundEvent(me.id))
     }
 
-    override suspend fun sendEvent(event: GameClientEvent) = authority.processEvent(event.toHostBoundEvent(me.id))
+    override suspend fun sendEvent(event: GameClientEvent) =
+        authority.processEvent(event.toHostBoundEvent(me.id))
+
+    override suspend fun sendEventAs(event: GameClientEvent, playerId: String) =
+        authority.processEvent(event.toHostBoundEvent(playerId))
 
     override fun close() = authority.close()
 }

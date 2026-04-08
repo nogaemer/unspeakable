@@ -36,6 +36,7 @@ interface GameComponent {
     val state: StateFlow<GameState>
     val stack: Value<ChildStack<LobbyConfig, GameChild>>
     fun onEvent(event: GameClientEvent)
+    fun onEventAs(event: GameClientEvent, playerId: String)
     fun drawRandomCard()
     fun goBack()
 
@@ -82,6 +83,7 @@ class DefaultGameComponent(
         }
 
     override fun onEvent(event: GameClientEvent) = viewModel.onEvent(event)
+    override fun onEventAs(event: GameClientEvent, playerId: String) = viewModel.onEventAs(event, playerId)
     override fun drawRandomCard() = viewModel.drawRandomCard()
     override fun goBack() = navigation.pop()
 

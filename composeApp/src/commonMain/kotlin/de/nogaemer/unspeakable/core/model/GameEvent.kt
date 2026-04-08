@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class GameClientEvent() {
     @Serializable data class JoinGame(val player: Player) : GameClientEvent()
+    @Serializable data class AddLocalPlayer(val player: Player) : GameClientEvent()
     @Serializable data object LeaveGame : GameClientEvent()
     @Serializable data class JoinTeam(val team: Team) : GameClientEvent()
     @Serializable data object StartGame : GameClientEvent()

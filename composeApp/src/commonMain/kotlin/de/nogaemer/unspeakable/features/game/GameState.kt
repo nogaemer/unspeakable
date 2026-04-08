@@ -14,13 +14,15 @@ import de.nogaemer.unspeakable.db.UnspeakableCard
  * Represents current client-visible game state derived from host events.
  */
 data class GameState(
-    val phase: GamePhase = GamePhase.SETUP,
-    val role: GameRole? = null,
     val isHost: Boolean = false,
     val hostIp: String? = null,
-    val me: Player? = null,
-    val match: Match? = null,
+    val isLocalGame: Boolean = false,
 
+    val phase: GamePhase = GamePhase.SETUP,
+    val role: GameRole? = null,
+    val me: Player? = null,
+
+    val match: Match? = null,
     val currentRound: Round? = null,
     val currentCard: UnspeakableCard? = null,
     val currentRoundTime: Int? = null,

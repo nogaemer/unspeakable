@@ -219,6 +219,7 @@ internal fun PlayingRoundContent(
                                         )
 
                                         SegmentedListItem(
+                                            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
                                             headlineContent = {
                                                 Text(
                                                     text = word.uppercase(),
