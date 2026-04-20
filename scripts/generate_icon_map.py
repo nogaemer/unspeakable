@@ -1,0 +1,242 @@
+#!/usr/bin/env python3
+"""
+AI GENERATED FILE
+
+generate_icon_map.py
+Run from your project root: python3 scripts/generate_icon_map.py
+"""
+
+import glob
+import json
+import os
+import re
+import sys
+import urllib.request
+import zipfile
+
+# ── Config ────────────────────────────────────────────────────────────────────
+
+PACKAGE   = "de.nogaemer.unspeakable.core.util.icon"
+OUT_DIR   = f"composeApp/src/commonMain/kotlin/{PACKAGE.replace('.', '/')}"
+MAP_FILE  = os.path.join(OUT_DIR, "LucideIconMap.kt")
+CAT_FILE  = os.path.join(OUT_DIR, "LucideCategories.kt")
+LUCIDE_API = "https://lucide.dev/api/categories"
+
+# ── Converters ────────────────────────────────────────────────────────────────
+
+def snake_to_pascal(snake: str) -> str:
+    return "".join(p.capitalize() for p in snake.split("_"))
+
+def snake_to_kebab(snake: str) -> str:
+    return snake.replace("_", "-")
+
+def to_key(s: str) -> str:
+    return s.replace("-", "").replace("_", "").lower()
+
+# ── Step 1: Icons from jar ────────────────────────────────────────────────────
+
+def icons_from_jar() -> dict:
+    gradle_home = os.path.expanduser("~/.gradle")
+    jars = []
+    for pattern in [
+        f"{gradle_home}/**/icons-lucide-cmp-jvm*.jar",
+        f"{gradle_home}/**/icons-lucide-cmp-android*.jar",
+        f"{gradle_home}/**/icons-lucide-android*.jar",
+        f"{gradle_home}/**/icons-lucide-cmp*.jar",
+        f"{gradle_home}/**/icons-lucide*.jar",
+    ]:
+        jars.extend(glob.glob(pattern, recursive=True))
+
+    if not jars:
+        return {}
+
+    sources_jars = [j for j in jars if "sources" in os.path.basename(j)]
+    binary_jars  = [j for j in jars if "sources" not in os.path.basename(j)]
+
+    pascal_to_kebab = {}
+
+    if sources_jars:
+        jar_path = max(sources_jars, key=os.path.getmtime)
+        print(f"Using sources jar: {os.path.basename(jar_path)}")
+        with zipfile.ZipFile(jar_path) as zf:
+            for entry in zf.namelist():
+                m = re.match(
+                    r"(?:commonMain/)?com/composables/icons/lucide/([a-z][a-z0-9_]+)\.kt",
+                    entry,
+                )
+                if not m:
+                    continue
+                snake  = m.group(1)
+                pascal = snake_to_pascal(snake)
+                kebab  = snake_to_kebab(snake)
+                try:
+                    src = zf.read(entry).decode("utf-8", errors="ignore")
+                    id_match = re.search(r'name\s*=\s*"([a-z][a-z0-9\-]+)"', src)
+                    if id_match:
+                        kebab = id_match.group(1)
+                    prop_match = re.search(r'val Lucide\.([A-Z][a-zA-Z0-9]+)\s*:', src)
+                    if prop_match:
+                        pascal = prop_match.group(1)
+                except Exception:
+                    pass
+                pascal_to_kebab[pascal] = kebab
+
+    elif binary_jars:
+        jar_path = max(binary_jars, key=os.path.getmtime)
+        print(f"Using binary jar: {os.path.basename(jar_path)}")
+        with zipfile.ZipFile(jar_path) as zf:
+            for entry in zf.namelist():
+                m = re.match(
+                    r"com/composables/icons/lucide/([A-Za-z][a-zA-Z0-9_]+)Kt\.class",
+                    entry,
+                )
+                if not m:
+                    continue
+                raw    = m.group(1)
+                snake  = raw.lower()
+                pascal = snake_to_pascal(snake)
+                kebab  = snake_to_kebab(snake)
+                pascal_to_kebab[pascal] = kebab
+
+    print(f"Found {len(pascal_to_kebab)} icons.")
+    return pascal_to_kebab
+
+# ── Step 2: Categories from lucide.dev ───────────────────────────────────────
+
+def fetch_lucide_categories():
+    """
+    The /api/categories endpoint returns the map directly:
+      { "icon-kebab-name": ["cat-slug", ...], ... }
+    There is no wrapper object — the response IS the iconCategories dict.
+    """
+    print(f"Fetching categories from {LUCIDE_API} ...")
+    req = urllib.request.Request(LUCIDE_API, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        data = json.loads(resp.read())
+
+    # The whole response is { "icon-name": ["cat", ...] }
+    icon_categories = data  # type: dict[str, list[str]]
+
+    # Collect all unique category slugs and derive a human title from each
+    all_slugs = sorted({cat for cats in data.values() for cat in cats})
+    category_titles = {slug: slug.replace("-", " ").title() for slug in all_slugs}
+
+    print(f"Loaded {len(icon_categories)} icon entries, {len(category_titles)} categories.")
+    return icon_categories, category_titles
+
+# ── Step 3: Generate Kotlin ───────────────────────────────────────────────────
+
+def gen_icon_map(validated):
+    entries = "\n".join(
+        f'        "{to_key(kebab)}" to Lucide.{pascal},'
+        for pascal, kebab in validated
+    )
+    return f"""\
+// AUTO-GENERATED by scripts/generate_icon_map.py — DO NOT EDIT MANUALLY
+package {PACKAGE}
+
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Tag
+
+/** Resolves a Lucide icon by its kebab-case or camelCase name. Falls back to [Lucide.Tag]. */
+fun Lucide.byString(iconName: String?): ImageVector {{
+    val key = iconName
+        .orEmpty()
+        .trim()
+        .lowercase()
+        .replace(Regex("[_\\\\- ]"), "")
+    return iconMap[key] ?: Lucide.Tag
+}}
+
+private val iconMap: Map<String, ImageVector> by lazy {{
+    mapOf(
+{entries}
+    )
+}}
+"""
+
+def gen_category_map(validated, icon_categories, category_titles):
+    icon_entries = []
+    for pascal, kebab in validated:
+        cats = icon_categories.get(kebab, [])
+        if not cats:
+            continue
+        cats_literal = ", ".join(f'"{c}"' for c in cats)
+        icon_entries.append(f'        "{to_key(kebab)}" to listOf({cats_literal}),')
+
+    title_entries = "\n".join(
+        f'        "{slug}" to "{title}",'
+        for slug, title in sorted(category_titles.items())
+    )
+
+    icon_map_block = "\n".join(icon_entries)
+
+    return f"""\
+// AUTO-GENERATED by scripts/generate_icon_map.py — DO NOT EDIT MANUALLY
+package {PACKAGE}
+
+/** Maps a normalised icon key to its Lucide category slugs. */
+val iconCategoryMap: Map<String, List<String>> by lazy {{
+    mapOf(
+{icon_map_block}
+    )
+}}
+
+/** Human-readable title for each Lucide category slug. */
+val categoryTitles: Map<String, String> by lazy {{
+    mapOf(
+{title_entries}
+    )
+}}
+
+/** Returns Lucide category slugs for the given icon name (any casing/separator). */
+fun iconCategories(iconName: String): List<String> =
+    iconCategoryMap[iconName.lowercase().replace(Regex("[_\\\\- ]"), "")] ?: emptyList()
+"""
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    jar_icons = icons_from_jar()
+
+    if not jar_icons:
+        print("ERROR: No icons found. Run a Gradle sync first, then re-run.")
+        sys.exit(1)
+
+    try:
+        icon_categories, category_titles = fetch_lucide_categories()
+    except Exception as e:
+        print(f"WARNING: Could not fetch lucide.dev: {e}. Skipping categories.")
+        icon_categories, category_titles = {}, {}
+
+    validated = []
+    skipped   = []
+
+    if icon_categories:
+        lucide_ids = set(icon_categories.keys())
+        for pascal, kebab in sorted(jar_icons.items()):
+            if kebab in lucide_ids:
+                validated.append((pascal, kebab))
+            else:
+                skipped.append((pascal, kebab))
+    else:
+        validated = sorted(jar_icons.items())
+
+    print(f"\nValidated : {len(validated)}")
+    print(f"Skipped   : {len(skipped)} (not on lucide.dev)")
+    if skipped:
+        for p, k in skipped[:15]:
+            print(f"  {p} -> '{k}'")
+        if len(skipped) > 15:
+            print(f"  ... and {len(skipped) - 15} more")
+
+    os.makedirs(OUT_DIR, exist_ok=True)
+
+    with open(MAP_FILE, "w", encoding="utf-8") as f:
+        f.write(gen_icon_map(validated))
+    print(f"\nWritten: {MAP_FILE}")
+
+    with open(CAT_FILE, "w", encoding="utf-8") as f:
+        f.write(gen_category_map(validated, icon_categories, category_titles))
+    print(f"Written: {CAT_FILE}")

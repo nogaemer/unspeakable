@@ -121,6 +121,11 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
+    buildFeatures {
+        compose = true
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -128,17 +133,26 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
+
         getByName("debug") {
             isDebuggable = true
-            // Hot reload works best with debug builds
+            ndk {
+                abiFilters += "arm64-v8a"
+            }
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
 }
 
 room {

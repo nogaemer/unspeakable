@@ -17,6 +17,14 @@ data class CommonStrings(
     val share: String,
     val next: String,
     val cancel: String,
+    val save: String,
+    val addWord: String,
+    val addCategory: String,
+    val deleteCard: String,
+    val deleteCategory: String,
+    val toggleFlashlight: String,
+    val selectImage: String,
+    val gallery: String,
 )
 
 /** Holds navigation tab labels. */
@@ -40,6 +48,7 @@ data class QrStrings(
     val description: String,
     val enterCode: String,
     val joinLobby: String,
+    val invalidCode: String,
 )
 
 /** Holds labels for name entry and lobby join setup. */
@@ -55,7 +64,7 @@ data class GameSetupStrings(
 data class GameStrings(
     val teamA: String,
     val teamB: String,
-    val categoryStrings: Map<String, CategoryStrings>,
+    val categoryItemStrings: Map<String, CategoryItemStrings>,
     val gameModesStrings: Map<String, GameModeStrings>,
 )
 
@@ -63,10 +72,6 @@ interface GameModeStrings {
     val title: String
     val description: String
 }
-
-data class CategoryStrings(
-    val title: String,
-)
 
 data class SabotageGameModeStrings(
     override val title: String,
@@ -88,6 +93,15 @@ data class SnowballGameModeStrings(
     override val title: String,
     override val description: String,
 ) : GameModeStrings
+
+data class CategoryItemStrings(
+    val title: String,
+)
+
+data class CategoryStrings (
+    val title: String,
+    val exampleName: String,
+)
 
 /** Holds text for the pre-round ready state. */
 data class GameReadyStrings(
@@ -260,7 +274,51 @@ data class Strings(
     val connectionLost: ConnectionLostStrings,
     val gameOver: GameOverStrings,
     val settings: SettingsStrings,
+    val categories: CategoryStrings,
     val gamePlaying: GamePlayingStrings,
+    val cardEditor: CardEditorStrings,
+    val jsonImport: JsonImportStrings,
+)
+
+data class CardEditorStrings(
+    val cardContent: String,
+    val term: String,
+    val prohibitedTerm: (Int) -> String,
+    val category: String,
+    val inputPlaceholder: String,
+    val labelPlaceholder: String,
+)
+
+data class JsonImportStrings(
+    val title: String,
+    val heroTitle: String,
+    val heroSubtitle: String,
+    val uploadDropzoneTitle: String,
+    val uploadDropzoneSubtitle: String,
+    val categoriesSchema: String,
+    val cardsSchema: String,
+    val pastePayloadTitle: String,
+    val pickFileButton: String,
+    val useSampleButton: String,
+    val jsonFieldLabel: String,
+    val importButton: String,
+    val importingButton: String,
+    val previewPopupTitle: String,
+    val previewTitle: String,
+    val previewCount: (Int) -> String,
+    val previewEmpty: String,
+    val previewMore: (Int) -> String,
+    val previewCategory: (String) -> String,
+    val successTitle: String,
+    val categoriesCount: (Int) -> String,
+    val cardsCount: (Int) -> String,
+    val skippedCardsCount: (Int) -> String,
+    val tip: String,
+    val filePickerUnavailable: String,
+    val fileReadFailed: (String) -> String,
+    val errorWithLine: (Int, Int, String) -> String,
+    val errorGeneric: (String) -> String,
+    val errorPath: (String) -> String,
 )
 
 data class GamePlayingStrings(
@@ -269,7 +327,7 @@ data class GamePlayingStrings(
 )
 
 @Suppress("unused")
-fun Strings.categoryName(id: String): String = game.categoryStrings[id]?.title ?: id
+fun Strings.categoryName(id: String): String? = game.categoryItemStrings[id]?.title
 
 data class GameModeSettingsStrings(
     val title: String,
@@ -277,67 +335,67 @@ data class GameModeSettingsStrings(
 )
 
 private fun englishCategoryStrings() = mapOf(
-    "adjectives" to CategoryStrings("Adjectives"),
-    "animation" to CategoryStrings("Animations"),
-    "art" to CategoryStrings("Art"),
-    "body" to CategoryStrings("Body"),
-    "clothing" to CategoryStrings("Clothing"),
-    "entertainment" to CategoryStrings("Entertainment"),
-    "environment" to CategoryStrings("Environment"),
-    "events" to CategoryStrings("Events"),
-    "food" to CategoryStrings("Food"),
-    "games" to CategoryStrings("Games"),
-    "geography" to CategoryStrings("Geography"),
-    "health" to CategoryStrings("Health"),
-    "history" to CategoryStrings("History"),
-    "home" to CategoryStrings("Home"),
-    "media" to CategoryStrings("Media"),
-    "music" to CategoryStrings("Music"),
-    "nature" to CategoryStrings("Nature"),
-    "objects" to CategoryStrings("Objects"),
-    "people_and_feelings" to CategoryStrings("People & Feelings"),
-    "people_and_jobs" to CategoryStrings("People & Jobs"),
-    "places" to CategoryStrings("Places"),
-    "politics" to CategoryStrings("Politics"),
-    "religion" to CategoryStrings("Religion"),
-    "school_and_work" to CategoryStrings("School & Work"),
-    "sports_and_games" to CategoryStrings("Sports & Games"),
-    "technology" to CategoryStrings("Technology"),
-    "travel" to CategoryStrings("Travel"),
-    "verbs" to CategoryStrings("Verbs"),
-    "weather" to CategoryStrings("Weather"),
+    "adjectives" to CategoryItemStrings("Adjectives"),
+    "animation" to CategoryItemStrings("Animations"),
+    "art" to CategoryItemStrings("Art"),
+    "body" to CategoryItemStrings("Body"),
+    "clothing" to CategoryItemStrings("Clothing"),
+    "entertainment" to CategoryItemStrings("Entertainment"),
+    "environment" to CategoryItemStrings("Environment"),
+    "events" to CategoryItemStrings("Events"),
+    "food" to CategoryItemStrings("Food"),
+    "games" to CategoryItemStrings("Games"),
+    "geography" to CategoryItemStrings("Geography"),
+    "health" to CategoryItemStrings("Health"),
+    "history" to CategoryItemStrings("History"),
+    "home" to CategoryItemStrings("Home"),
+    "media" to CategoryItemStrings("Media"),
+    "music" to CategoryItemStrings("Music"),
+    "nature" to CategoryItemStrings("Nature"),
+    "objects" to CategoryItemStrings("Objects"),
+    "people_and_feelings" to CategoryItemStrings("People & Feelings"),
+    "people_and_jobs" to CategoryItemStrings("People & Jobs"),
+    "places" to CategoryItemStrings("Places"),
+    "politics" to CategoryItemStrings("Politics"),
+    "religion" to CategoryItemStrings("Religion"),
+    "school_and_work" to CategoryItemStrings("School & Work"),
+    "sports_and_games" to CategoryItemStrings("Sports & Games"),
+    "technology" to CategoryItemStrings("Technology"),
+    "travel" to CategoryItemStrings("Travel"),
+    "verbs" to CategoryItemStrings("Verbs"),
+    "weather" to CategoryItemStrings("Weather"),
 )
 
 private fun germanCategoryStrings() = mapOf(
-    "adjectives" to CategoryStrings("Adjektive"),
-    "animations" to CategoryStrings("Animationen"),
-    "art" to CategoryStrings("Kunst"),
-    "body" to CategoryStrings("Körper"),
-    "clothing" to CategoryStrings("Kleidung"),
-    "entertainment" to CategoryStrings("Unterhaltung"),
-    "environment" to CategoryStrings("Umwelt"),
-    "events" to CategoryStrings("Ereignisse"),
-    "food" to CategoryStrings("Essen"),
-    "games" to CategoryStrings("Spiele"),
-    "geography" to CategoryStrings("Geographie"),
-    "health" to CategoryStrings("Gesundheit"),
-    "history" to CategoryStrings("Geschichte"),
-    "home" to CategoryStrings("Zuhause"),
-    "media" to CategoryStrings("Medien"),
-    "music" to CategoryStrings("Musik"),
-    "nature" to CategoryStrings("Natur"),
-    "objects" to CategoryStrings("Gegenstände"),
-    "people_and_feelings" to CategoryStrings("Menschen & Gefühle"),
-    "people_and_jobs" to CategoryStrings("Menschen & Berufe"),
-    "places" to CategoryStrings("Orte"),
-    "politics" to CategoryStrings("Politik"),
-    "religion" to CategoryStrings("Religion"),
-    "school_and_work" to CategoryStrings("Schule & Arbeit"),
-    "sports_and_games" to CategoryStrings("Sport & Spiele"),
-    "technology" to CategoryStrings("Technologie"),
-    "travel" to CategoryStrings("Reisen"),
-    "verbs" to CategoryStrings("Verben"),
-    "weather" to CategoryStrings("Wetter"),
+    "adjectives" to CategoryItemStrings("Adjektive"),
+    "animations" to CategoryItemStrings("Animationen"),
+    "art" to CategoryItemStrings("Kunst"),
+    "body" to CategoryItemStrings("Körper"),
+    "clothing" to CategoryItemStrings("Kleidung"),
+    "entertainment" to CategoryItemStrings("Unterhaltung"),
+    "environment" to CategoryItemStrings("Umwelt"),
+    "events" to CategoryItemStrings("Ereignisse"),
+    "food" to CategoryItemStrings("Essen"),
+    "games" to CategoryItemStrings("Spiele"),
+    "geography" to CategoryItemStrings("Geographie"),
+    "health" to CategoryItemStrings("Gesundheit"),
+    "history" to CategoryItemStrings("Geschichte"),
+    "home" to CategoryItemStrings("Zuhause"),
+    "media" to CategoryItemStrings("Medien"),
+    "music" to CategoryItemStrings("Musik"),
+    "nature" to CategoryItemStrings("Natur"),
+    "objects" to CategoryItemStrings("Gegenstände"),
+    "people_and_feelings" to CategoryItemStrings("Menschen & Gefühle"),
+    "people_and_jobs" to CategoryItemStrings("Menschen & Berufe"),
+    "places" to CategoryItemStrings("Orte"),
+    "politics" to CategoryItemStrings("Politik"),
+    "religion" to CategoryItemStrings("Religion"),
+    "school_and_work" to CategoryItemStrings("Schule & Arbeit"),
+    "sports_and_games" to CategoryItemStrings("Sport & Spiele"),
+    "technology" to CategoryItemStrings("Technologie"),
+    "travel" to CategoryItemStrings("Reisen"),
+    "verbs" to CategoryItemStrings("Verben"),
+    "weather" to CategoryItemStrings("Wetter"),
 )
 
 /** English localization bundle used as default strings. */
@@ -353,6 +411,14 @@ val EnStrings = Strings(
         share = "Share",
         next = "Next",
         cancel = "Cancel",
+        save = "Save",
+        addWord = "Add Word",
+        addCategory = "Add Category",
+        deleteCard = "Delete card",
+        deleteCategory = "Delete category",
+        toggleFlashlight = "Toggle flashlight",
+        selectImage = "Select Image",
+        gallery = "Gallery",
     ),
     nav = NavigationStrings(
         home = "Home",
@@ -370,6 +436,7 @@ val EnStrings = Strings(
         description = "Scan the QR to join friends in this game lobby.",
         enterCode = "Enter Code",
         joinLobby = "Join Lobby",
+        invalidCode = "Invalid QR code",
     ),
     gameSetup = GameSetupStrings(
         whatsYourName = "What's your name?",
@@ -381,7 +448,7 @@ val EnStrings = Strings(
     game = GameStrings(
         teamA = "Team A",
         teamB = "Team B",
-        categoryStrings = englishCategoryStrings(),
+        categoryItemStrings = englishCategoryStrings(),
         gameModesStrings = mapOf(
             SabotageMode().id to SabotageGameModeStrings(
                 title = "Sabotage",
@@ -522,9 +589,54 @@ val EnStrings = Strings(
             title = "About",
         ),
     ),
+    categories = CategoryStrings(
+        title = "Categories",
+        exampleName = "Animals",
+    ),
     gamePlaying = GamePlayingStrings(
         title = "GUESS!",
         subtitle = "find the target word",
+    ),
+    cardEditor = CardEditorStrings(
+        cardContent = "Card content",
+        term = "Term",
+        prohibitedTerm = { i -> "Prohibited Term $i" },
+        category = "Category",
+        inputPlaceholder = "Input",
+        labelPlaceholder = "Label",
+    ),
+    jsonImport = JsonImportStrings(
+        title = "Import JSON",
+        heroTitle = "Bulk Import (JSON)",
+        heroSubtitle = "Import cards and categories in one step.",
+        uploadDropzoneTitle = "Choose a JSON file",
+        uploadDropzoneSubtitle = "Tap here to pick a file from your device",
+        categoriesSchema = "Categories: id/name/iconName",
+        cardsSchema = "Cards: word/forbiddenWords/category/language",
+        pastePayloadTitle = "Paste JSON payload",
+        pickFileButton = "Pick JSON file",
+        useSampleButton = "Use sample",
+        jsonFieldLabel = "JSON",
+        importButton = "Import JSON",
+        importingButton = "Importing...",
+        previewPopupTitle = "Review before import",
+        previewTitle = "Card preview",
+        previewCount = { count -> "$count cards" },
+        previewEmpty = "No preview cards available yet.",
+        previewMore = { remaining -> "+$remaining more cards" },
+        previewCategory = { category -> "Category: $category" },
+        successTitle = "Import complete",
+        categoriesCount = { count -> "Categories: $count" },
+        cardsCount = { count -> "Cards: $count" },
+        skippedCardsCount = { count -> "Skipped cards: $count" },
+        tip = "Tip: You can import cards without categories; existing categories are matched by id or name.",
+        filePickerUnavailable = "File picker is unavailable on this platform.",
+        fileReadFailed = { reason -> "Could not read file: $reason" },
+        errorWithLine = { line, column, details ->
+            "Line $line, column $column: $details"
+        },
+        errorGeneric = { details -> "Import failed: $details" },
+        errorPath = { path -> "Path: $path" },
     ),
 )
 
@@ -541,6 +653,14 @@ val DeStrings = Strings(
         share = "Teilen",
         next = "Weiter",
         cancel = "Abbrechen",
+        save = "Speichern",
+        addWord = "Wort hinzufügen",
+        addCategory = "Kategorie hinzufügen",
+        deleteCard = "Karte löschen",
+        deleteCategory = "Kategorie löschen",
+        toggleFlashlight = "Taschenlampe umschalten",
+        selectImage = "Bild auswählen",
+        gallery = "Galerie",
     ),
     nav = NavigationStrings(
         home = "Start",
@@ -558,6 +678,7 @@ val DeStrings = Strings(
         description = "Scan den QR-Code, um Freunden in dieser Spiel-Lobby beizutreten",
         enterCode = "Code eingeben",
         joinLobby = "Lobby beitreten",
+        invalidCode = "Ungültiger QR-Code",
     ),
     gameSetup = GameSetupStrings(
         whatsYourName = "Wie heißt du?",
@@ -569,7 +690,7 @@ val DeStrings = Strings(
     game = GameStrings(
         teamA = "Team A",
         teamB = "Team B",
-        categoryStrings = germanCategoryStrings(),
+        categoryItemStrings = germanCategoryStrings(),
         gameModesStrings = mapOf(
             SabotageMode().id to SabotageGameModeStrings(
                 title = "Sabotage",
@@ -596,7 +717,7 @@ val DeStrings = Strings(
         readySubtitle = "Starte deinen Zug",
         waitingFor = "Warten auf",
         startTurnDescription = "Zug starten",
-        yourTurn = "Dein Zug started gleich,",
+        yourTurn = "Dein Zug startet gleich,",
     ),
     gameLobby = GameLobbyStrings(
         lobbyTitle = "Lobby",
@@ -710,8 +831,53 @@ val DeStrings = Strings(
             title = "Über",
         ),
     ),
+    categories = CategoryStrings(
+        title = "Kategorien",
+        exampleName = "Tiere",
+    ),
     gamePlaying = GamePlayingStrings(
         title = "RATE!",
         subtitle = "errate das gesuchte Wort",
+    ),
+    cardEditor = CardEditorStrings(
+        cardContent = "Karteninhalt",
+        term = "Begriff",
+        prohibitedTerm = { i -> "Verbotener Begriff $i" },
+        category = "Kategorie",
+        inputPlaceholder = "Eingabe",
+        labelPlaceholder = "Label",
+    ),
+    jsonImport = JsonImportStrings(
+        title = "JSON importieren",
+        heroTitle = "Massenimport (JSON)",
+        heroSubtitle = "Importiere Karten und Kategorien in einem Schritt.",
+        uploadDropzoneTitle = "JSON-Datei auswählen",
+        uploadDropzoneSubtitle = "Tippe hier, um eine Datei vom Gerät auszuwählen",
+        categoriesSchema = "Kategorien: id/name/iconName",
+        cardsSchema = "Karten: word/forbiddenWords/category/language",
+        pastePayloadTitle = "JSON-Nutzlast einfügen",
+        pickFileButton = "JSON-Datei auswählen",
+        useSampleButton = "Beispiel verwenden",
+        jsonFieldLabel = "JSON",
+        importButton = "Laden",
+        importingButton = "Importiere...",
+        previewPopupTitle = "Vor dem Import prüfen",
+        previewTitle = "Kartenvorschau",
+        previewCount = { count -> "$count Karten" },
+        previewEmpty = "Noch keine Vorschaukarten verfügbar.",
+        previewMore = { remaining -> "+$remaining weitere Karten" },
+        previewCategory = { category -> "Kategorie: $category" },
+        successTitle = "Import abgeschlossen",
+        categoriesCount = { count -> "Kategorien: $count" },
+        cardsCount = { count -> "Karten: $count" },
+        skippedCardsCount = { count -> "Übersprungene Karten: $count" },
+        tip = "Tipp: Du kannst Karten ohne Kategorien importieren; vorhandene Kategorien werden über ID oder Namen abgeglichen.",
+        filePickerUnavailable = "Dateiauswahl ist auf dieser Plattform nicht verfügbar.",
+        fileReadFailed = { reason -> "Datei konnte nicht gelesen werden: $reason" },
+        errorWithLine = { line, column, details ->
+            "Zeile $line, Spalte $column: $details"
+        },
+        errorGeneric = { details -> "Import fehlgeschlagen: $details" },
+        errorPath = { path -> "Pfad: $path" },
     ),
 )

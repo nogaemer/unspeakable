@@ -12,11 +12,11 @@ import de.nogaemer.unspeakable.features.game_setup.NetworkMode
 import de.nogaemer.unspeakable.features.home.DefaultHomeComponent
 import de.nogaemer.unspeakable.features.home.HomeComponent
 import de.nogaemer.unspeakable.features.settings.DefaultSettingsComponent
-import de.nogaemer.unspeakable.features.words.WordsComponent
+import de.nogaemer.unspeakable.features.words.CategoryComponent
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Tab { HOME, /*WORDS,*/ SETTINGS }
+enum class Tab { HOME, WORDS, SETTINGS }
 
 
 interface MainComponent {
@@ -25,8 +25,8 @@ interface MainComponent {
     fun onTabSelected(tab: Tab)
 
     sealed class TabChild {
-        data class Home(val component: HomeComponent)         : TabChild()
-        data class Words(val component: WordsComponent)       : TabChild()
+        data class Home(val component: HomeComponent) : TabChild()
+        data class Category(val component: CategoryComponent) : TabChild()
         data class Settings(val component: DefaultSettingsComponent) : TabChild()
     }
 }
@@ -65,10 +65,11 @@ class DefaultMainComponent(
 
     private fun createTab(tab: Tab, ctx: ComponentContext): MainComponent.TabChild =
         when (tab) {
-            Tab.HOME     -> MainComponent.TabChild.Home(
+            Tab.HOME -> MainComponent.TabChild.Home(
                 DefaultHomeComponent(ctx, onSelect = onSelect)
             )
-//            Tab.WORDS    -> MainComponent.TabChild.Words(DefaultWordsComponent(ctx))
+
+            Tab.WORDS -> MainComponent.TabChild.Category(CategoryComponent(ctx))
             Tab.SETTINGS -> MainComponent.TabChild.Settings(DefaultSettingsComponent(ctx))
         }
 }

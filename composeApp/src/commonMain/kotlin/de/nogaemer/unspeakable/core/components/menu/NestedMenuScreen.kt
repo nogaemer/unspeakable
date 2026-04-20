@@ -38,6 +38,7 @@ fun <O> NestedMenuScreen(
                 title = rootTitle ?: (component as? MenuPage)?.titleKey?.invoke(s) ?: "",
                 onBack = onRootBack ?: component::goBack,
                 navigationIcon = rootTitle == null || showBackOnOverview,
+                actions = instance.actions,
             ) {
                 overviewContent?.invoke(instance.component)
                     ?: OverviewScreen(instance.component as SimpleOverviewComponent<*>)
@@ -46,6 +47,7 @@ fun <O> NestedMenuScreen(
             is MenuChild.Page -> DefaultTopAppBar(
                 title = instance.component.titleKey(s),
                 onBack = instance.component.onBack,
+                actions = instance.actions,
             ) {
                 instance.content(instance.component)
             }

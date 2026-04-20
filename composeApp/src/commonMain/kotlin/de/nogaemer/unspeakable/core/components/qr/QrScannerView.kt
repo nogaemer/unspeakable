@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.lyricist.strings
 import com.composables.icons.lucide.ClipboardCopy
 import com.composables.icons.lucide.Flashlight
 import com.composables.icons.lucide.FlashlightOff
@@ -54,6 +55,8 @@ import qrscanner.QrScanner
  */
 @Composable
 fun QrScannerView(onNavigate: (String) -> Unit) {
+    val localizedStrings = strings
+    val invalidCodeMessage = localizedStrings.qr.invalidCode
     var qrCodeURL by remember { mutableStateOf("") }
     var flashlightOn by remember { mutableStateOf(false) }
     var openImagePicker by remember { mutableStateOf(value = false) }
@@ -88,7 +91,7 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
                     onFailure = {
                         coroutineScope.launch {
                             if (it.isEmpty()) {
-                                snackBarHostState.showSnackbar("Invalid qr code")
+                                snackBarHostState.showSnackbar(invalidCodeMessage)
                             } else {
                                 snackBarHostState.showSnackbar(it)
                             }
@@ -111,7 +114,7 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
                     ) {
                         Icon(
                             imageVector = if (flashlightOn) Lucide.Flashlight else Lucide.FlashlightOff,
-                            "flash",
+                            contentDescription = strings.common.toggleFlashlight,
                             modifier = Modifier.size(20.dp).clickable {
                                     flashlightOn = !flashlightOn
                                 })
@@ -122,7 +125,7 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
 
                         Image(
                             imageVector = Lucide.GalleryThumbnails,
-                            contentDescription = "gallery",
+                            contentDescription = strings.common.gallery,
                             contentScale = ContentScale.Fit,
                             modifier = Modifier.size(20.dp).clickable {
                                     openImagePicker = true
@@ -140,8 +143,8 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
                     ),
                 ) {
                     Text(
-                        text = "Select Image",
-                        modifier = Modifier.background(Color.Transparent)
+                        text = strings.common.selectImage,
+                         modifier = Modifier.background(Color.Transparent)
                             .padding(horizontal = 12.dp, vertical = 12.dp),
                         fontSize = 16.sp,
                         fontFamily = FontFamily.Serif
@@ -169,7 +172,7 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
                 )
 
                 Icon(
-                    Lucide.ClipboardCopy, "CopyAll", modifier = Modifier.size(20.dp).clickable {
+                    Lucide.ClipboardCopy, strings.common.copy, modifier = Modifier.size(20.dp).clickable {
                         // TODO: Implement clipboard copy functionality
                     }, tint = Color.White
                 )
@@ -181,7 +184,7 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "QRScanner",
+                text = strings.qr.title,
                 modifier = Modifier.weight(1f),
                 fontSize = 18.sp,
                 color = Color.White,
@@ -190,7 +193,7 @@ fun QrScannerView(onNavigate: (String) -> Unit) {
             )
 
             Icon(
-                Lucide.X, "close", modifier = Modifier.size(20.dp).clickable {
+                Lucide.X, strings.common.cancel, modifier = Modifier.size(20.dp).clickable {
                     onNavigate("")
                 }, tint = Color.White
             )

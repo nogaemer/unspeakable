@@ -1,6 +1,8 @@
 package de.nogaemer.unspeakable.db
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
@@ -33,11 +35,18 @@ interface UnspeakableCardsDao {
     @Query("SELECT COUNT(*) FROM cards WHERE language = :lang")
     suspend fun getCardCount(lang: String): Int
 
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun saveCard(card: UnspeakableCardDto)
+
     @Query("DELETE FROM cards")
     suspend fun deleteAll()
 
     @Query("DELETE FROM cards WHERE id = :id")
     suspend fun deleteById(id: Int)
+
+    @Query("DELETE FROM cards WHERE category = :category")
+    suspend fun deleteByCategory(category: String)
 
     @Query("DELETE FROM cards WHERE language = :lang")
     suspend fun deleteByLanguage(lang: String)

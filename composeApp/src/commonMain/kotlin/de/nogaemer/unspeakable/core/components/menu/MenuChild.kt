@@ -1,5 +1,6 @@
 package de.nogaemer.unspeakable.core.components.menu
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 
 /**
@@ -13,13 +14,17 @@ sealed class MenuChild<O> {
     /**
      * Represents the root overview node of a menu stack.
      */
-    data class Overview<O>(val component: O) : MenuChild<O>()
+    data class Overview<O>(
+        val component: O,
+        val actions: @Composable RowScope.() -> Unit = {}
+    ) : MenuChild<O>()
 
     /**
      * Represents a standard menu page and its content renderer.
      */
     data class Page<O>(
         val component: MenuPage,
+        val actions: @Composable RowScope.() -> Unit = {},
         val content: @Composable (MenuPage) -> Unit,
     ) : MenuChild<O>()
 
@@ -28,6 +33,7 @@ sealed class MenuChild<O> {
      */
     data class SubMenu<O>(
         val component: MenuPage,
+        val actions: @Composable RowScope.() -> Unit = {},
         val content: @Composable (MenuPage) -> Unit,
     ) : MenuChild<O>()
 }

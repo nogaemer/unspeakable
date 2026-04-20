@@ -28,4 +28,16 @@ data class UnspeakableCard(
     val category: String,
     val language: String,
     val forbiddenWords: List<String> = emptyList(),
-)
+) {
+    fun toCardDto() = UnspeakableCardDto(
+        id,
+        word,
+        category,
+        language,
+        forbiddenWords.getOrElse(0) { "" },
+        forbiddenWords.getOrElse(1) { "" },
+        forbiddenWords.getOrElse(2) { "" },
+        forbiddenWords.getOrElse(3) { "" },
+        forbiddenWords.getOrElse(4) { "" }
+    )
+}

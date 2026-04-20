@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import com.arkivanov.decompose.retainedComponent
+import com.russhwolf.settings.BuildConfig
 import de.nogaemer.unspeakable.db.AndroidAppContext
 import de.nogaemer.unspeakable.navigation.RootComponent
 
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Configure global logger before creating app components.
-        Logger.setMinSeverity(Severity.Verbose)
+        Logger.setMinSeverity(if (BuildConfig.DEBUG) Severity.Verbose else Severity.Info)
         Logger.setTag("Unspeakable")
 
         AndroidAppContext.application = this.application

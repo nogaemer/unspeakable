@@ -35,6 +35,7 @@ abstract class DefaultMenuComponent<Config : Any, Overview>(
         ctx: ComponentContext,
         push: (Config) -> Unit,
         pop: () -> Unit,
+        navigation: StackNavigation<Config>,
     ) -> MenuChild<Overview>,
 ) : ComponentContext by ctx {
 
@@ -47,10 +48,18 @@ abstract class DefaultMenuComponent<Config : Any, Overview>(
         initialConfiguration = initialConfig,
         handleBackButton = true,
         childFactory = { config, childCtx ->
-            childFactory(config, childCtx, { navigation.push(it) }, { navigation.pop() })
+            childFactory(
+                config,
+                childCtx,
+                { navigation.push(it) },
+                { goBack() },
+                navigation
+            )
         }
     )
 
-    fun goBack() = navigation.pop()
+    @OptIn(DelicateDecomposeApi::class)
+    fun navigate(config: Config) = navigation.push(config)
+    open fun goBack() = navigation.pop()
     fun resetToRoot() = navigation.replaceAll(initialConfig)
 }

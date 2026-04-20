@@ -29,7 +29,7 @@ class DefaultRoundCountComponent(
     ctx           = ctx,
     serializer    = GameRoundConfig.serializer(),
     initialConfig = GameRoundConfig.Overview,
-    childFactory  = { config, childCtx, push, pop ->
+    childFactory  = { config, childCtx, push, pop, _ ->
         when (config) {
             is GameRoundConfig.Overview -> MenuChild.Overview(
                 GameSettingsOverviewComponent(

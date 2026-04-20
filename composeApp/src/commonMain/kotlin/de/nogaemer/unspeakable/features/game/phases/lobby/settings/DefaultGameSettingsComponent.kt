@@ -29,7 +29,7 @@ class DefaultGameSettingsComponent(
     ctx = ctx,
     serializer = GameSettingsConfig.serializer(),
     initialConfig = GameSettingsConfig.Overview,
-    childFactory = { config, childCtx, push, pop ->
+    childFactory = { config, childCtx, push, pop, _ ->
         when (config) {
             is GameSettingsConfig.Overview -> MenuChild.Overview(
                 GameSettingsOverviewComponent(

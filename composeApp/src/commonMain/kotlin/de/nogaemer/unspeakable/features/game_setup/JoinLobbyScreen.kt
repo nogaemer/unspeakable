@@ -65,7 +65,6 @@ fun JoinLobbyScreen(
     lobbyCode: String,
     onCodeChange: (String) -> Unit,
     onJoin: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var flashlightOn by remember { mutableStateOf(false) }
     var openImagePicker by remember { mutableStateOf(false) }
@@ -150,7 +149,7 @@ fun JoinLobbyScreen(
             ) {
                 Icon(
                     imageVector = if (flashlightOn) Lucide.Flashlight else Lucide.FlashlightOff,
-                    contentDescription = "Toggle Flashlight",
+                    contentDescription = strings.common.toggleFlashlight,
                     modifier = Modifier.size(22.dp),
                     tint = colorScheme.onSecondaryContainer
                 )
@@ -168,7 +167,7 @@ fun JoinLobbyScreen(
                 color = colorScheme.outlineVariant
             )
             Text(
-                text = "or",
+                text = strings.common.or,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurfaceVariant

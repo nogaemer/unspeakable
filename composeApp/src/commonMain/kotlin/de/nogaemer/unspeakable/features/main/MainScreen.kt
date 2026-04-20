@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.strings
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Settings
@@ -34,7 +35,7 @@ import de.nogaemer.unspeakable.core.util.settings.LocalAppSettings
 import de.nogaemer.unspeakable.core.util.settings.isDark
 import de.nogaemer.unspeakable.features.home.HomeScreen
 import de.nogaemer.unspeakable.features.settings.SettingsScreen
-import de.nogaemer.unspeakable.features.words.WordsScreen
+import de.nogaemer.unspeakable.features.words.CategoriesScreen
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -46,6 +47,10 @@ fun MainScreen(component: MainComponent) {
 
     val showBottomBar = when (active) {
         is MainComponent.TabChild.Settings -> {
+            val child = active.component.stack.subscribeAsState().value.active.instance
+            child is MenuChild.Overview
+        }
+        is MainComponent.TabChild.Category -> {
             val child = active.component.stack.subscribeAsState().value.active.instance
             child is MenuChild.Overview
         }
@@ -87,12 +92,12 @@ fun MainScreen(component: MainComponent) {
                                 Icon(
                                     imageVector = when (tab) {
                                         Tab.HOME -> Lucide.House
-//                                        Tab.WORDS -> Lucide.BookOpen
+                                        Tab.WORDS -> Lucide.BookOpen
                                         Tab.SETTINGS -> Lucide.Settings
                                     },
                                     contentDescription = when (tab) {
                                         Tab.HOME -> text.home
-//                                        Tab.WORDS -> text.words
+                                        Tab.WORDS -> text.words
                                         Tab.SETTINGS -> text.settings
                                     }
                                 )
@@ -101,7 +106,7 @@ fun MainScreen(component: MainComponent) {
                                 Text(
                                     when (tab) {
                                         Tab.HOME -> text.home
-//                                        Tab.WORDS -> text.words
+                                        Tab.WORDS -> text.words
                                         Tab.SETTINGS -> text.settings
                                     }
                                 )
@@ -131,7 +136,7 @@ fun MainScreen(component: MainComponent) {
         ) {
             when (active) {
                 is MainComponent.TabChild.Home -> HomeScreen(active.component)
-                is MainComponent.TabChild.Words -> WordsScreen(active.component)
+                is MainComponent.TabChild.Category -> CategoriesScreen(active.component)
                 is MainComponent.TabChild.Settings -> SettingsScreen(active.component)
                 null -> Unit
             }

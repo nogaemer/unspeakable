@@ -38,7 +38,7 @@ class DefaultSettingsComponent(
     ctx = ctx,
     serializer = SettingsConfig.serializer(),
     initialConfig = SettingsConfig.Overview,
-    childFactory = { config, childCtx, push, pop ->
+    childFactory = { config, childCtx, push, pop, _ ->
         when (config) {
             is SettingsConfig.Overview -> MenuChild.Overview(
                 SettingsOverviewComponent(
