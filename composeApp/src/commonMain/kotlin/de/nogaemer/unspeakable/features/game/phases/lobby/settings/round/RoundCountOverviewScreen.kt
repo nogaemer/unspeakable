@@ -66,12 +66,14 @@ fun RoundCountContent(
 ) {
     val text = strings.gameLobbySettings.gameRoundSettingsStrings
 
-    val roundsFromState = state.match?.settings?.maxRounds ?: 10
+    val roundsFromState = state.match?.settings?.maxRounds ?: 4
+    val teamCount = state.match?.teams?.size ?: 1
+
     var roundCount by remember { mutableIntStateOf(roundsFromState) }
     var selectedRoundCountOption by remember { mutableStateOf(RoundCountOption.getByRound(roundCount)) }
 
     LaunchedEffect(roundsFromState) {
-        roundCount = roundsFromState
+        roundCount = roundsFromState / teamCount
         selectedRoundCountOption = RoundCountOption.getByRound(roundCount)
     }
 
@@ -81,7 +83,7 @@ fun RoundCountContent(
         roundCount = value
         val settings = state.match?.settings ?: return
         onEvent(
-            GameClientEvent.UpdateGameSettings(settings.copy(maxRounds = value))
+            GameClientEvent.UpdateGameSettings(settings.copy(maxRounds = value * teamCount))
         )
     }
 
@@ -95,23 +97,22 @@ fun RoundCountContent(
         SegmentedLazyColumn {
             addRoundCountItem(
                 label = text.roundCountLittleLabel,
-                supporting = text.roundCountValue(4),
+                supporting = text.roundCountValue(RoundCountOption.LITTLE_ROUNDS),
                 selected = isLittleSelected,
-                onClick = { updateRoundCount(RoundCountOption.Little, 4) },
+                onClick = { updateRoundCount(RoundCountOption.Little, RoundCountOption.LITTLE_ROUNDS) },
             )
             addRoundCountItem(
                 label = text.roundCountMiddleLabel,
-                supporting = text.roundCountValue(8),
+                supporting = text.roundCountValue(RoundCountOption.MIDDLE_ROUNDS),
                 selected = isMiddleSelected,
-                onClick = { updateRoundCount(RoundCountOption.Middle, 8) },
+                onClick = { updateRoundCount(RoundCountOption.Middle, RoundCountOption.MIDDLE_ROUNDS) },
             )
             addRoundCountItem(
                 label = text.roundCountManyLabel,
-                supporting = text.roundCountValue(12),
+                supporting = text.roundCountValue(RoundCountOption.MANY_ROUNDS),
                 selected = isManySelected,
-                onClick = { updateRoundCount(RoundCountOption.Many, 12) },
+                onClick = { updateRoundCount(RoundCountOption.Many, RoundCountOption.MANY_ROUNDS) },
             )
-
             item("custom_round_count") {
                 SegmentedListItem(
                     modifier = Modifier.clickable {
@@ -191,11 +192,15 @@ private enum class RoundCountOption {
     Custom;
 
     companion object {
+        const val LITTLE_ROUNDS = 2
+        const val MIDDLE_ROUNDS = 4
+        const val MANY_ROUNDS = 8
+
         fun getByRound(rounds: Int): RoundCountOption {
             return when (rounds) {
-                4 -> Little
-                8 -> Middle
-                12 -> Many
+                LITTLE_ROUNDS -> Little
+                MIDDLE_ROUNDS -> Middle
+                MANY_ROUNDS -> Many
                 else -> Custom
             }
         }

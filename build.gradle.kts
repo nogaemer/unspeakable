@@ -11,3 +11,6 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.androidx.room) apply false
 }
+
+extra["appVersionName"] = "1.0.0"
+extra["appVersionCode"] = 1

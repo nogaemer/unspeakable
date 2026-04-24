@@ -9,8 +9,8 @@ import de.nogaemer.unspeakable.core.components.menu.DefaultMenuComponent
 import de.nogaemer.unspeakable.core.components.menu.MenuChild
 import de.nogaemer.unspeakable.core.components.menu.NestedMenuScreen
 import de.nogaemer.unspeakable.core.components.menu.OverviewItem
+import de.nogaemer.unspeakable.features.settings.pages.about.AboutComponent
 import de.nogaemer.unspeakable.features.settings.pages.about.AboutScreen
-import de.nogaemer.unspeakable.features.settings.pages.about.DefaultAboutComponent
 import de.nogaemer.unspeakable.features.settings.pages.language.DefaultLanguageComponent
 import de.nogaemer.unspeakable.features.settings.pages.language.LanguageScreen
 import de.nogaemer.unspeakable.features.settings.pages.personalization.DefaultPersonalizationComponent
@@ -95,8 +95,8 @@ class DefaultSettingsComponent(
             }
 
             is SettingsConfig.About -> {
-                val component = DefaultAboutComponent(childCtx, pop)
-                MenuChild.Page(component) {
+                val component = AboutComponent(childCtx, pop)
+                MenuChild.Page(component, isTitleBarTransparent = true) {
                     AboutScreen(component)
                 }
             }

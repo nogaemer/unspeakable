@@ -67,7 +67,7 @@ fun GameScreen(component: DefaultGameComponent, onBack: () -> Unit, onGoHome: ()
 
         GamePhase.PLAYING -> PlayingScreen(
             state = state,
-            onEvent = component::onEvent,
+            onEventAs = component::onEventAs,
         )
 
         GamePhase.ROUND_SUMMARY -> RoundOverviewScreen(

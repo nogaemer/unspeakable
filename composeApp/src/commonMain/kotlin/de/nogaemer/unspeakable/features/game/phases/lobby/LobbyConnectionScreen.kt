@@ -95,7 +95,7 @@ fun LobbyConnectionScreen(
                 ),
                 headlineContent = {
                     Text(
-                        text = "Code",
+                        text = text.common.code,
                         style = MaterialTheme.typography.labelMedium,
                         color = colorScheme.onSurfaceVariant
                     )

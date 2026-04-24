@@ -45,6 +45,7 @@ fun DefaultTopAppBar(
     title: String,
     onBack: () -> Unit,
     navigationIcon: Boolean = true,
+    isTransparent: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -54,7 +55,7 @@ fun DefaultTopAppBar(
             key(settings.isDark.toString() + settings.isAmoled.toString()) {
                 TopAppBar(
                     title = {
-                        Text(
+                        if (!isTransparent) Text(
                             title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -75,8 +76,8 @@ fun DefaultTopAppBar(
                     },
                     actions = actions,
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        containerColor = if (!isTransparent) MaterialTheme.colorScheme.surface else Color.Transparent,
+                        scrolledContainerColor = if (!isTransparent) MaterialTheme.colorScheme.surfaceContainer else Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.onSurface,
                         navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     )
@@ -86,7 +87,7 @@ fun DefaultTopAppBar(
             }
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = if (!isTransparent) Modifier.padding(innerPadding) else Modifier) {
             content()
         }
     }

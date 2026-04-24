@@ -16,6 +16,7 @@ sealed class MenuChild<O> {
      */
     data class Overview<O>(
         val component: O,
+        val isTitleBarTransparent: Boolean = false,
         val actions: @Composable RowScope.() -> Unit = {}
     ) : MenuChild<O>()
 
@@ -25,6 +26,7 @@ sealed class MenuChild<O> {
     data class Page<O>(
         val component: MenuPage,
         val actions: @Composable RowScope.() -> Unit = {},
+        val isTitleBarTransparent: Boolean = false,
         val content: @Composable (MenuPage) -> Unit,
     ) : MenuChild<O>()
 
@@ -33,7 +35,6 @@ sealed class MenuChild<O> {
      */
     data class SubMenu<O>(
         val component: MenuPage,
-        val actions: @Composable RowScope.() -> Unit = {},
         val content: @Composable (MenuPage) -> Unit,
     ) : MenuChild<O>()
 }

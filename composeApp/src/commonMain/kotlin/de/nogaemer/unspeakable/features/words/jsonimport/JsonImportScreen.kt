@@ -467,6 +467,7 @@ private fun JsonImportPreviewDialog(
             FilledTonalButton(
                 onClick = onDismissRequest,
                 modifier = Modifier.height(40.dp),
+                shapes = ButtonDefaults.shapesFor(40.dp),
             ) {
                 Text(s.common.cancel)
             }
@@ -476,6 +477,7 @@ private fun JsonImportPreviewDialog(
                 onClick = onConfirm,
                 enabled = !isImporting,
                 modifier = Modifier.height(40.dp),
+                shapes = ButtonDefaults.shapesFor(40.dp),
             ) {
                 Text(if (isImporting) s.jsonImport.importingButton else s.jsonImport.importButton)
             }

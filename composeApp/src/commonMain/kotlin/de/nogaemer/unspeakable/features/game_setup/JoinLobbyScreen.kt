@@ -221,7 +221,7 @@ fun JoinLobbyScreen(
                     Box(contentAlignment = Alignment.Center) {
                         if (lobbyCode.isEmpty()) {
                             Text(
-                                text = "CODE",
+                                text = text.common.code.uppercase(),
                                 style = MaterialTheme.typography.headlineSmall.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = colorScheme.onSurfaceVariant.copy(alpha = 0.3f),

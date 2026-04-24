@@ -10,12 +10,20 @@ import de.nogaemer.unspeakable.features.game.phases.ready.PlayingGuesserScreen
 @Composable
 fun PlayingScreen(
     state: GameState,
-    onEvent: (event: GameClientEvent) -> Unit,
+    onEventAs: (event: GameClientEvent, String) -> Unit,
 ) {
-    when (state.role) {
-        GameRole.GUESSER -> PlayingGuesserScreen(state)
-        GameRole.EXPLAINER -> PlayingExplainerScreen(state, onEvent)
-        GameRole.OPPONENT -> PlayingOpponentScreen(state, onEvent)
-        null -> LoadingScreen()
+    val currentExplainer = state.currentExplainer?.id ?: ""
+    val onEvent: (event: GameClientEvent) -> Unit = { event -> onEventAs(event, currentExplainer) }
+
+    if (state.isLocalGame) {
+        PlayingExplainerScreen(state, onEvent)
+    } else {
+        when (state.role) {
+            GameRole.GUESSER -> PlayingGuesserScreen(state)
+            GameRole.EXPLAINER -> PlayingExplainerScreen(state, onEvent)
+            GameRole.OPPONENT -> PlayingOpponentScreen(state, onEvent)
+
+            null -> LoadingScreen()
+        }
     }
 }

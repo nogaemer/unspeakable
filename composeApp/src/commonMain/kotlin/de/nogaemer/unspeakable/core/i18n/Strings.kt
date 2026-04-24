@@ -25,6 +25,7 @@ data class CommonStrings(
     val toggleFlashlight: String,
     val selectImage: String,
     val gallery: String,
+    val code: String,
 )
 
 /** Holds navigation tab labels. */
@@ -211,7 +212,7 @@ data class SettingsStrings(
     val title: String,
     val personalizationStrings: SettingsPagePersonalizationStrings,
     val languageStrings: SettingsPageLanguageStrings,
-    val aboutStrings: SettingsPageStrings
+    val aboutStrings: SettingsPageAboutStrings
 )
 
 /** Defines common contract for settings subpage titles/descriptions. */
@@ -256,6 +257,18 @@ data class SettingsPageLanguageStrings(
 data class SettingsPageAboutStrings(
     override val title: String,
     override val description: String? = null,
+    val heroTagline: String,
+    val versionLabel: (String, Int) -> String,
+    val developerSectionTitle: String,
+    val developerName: String,
+    val developerRole: String,
+    val sourceCodeTitle: String,
+    val sourceCodeSubtitle: String,
+    val openSourceSectionTitle: String,
+    val librariesTitle: String,
+    val librariesCollapseHint: String,
+    val librariesCount: (Int) -> String,
+    val footer: String,
 ) : SettingsPageStrings
 
 
@@ -419,6 +432,7 @@ val EnStrings = Strings(
         toggleFlashlight = "Toggle flashlight",
         selectImage = "Select Image",
         gallery = "Gallery",
+        code = "Code",
     ),
     nav = NavigationStrings(
         home = "Home",
@@ -587,6 +601,18 @@ val EnStrings = Strings(
         ),
         aboutStrings = SettingsPageAboutStrings(
             title = "About",
+            heroTagline = "Say everything. Except what matters.",
+            versionLabel = { version, build -> "v$version  •  build $build" },
+            developerSectionTitle = "Developer",
+            developerName = "nogaemer",
+            developerRole = "Developer & designer",
+            sourceCodeTitle = "nogaemer/unspeakable",
+            sourceCodeSubtitle = "Source code",
+            openSourceSectionTitle = "Open Source",
+            librariesTitle = "Libraries",
+            librariesCollapseHint = "Tap to collapse",
+            librariesCount = { count -> "$count open-source libraries" },
+            footer = "© 2026 nogaemer. Made with ❤ in Germany",
         ),
     ),
     categories = CategoryStrings(
@@ -661,6 +687,7 @@ val DeStrings = Strings(
         toggleFlashlight = "Taschenlampe umschalten",
         selectImage = "Bild auswählen",
         gallery = "Galerie",
+        code = "Code",
     ),
     nav = NavigationStrings(
         home = "Start",
@@ -829,6 +856,18 @@ val DeStrings = Strings(
         ),
         aboutStrings = SettingsPageAboutStrings(
             title = "Über",
+            heroTagline = "Sag alles. Außer was zählt.",
+            versionLabel = { version, build -> "v$version  •  Build $build" },
+            developerSectionTitle = "Entwickler",
+            developerName = "nogaemer",
+            developerRole = "Entwickler & Designer",
+            sourceCodeTitle = "nogaemer/unspeakable",
+            sourceCodeSubtitle = "Quellcode",
+            openSourceSectionTitle = "Open Source",
+            librariesTitle = "Bibliotheken",
+            librariesCollapseHint = "Zum Einklappen tippen",
+            librariesCount = { count -> "$count Open-Source-Bibliotheken" },
+            footer = "© 2026 nogaemer. Mit ❤ in Deutschland gemacht",
         ),
     ),
     categories = CategoryStrings(

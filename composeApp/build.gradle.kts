@@ -12,6 +12,9 @@ plugins {
     alias(libs.plugins.androidx.room)
 }
 
+val appVersionName: String by rootProject.extra
+val appVersionCode: Int    by rootProject.extra
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -118,12 +121,16 @@ android {
         applicationId = "de.nogaemer.unspeakable"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionName = appVersionName
+        versionCode = appVersionCode
+
+        buildConfigField("String", "VERSION_NAME", "\"$appVersionName\"")
+        buildConfigField("int",    "VERSION_CODE", "$appVersionCode")
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -193,7 +200,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "de.nogaemer.unspeakable"
-            packageVersion = "1.0.0"
+            packageVersion = appVersionName
         }
     }
 }

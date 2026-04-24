@@ -5,8 +5,8 @@ import com.arkivanov.decompose.DelicateDecomposeApi
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.arkivanov.essenty.lifecycle.doOnStart
+import com.composables.icons.lucide.Import
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Plus
 import de.nogaemer.unspeakable.core.components.menu.AppBarButton
 import de.nogaemer.unspeakable.core.components.menu.DefaultMenuComponent
 import de.nogaemer.unspeakable.core.components.menu.MenuChild
@@ -63,7 +63,7 @@ class CategoryComponent(
                     items = listOf()
                 )
             ) {
-                AppBarButton({ push(CategoryConfig.JsonImport) }, Lucide.Plus)
+                AppBarButton({ push(CategoryConfig.JsonImport) }, Lucide.Import)
             }
 
             is CategoryConfig.Words -> {

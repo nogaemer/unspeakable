@@ -1,6 +1,7 @@
 package de.nogaemer.unspeakable
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -22,6 +23,9 @@ class MainActivity : ComponentActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        // Prevent the device from sleeping while the app is in foreground.
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // Configure global logger before creating app components.
         Logger.setMinSeverity(if (BuildConfig.DEBUG) Severity.Verbose else Severity.Info)

@@ -38,6 +38,7 @@ fun <O> NestedMenuScreen(
                 title = rootTitle ?: (component as? MenuPage)?.titleKey?.invoke(s) ?: "",
                 onBack = onRootBack ?: component::goBack,
                 navigationIcon = rootTitle == null || showBackOnOverview,
+                isTransparent = instance.isTitleBarTransparent,
                 actions = instance.actions,
             ) {
                 overviewContent?.invoke(instance.component)
@@ -47,6 +48,7 @@ fun <O> NestedMenuScreen(
             is MenuChild.Page -> DefaultTopAppBar(
                 title = instance.component.titleKey(s),
                 onBack = instance.component.onBack,
+                isTransparent = instance.isTitleBarTransparent,
                 actions = instance.actions,
             ) {
                 instance.content(instance.component)
