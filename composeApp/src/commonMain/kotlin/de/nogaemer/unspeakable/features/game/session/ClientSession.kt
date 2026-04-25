@@ -1,5 +1,6 @@
 package de.nogaemer.unspeakable.features.game.session
 
+import co.touchlab.kermit.Logger
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameHostEvent
 import de.nogaemer.unspeakable.core.model.GamePhase
@@ -15,8 +16,10 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,32 +49,74 @@ class ClientSession(
     private lateinit var session: DefaultWebSocketSession
     private var hostDisconnectHandled = false
 
-    override suspend fun start() {
+    override suspend fun start() = connect(isReconnect = false)
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Logger.e { "Unhandled session error: $throwable" }
+        scope.launch { handleDrop() }
+    }
+
+
+    suspend fun connect(isReconnect: Boolean) {
         try {
             session = client.webSocketSession("ws://$hostIp:8080/game")
 
-            val me = Player("", playerName, profilePicture, isHost = false, "")
+            val myId = if (isReconnect) state.value.me?.id ?: "" else ""
+            val me = Player(myId, playerName, profilePicture, isHost = false, "")
             sendEvent(GameClientEvent.JoinGame(me))
+
         } catch (_: Exception) {
             onHostDisconnected()
             return
         }
 
-        scope.launch {
+        scope.launch(exceptionHandler) {
             try {
                 for (frame in session.incoming) {
                     val event =
                         Json.decodeFromString<GameHostEvent>((frame as Frame.Text).readText())
                     _state.update { it.applyEvent(event) }
                 }
-                onHostDisconnected()
+                handleDrop()
             } catch (_: ClosedReceiveChannelException) {
-                onHostDisconnected()
+                handleDrop()
             } catch (_: Exception) {
-                onHostDisconnected()
+                handleDrop()
             }
+
         }
     }
+
+    private suspend fun handleDrop() {
+        val phase = _state.value.phase
+
+        // Only attempt reconnect if a game was actually in progress
+        if (phase == GamePhase.GAME_OVER || phase == GamePhase.CONNECTION_LOST) {
+            _state.update { it.copy(phase = GamePhase.CONNECTION_LOST) }
+            return
+        }
+
+        _state.update { it.copy(phase = GamePhase.RECONNECTING) }
+
+        // Exponential backoff: 1s, 2s, 4s, 8s, … capped at 16s, give up after ~60s
+        var attempt = 0
+        val maxAttempts = 6
+        while (attempt < maxAttempts) {
+            val delayMs = minOf(1000L * (1 shl attempt), 16_000L)
+            delay(delayMs)
+            attempt++
+            try {
+                connect(isReconnect = true)
+                return
+            } catch (_: Exception) {
+                // try again
+            }
+        }
+
+        // All attempts failed
+        _state.update { it.copy(phase = GamePhase.CONNECTION_LOST) }
+    }
+
 
     private fun onHostDisconnected() {
         if (hostDisconnectHandled) return
@@ -97,6 +142,7 @@ class ClientSession(
     override fun close() {
         scope.launch {
             if (::session.isInitialized) {
+                sendEvent(GameClientEvent.LeaveGame)
                 runCatching { session.close() }
             }
             client.close()

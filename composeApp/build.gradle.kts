@@ -50,7 +50,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
+            implementation(libs.ktor.client.cio)
             implementation(libs.androidx.core.ktx.v1160)
         }
         commonMain.dependencies {
@@ -199,8 +199,27 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "de.nogaemer.unspeakable"
+            packageName = "Unspeakable"
             packageVersion = appVersionName
+            description = "Unspeakable Party Game"
+            copyright = "© 2026 nogaemer"
+            vendor = "nogaemer"
+
+
+            windows {
+                dirChooser = true
+                menuGroup = "Unspeakable"
+                menu = true
+                shortcut = true
+                iconFile.set(project.file("src/jvmMain/resources/icon.ico"))
+            }
+            macOS {
+                iconFile.set(project.file("src/jvmMain/resources/icon.icns"))
+            }
+            linux {
+                iconFile.set(project.file("src/jvmMain/resources/icon.png"))
+            }
+
         }
     }
 }

@@ -61,7 +61,8 @@ class CategoryComponent(
                     goBack = pop,
                     onNavigate = push,
                     items = listOf()
-                )
+                ),
+                hasBottomPadding = false
             ) {
                 AppBarButton({ push(CategoryConfig.JsonImport) }, Lucide.Import)
             }

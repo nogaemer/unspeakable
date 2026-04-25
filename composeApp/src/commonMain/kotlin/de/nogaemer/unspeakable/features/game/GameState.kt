@@ -45,6 +45,9 @@ data class GameState(
         is GameHostEvent.Tick ->
             copy(currentRoundTime = event.currentRoundTime)
 
+        is GameHostEvent.SetRoundTime ->
+            copy(currentRound = currentRound?.copy(roundTime =  event.roundTime))
+
         is GameHostEvent.SendCard ->
             copy(
                 currentCard = event.card,
@@ -69,6 +72,12 @@ data class GameState(
 
         is GameHostEvent.SendGameSettings ->
             copy(match = match?.copy(settings = event.settings))
+
+        is GameHostEvent.SendRound ->
+            copy(currentRound = event.round)
+
+        is GameHostEvent.SendPhase ->
+            copy(phase = event.phase)
 
         is GameHostEvent.StartGame ->
             copy(match = event.match, phase = GamePhase.PLAYING)

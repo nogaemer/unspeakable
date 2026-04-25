@@ -3,7 +3,10 @@ package de.nogaemer.unspeakable.core.components.menu
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -46,10 +50,13 @@ fun DefaultTopAppBar(
     onBack: () -> Unit,
     navigationIcon: Boolean = true,
     isTransparent: Boolean = false,
+    hasBottomPadding: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val settings = LocalAppSettings.current.appSettings
+    val layoutDirection = LocalLayoutDirection.current
+
     Scaffold(
         topBar = {
             key(settings.isDark.toString() + settings.isAmoled.toString()) {
@@ -87,7 +94,14 @@ fun DefaultTopAppBar(
             }
         }
     ) { innerPadding ->
-        Column(modifier = if (!isTransparent) Modifier.padding(innerPadding) else Modifier) {
+        val padding = PaddingValues(
+            start = innerPadding.calculateStartPadding(layoutDirection),
+            top = innerPadding.calculateTopPadding(),
+            end = innerPadding.calculateEndPadding(layoutDirection),
+            bottom = if (hasBottomPadding) innerPadding.calculateBottomPadding() else 0.dp
+        )
+
+        Column(modifier = if (!isTransparent) Modifier.padding(padding) else Modifier) {
             content()
         }
     }

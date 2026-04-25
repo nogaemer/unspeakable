@@ -49,12 +49,15 @@ sealed class GameHostEvent {
     @Serializable data class ModeWarning(val warningMessages: List<SoftConflictWarning>) : GameHostEvent()
 
     @Serializable data class Tick(val currentRoundTime: Int) : GameHostEvent()
+    @Serializable data class SetRoundTime(val roundTime: Int) : GameHostEvent()
     @Serializable data class SendCard(val card: UnspeakableCard) : GameHostEvent()
     @Serializable data class PlayerJoined(val player: Player) : GameHostEvent()
     @Serializable data class YouJoined(val player: Player) : GameHostEvent()
     @Serializable data class PlayerLeft(val player: Player) : GameHostEvent()
     @Serializable data class PlayerJoinedTeam(val player: Player, val team: Team) : GameHostEvent()
     @Serializable data class SendMatch(val match: Match) : GameHostEvent()
+    @Serializable data class SendRound(val round: Round?) : GameHostEvent()
+    @Serializable data class SendPhase(val phase: GamePhase) : GameHostEvent()
     @Serializable data class SendGameSettings(val settings: GameSettings) : GameHostEvent()
     @Serializable data class StartGame(val match: Match) : GameHostEvent()
 

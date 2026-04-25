@@ -17,6 +17,7 @@ sealed class MenuChild<O> {
     data class Overview<O>(
         val component: O,
         val isTitleBarTransparent: Boolean = false,
+        val hasBottomPadding: Boolean = true,
         val actions: @Composable RowScope.() -> Unit = {}
     ) : MenuChild<O>()
 

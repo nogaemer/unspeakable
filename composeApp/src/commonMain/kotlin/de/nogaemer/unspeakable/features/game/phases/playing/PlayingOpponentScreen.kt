@@ -66,6 +66,9 @@ fun PlayingOpponentScreen(
     var sabotageWord by rememberSaveable { mutableStateOf("") }
     val sabotageSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val canSabotage = (state.match?.settings?.enabledModeIds?.contains(SabotageMode().id) ?: false)
+            && state.lastSabotage == null
+
     PlayingRoundContent(
         state = state,
         forbiddenTrailingContent = { word ->
@@ -79,7 +82,7 @@ fun PlayingOpponentScreen(
             )
         },
         actions = {
-            if (state.match?.settings?.enabledModeIds?.contains(SabotageMode().id) ?: false) Row(
+            if (canSabotage) Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(
                     10.dp,

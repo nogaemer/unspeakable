@@ -181,10 +181,18 @@ data class ConnectionLostStrings(
     val backToHome: String,
 )
 
+/** Holds copy shown when attempting to reconnect after a disconnect. */
+data class ReconnectStrings(
+    val title: String,
+    val description: String,
+)
+
 /** Holds copy shown on final game results and stats screens. */
 data class GameOverStrings(
     val title: String,
     val subtitleWin: String,
+    val subtitleLoose: String,
+    val subtitleDraw: String,
     val winner: (String) -> String,
     val drawTitle: String,
     val overallStats: String,
@@ -285,6 +293,7 @@ data class Strings(
     val gameLobbySettings: GameSettingsStrings,
     val roundOverview: RoundOverviewStrings,
     val connectionLost: ConnectionLostStrings,
+    val reconnect: ReconnectStrings,
     val gameOver: GameOverStrings,
     val settings: SettingsStrings,
     val categories: CategoryStrings,
@@ -479,7 +488,7 @@ val EnStrings = Strings(
                 description = "Survive as long as possible under time pressure."
             ),
             SnowballMode().id to SnowballGameModeStrings(
-                title = "Bluff Cards",
+                title = "Chain Reaction",
                 description = "Every time you guess a word correctly, it becomes a new forbidden word."
             )
         )
@@ -515,8 +524,8 @@ val EnStrings = Strings(
             roundCountCustomLabel = "Custom",
             title = "Rounds per team",
             description = "Choose the number of rounds per team",
-            customRoundsSliderLabel = "Number of Rounds",
-            roundCountValue = { value -> "$value rounds" },
+            customRoundsSliderLabel = "Number of Rounds per team",
+            roundCountValue = { value -> "$value rounds per team" },
         ),
         gameModeSettingsStrings = GameModeSettingsStrings(
             title = "Game Mode",
@@ -540,9 +549,15 @@ val EnStrings = Strings(
         description = "Your connection to the host was interrupted.",
         backToHome = "Back to home",
     ),
+    reconnect = ReconnectStrings(
+        title = "Reconnecting",
+        description = "Trying to reconnect to the host. Please wait...",
+    ),
     gameOver = GameOverStrings(
         title = "Game Over",
         subtitleWin = "Your Team won",
+        subtitleLoose = "The other team won",
+        subtitleDraw = "The Teams tied",
         winner = { teamName -> "$teamName wins" },
         drawTitle = "It's a draw",
         overallStats = "Overall stats",
@@ -734,7 +749,7 @@ val DeStrings = Strings(
                 description = "Überlebe so lange wie möglich unter Zeitdruck."
             ),
             SnowballMode().id to SnowballGameModeStrings(
-                title = "Bluff-Karten",
+                title = "Kettenreaktion",
                 description = "Jedes Mal, wenn du ein Wort richtig errätst, wird es zu einem neuen verbotenen Wort. "
             )
         )
@@ -770,8 +785,8 @@ val DeStrings = Strings(
             roundCountCustomLabel = "Benutzerdefiniert",
             title = "Rundenanzahl",
             description = "Wähle die Anzahl der Runden pro Team",
-            customRoundsSliderLabel = "Rundenanzahl",
-            roundCountValue = { value -> "$value Runden" },
+            customRoundsSliderLabel = "Rundenanzahl pro Team",
+            roundCountValue = { value -> "$value Runden pro Team" },
         ),
         gameModeSettingsStrings = GameModeSettingsStrings(
             title = "Spielmodus",
@@ -795,9 +810,15 @@ val DeStrings = Strings(
         description = "Die Verbindung zum Host wurde unterbrochen.",
         backToHome = "Zur Startseite",
     ),
+    reconnect = ReconnectStrings(
+        title = "Wird verbunden",
+        description = "Es wird versucht, die Verbindung zum Host wiederherzustellen. Bitte warten...",
+    ),
     gameOver = GameOverStrings(
         title = "Spiel vorbei",
         subtitleWin = "Dein Team hat gewonnen",
+        subtitleLoose = "Das andere Team hat gewonnen",
+        subtitleDraw = "Das Spiel endete unentschieden",
         winner = { teamName -> "$teamName gewinnt" },
         drawTitle = "Unentschieden",
         overallStats = "Gesamtstatistik",

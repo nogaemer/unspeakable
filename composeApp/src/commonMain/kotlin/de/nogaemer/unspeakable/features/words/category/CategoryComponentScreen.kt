@@ -206,7 +206,7 @@ fun CategoryEditorContent(
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
                     shape = RoundedCornerShape(16.dp),
-                    textStyle = LocalTextStyle.current.copy(fontSize = 18.sp, color = Color.White),
+                    textStyle = LocalTextStyle.current.copy(fontSize = 18.sp),
                 )
             }
         }

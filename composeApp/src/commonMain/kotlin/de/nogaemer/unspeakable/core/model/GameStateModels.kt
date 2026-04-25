@@ -56,6 +56,7 @@ data class Round(
     val explainerTeam: Team,
     val explainerPlayer: Player,
     val playedCards: List<PlayedCard> = emptyList(),
+    val roundTime: Int = 0,
     val durationSeconds: Int = 0,
 ) {
     val correct: Int get() = playedCards.count { it.outcome == CardOutcome.CORRECT }
@@ -91,6 +92,7 @@ enum class GamePhase {
     ROUND_SUMMARY,
     GAME_OVER,
     CONNECTION_LOST,
+    RECONNECTING,
 }
 
 @Serializable

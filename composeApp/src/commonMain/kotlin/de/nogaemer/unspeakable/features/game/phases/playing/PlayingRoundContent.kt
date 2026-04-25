@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -57,13 +59,14 @@ import de.nogaemer.unspeakable.features.game.GameState
 internal fun PlayingRoundContent(
     state: GameState,
     forbiddenTrailingContent: (@Composable (word: String) -> Unit)? = null,
+    hasTeamPointsCounter: Boolean = true,
     actions: @Composable () -> Unit,
 ) {
     val text = strings.game
     val sabotageText = strings.game.gameModesStrings[SabotageMode.id]!! as SabotageGameModeStrings
     val leftTeamPoints = state.match?.teams?.getOrNull(0)?.points ?: 0
     val rightTeamPoints = state.match?.teams?.getOrNull(1)?.points ?: 0
-    val roundTime = state.match?.settings?.roundTime ?: 0
+    val roundTime = state.currentRound?.roundTime ?: 0
     val progress = rememberRoundProgress(state.currentRoundTime, roundTime)
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -86,7 +89,7 @@ internal fun PlayingRoundContent(
                 .padding(padding)
                 .background(color = MaterialTheme.colorScheme.surfaceContainer),
         ) {
-            Box(
+            if (hasTeamPointsCounter) Box(
                 Modifier.fillMaxWidth().padding(horizontal = 10.dp).padding(top = 12.dp),
             ) {
                 TeamPoints(
@@ -95,7 +98,7 @@ internal fun PlayingRoundContent(
                     leftTeamPoints = leftTeamPoints,
                     rightTeamPoints = rightTeamPoints,
                 )
-            }
+            } else Spacer(modifier = Modifier.height(12.dp))
             TwoPartLayout(
                 modifier = Modifier.fillMaxSize(),
                 top = {
@@ -190,16 +193,21 @@ internal fun PlayingRoundContent(
                                 ) {
                                     for (word in forbiddenWords) {
                                         val violatedWord = state.violatedForbiddenWord
-                                        val isViolated = violatedWord.equals(word, ignoreCase = true)
-                                        val animationDuration = state.violatedForbiddenWordDurationMs
-                                            .coerceAtLeast(1L).toInt()
+                                        val isViolated =
+                                            violatedWord.equals(word, ignoreCase = true)
+                                        val animationDuration =
+                                            state.violatedForbiddenWordDurationMs
+                                                .coerceAtLeast(1L).toInt()
 
 
                                         val baseTextColor = MaterialTheme.colorScheme.onBackground
-                                        val targetTextColor = if (isViolated) MaterialTheme.colorScheme.onErrorContainer else baseTextColor
+                                        val targetTextColor =
+                                            if (isViolated) MaterialTheme.colorScheme.onErrorContainer else baseTextColor
 
-                                        val baseBackgroundColor = MaterialTheme.colorScheme.surfaceContainer
-                                        val targetBackgroundColor = if (isViolated) MaterialTheme.colorScheme.errorContainer else baseBackgroundColor
+                                        val baseBackgroundColor =
+                                            MaterialTheme.colorScheme.surfaceContainer
+                                        val targetBackgroundColor =
+                                            if (isViolated) MaterialTheme.colorScheme.errorContainer else baseBackgroundColor
 
                                         val animatedTextColor by animateColorAsState(
                                             targetValue = targetTextColor,
@@ -219,7 +227,10 @@ internal fun PlayingRoundContent(
                                         )
 
                                         SegmentedListItem(
-                                            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
+                                            contentPadding = PaddingValues(
+                                                horizontal = 2.dp,
+                                                vertical = 0.dp
+                                            ),
                                             headlineContent = {
                                                 Text(
                                                     text = word.uppercase(),

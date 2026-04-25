@@ -1,7 +1,6 @@
 package de.nogaemer.unspeakable
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -10,6 +9,7 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import com.arkivanov.decompose.retainedComponent
 import com.russhwolf.settings.BuildConfig
+import de.nogaemer.unspeakable.core.util.WakeLock
 import de.nogaemer.unspeakable.db.AndroidAppContext
 import de.nogaemer.unspeakable.navigation.RootComponent
 
@@ -23,9 +23,7 @@ class MainActivity : ComponentActivity() {
         )
 
         super.onCreate(savedInstanceState)
-
-        // Prevent the device from sleeping while the app is in foreground.
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        WakeLock.init(this)
 
         // Configure global logger before creating app components.
         Logger.setMinSeverity(if (BuildConfig.DEBUG) Severity.Verbose else Severity.Info)

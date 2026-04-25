@@ -5,6 +5,7 @@ import de.nogaemer.unspeakable.core.model.PlayedCard
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.Round
 import de.nogaemer.unspeakable.db.UnspeakableCard
+import de.nogaemer.unspeakable.features.game.GameState
 
 /**
  * Represents a chain of game modes that can be composed together.
@@ -53,11 +54,11 @@ class ModeChain(modes: List<GameMode>) {
      * @return An `InterceptResult` containing any additional events, a possible override for the time delta,
      *         and whether the event was consumed by any mode.
      */
-    suspend fun onCardPlayed(playedCard: PlayedCard): InterceptResult  {
+    suspend fun onCardPlayed(playedCard: PlayedCard, gameState: GameState): InterceptResult  {
         val extra = mutableListOf<GameHostEvent>()
         var totalDelta = 0
         for ((mode, state) in chain) {
-            val result = mode.onCardPlayed(playedCard, state)
+            val result = mode.onCardPlayed(playedCard, state, gameState)
             extra += result.extraEvents
             result.timeDelta?.let { totalDelta += it }
             if (result.consumed) break

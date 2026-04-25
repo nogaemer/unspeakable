@@ -81,6 +81,13 @@ fun GameOverScreen(
     val leftTeam = stats.rankedTeams.getOrNull(0)
     val rightTeam = stats.rankedTeams.getOrNull(1)
 
+    val isLeftTeamWinner =
+        leftTeam != null && rightTeam != null && leftTeam.points > rightTeam.points
+    val isRightTeamWinner =
+        rightTeam != null && leftTeam != null && rightTeam.points > leftTeam.points
+
+    val hasWon = state.getTeamByPlayer(state.me ?: return)?.equals(stats.winnerTeamName) ?: false
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -104,7 +111,13 @@ fun GameOverScreen(
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = if (stats.isDraw) text.drawTitle else text.subtitleWin,
+            text = (if (stats.isDraw) {
+                text.drawTitle
+            } else if (hasWon) {
+                text.subtitleWin
+            } else {
+                text.subtitleLoose
+            }),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
@@ -123,7 +136,7 @@ fun GameOverScreen(
                 modifier = Modifier.weight(1f),
                 teamName = leftTeam?.name ?: gameText.teamA,
                 points = leftTeam?.points ?: 0,
-                isWinner = leftTeam != null && rightTeam != null && leftTeam.points > rightTeam.points,
+                isWinner = isLeftTeamWinner,
                 isDraw = stats.isDraw,
                 winnerLabel = text.winnerBadge,
                 participationLabel = text.participationBadge,
@@ -132,7 +145,7 @@ fun GameOverScreen(
                 modifier = Modifier.weight(1f),
                 teamName = rightTeam?.name ?: gameText.teamB,
                 points = rightTeam?.points ?: 0,
-                isWinner = rightTeam != null && leftTeam != null && rightTeam.points > leftTeam.points,
+                isWinner = isRightTeamWinner,
                 isDraw = stats.isDraw,
                 winnerLabel = text.winnerBadge,
                 participationLabel = text.participationBadge,
@@ -148,7 +161,11 @@ fun GameOverScreen(
         ) {
             SegmentedListItem(
                 headlineContent = {
-                    StatsRow(text.totalTime, formatDuration(stats.totalTimeSeconds, text), Lucide.Clock)
+                    StatsRow(
+                        text.totalTime,
+                        formatDuration(stats.totalTimeSeconds, text),
+                        Lucide.Clock
+                    )
                 },
             )
             SegmentedListItem(
@@ -309,7 +326,8 @@ private fun GameState.toGameOverStats(): GameOverStats {
 
     val trackedTotalSeconds = rounds.sumOf { it.durationSeconds }
     val fallbackTotalSeconds = rounds.size * (match?.settings?.roundTime ?: 0)
-    val totalTimeSeconds = if (trackedTotalSeconds > 0) trackedTotalSeconds else fallbackTotalSeconds
+    val totalTimeSeconds =
+        if (trackedTotalSeconds > 0) trackedTotalSeconds else fallbackTotalSeconds
     val secondsPerCard =
         if (allPlayedCards.isEmpty() || totalTimeSeconds <= 0) null
         else totalTimeSeconds.toDouble() / allPlayedCards.size

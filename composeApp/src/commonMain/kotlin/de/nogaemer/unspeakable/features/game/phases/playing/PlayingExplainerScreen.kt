@@ -32,8 +32,10 @@ fun PlayingExplainerScreen(
     state: GameState,
     onEvent: (event: GameClientEvent) -> Unit,
 ) {
+
     PlayingRoundContent(
         state = state,
+        hasTeamPointsCounter = false,
         actions = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(

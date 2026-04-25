@@ -215,7 +215,8 @@ class GameAuthority(
                 val explainerTeamId = _state.value.currentExplainerTeam?.id ?: return
                 if (senderTeam.id == explainerTeamId) return
 
-                val isForbiddenWord = currentCard.forbiddenWords.any { it.equals(event.word, ignoreCase = true) }
+                val isForbiddenWord =
+                    currentCard.forbiddenWords.any { it.equals(event.word, ignoreCase = true) }
                 if (!isForbiddenWord) return
 
                 resolvingWrongByOpponent = true
@@ -270,22 +271,27 @@ class GameAuthority(
         val explainerPlayer = teamPlayers[explainerIndex % teamPlayers.size]
         nextExplainerIndexPerTeam[explainerTeam.id] = explainerIndex + 1
 
-        val round = Round(
-            roundNumber = completedRounds + 1,
-            explainerTeam = explainerTeam,
-            explainerPlayer = explainerPlayer,
-        )
 
         // Ask modes if they want a different start time
         val startTime = modeChain.resolveRoundStartTime(settings.roundTime)
 
+        val round = Round(
+            roundNumber = completedRounds + 1,
+            explainerTeam = explainerTeam,
+            explainerPlayer = explainerPlayer,
+            roundTime = startTime,
+        )
 
         timer = Timer(
             scope = scope,
             maxTime = startTime,
             onTick = { tick ->
                 val (consumed, extraEvents) = modeChain.onTick(tick)
-                if (!consumed) applyAndBroadcast(GameHostEvent.Tick(tick))
+                if (!consumed) applyAndBroadcast(
+                    GameHostEvent.Tick(
+                        tick
+                    )
+                )
                 extraEvents.forEach { applyAndBroadcast(it) }
             },
             onFinish = { endCurrentRound() }
@@ -332,7 +338,7 @@ class GameAuthority(
         val playedCard = PlayedCard(card = currentCard, outcome = outcome)
         applyAndBroadcast(GameHostEvent.CardPlayed(playedCard))
 
-        val result = modeChain.onCardPlayed(playedCard)
+        val result = modeChain.onCardPlayed(playedCard, state.value)
 
         // Apply time delta to the real timer and broadcast the updated tick
         result.timeDelta?.let { delta ->
@@ -389,10 +395,12 @@ class GameAuthority(
                 GameHostEvent.ModeConflict(
                     result.conflicts.map { it.toString() }
                 )
+
             is CompatibilityResult.SoftWarning ->
                 GameHostEvent.ModeWarning(
                     result.warnings
                 )
+
             CompatibilityResult.Compatible -> null
         }
     }

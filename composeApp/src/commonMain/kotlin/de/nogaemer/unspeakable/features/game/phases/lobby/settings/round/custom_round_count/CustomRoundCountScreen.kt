@@ -25,6 +25,7 @@ import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.features.game.GameState
 import de.nogaemer.unspeakable.features.game.phases.lobby.settings.AnchoredSlider
 import de.nogaemer.unspeakable.features.game.preview.GameStatePreviewData
+import kotlin.math.ceil
 
 /**
  * Renders custom round-count controls for lobby settings.
@@ -70,7 +71,7 @@ private fun CustomRoundCountScreen(
                     ) {
                         Text(text.customRoundsSliderLabel)
                         Text(
-                            text = text.roundCountValue(selectedRoundCount),
+                            text = text.roundCountValue(ceil(selectedRoundCount / 2.0).toInt()),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelLarge,
                         )
@@ -80,10 +81,10 @@ private fun CustomRoundCountScreen(
                     Column {
                         Spacer(modifier = Modifier.height(8.dp))
                         AnchoredSlider(
-                            anchors = (1..20).toList(),
-                            selectedValue = selectedRoundCount,
-                            onValueSelected = { updateRoundCount(it) },
-                            onValueChange = { selectedRoundCount = it },
+                            anchors = (1..10).toList(),
+                            selectedValue = ceil(selectedRoundCount / 2.0).toInt(),
+                            onValueSelected = { updateRoundCount(it * 2) },
+                            onValueChange = { selectedRoundCount = it * 2 },
                         )
                     }
                 }

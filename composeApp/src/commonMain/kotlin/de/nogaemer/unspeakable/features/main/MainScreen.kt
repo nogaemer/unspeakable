@@ -8,7 +8,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -18,10 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.lyricist.strings
@@ -31,8 +26,6 @@ import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Settings
 import de.nogaemer.unspeakable.core.components.menu.MenuChild
-import de.nogaemer.unspeakable.core.util.settings.LocalAppSettings
-import de.nogaemer.unspeakable.core.util.settings.isDark
 import de.nogaemer.unspeakable.features.home.HomeScreen
 import de.nogaemer.unspeakable.features.settings.SettingsScreen
 import de.nogaemer.unspeakable.features.words.CategoriesScreen
@@ -66,23 +59,23 @@ fun MainScreen(component: MainComponent) {
             ) {
 
                 ShortNavigationBar(
-                    if (active is MainComponent.TabChild.Settings) {
-                        Modifier.dropShadow(
-                            shape = RoundedCornerShape(0.dp),
-                            shadow = Shadow(
-                                radius = 8.dp,
-                                spread = 4.dp,
-                                color = if (LocalAppSettings.current.appSettings.isDark) Color(
-                                    0x40000000
-                                ) else Color(
-                                    0x40636363
-                                ),
-                                offset = DpOffset(x = 4.dp, 4.dp)
-                            )
-                        )
-                    } else {
-                        Modifier
-                    }
+//                    if (active is MainComponent.TabChild.Settings) {
+//                        Modifier.dropShadow(
+//                            shape = RoundedCornerShape(0.dp),
+//                            shadow = Shadow(
+//                                radius = 8.dp,
+//                                spread = 4.dp,
+//                                color = if (LocalAppSettings.current.appSettings.isDark) Color(
+//                                    0x40000000
+//                                ) else Color(
+//                                    0x40636363
+//                                ),
+//                                offset = DpOffset(x = 4.dp, 4.dp)
+//                            )
+//                        )
+//                    } else {
+//                        Modifier
+//                    }
                 ) {
                     Tab.entries.forEach { tab ->
                         ShortNavigationBarItem(

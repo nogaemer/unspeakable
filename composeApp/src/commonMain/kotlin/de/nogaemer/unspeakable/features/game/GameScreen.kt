@@ -1,6 +1,7 @@
 package de.nogaemer.unspeakable.features.game
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.lyricist.strings
@@ -14,6 +15,8 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import de.nogaemer.unspeakable.core.components.menu.NestedMenuScreen
 import de.nogaemer.unspeakable.core.model.GamePhase
+import de.nogaemer.unspeakable.core.util.KeepScreenOn
+import de.nogaemer.unspeakable.core.util.WakeLock
 import de.nogaemer.unspeakable.features.game.phases.connection.ConnectionLostScreen
 import de.nogaemer.unspeakable.features.game.phases.gameover.GameOverScreen
 import de.nogaemer.unspeakable.features.game.phases.lobby.LobbyScreen
@@ -21,6 +24,7 @@ import de.nogaemer.unspeakable.features.game.phases.lobby.settings.GameSettingsO
 import de.nogaemer.unspeakable.features.game.phases.overview.RoundOverviewScreen
 import de.nogaemer.unspeakable.features.game.phases.playing.PlayingScreen
 import de.nogaemer.unspeakable.features.game.phases.ready.GameReadyScreen
+import de.nogaemer.unspeakable.features.game.phases.reconnecting.ReconnectingScreen
 
 /**
  * Routes to the active game phase screen and nested lobby/settings content.
@@ -29,6 +33,14 @@ import de.nogaemer.unspeakable.features.game.phases.ready.GameReadyScreen
 @Composable
 fun GameScreen(component: DefaultGameComponent, onBack: () -> Unit, onGoHome: () -> Unit) {
     val state by component.state.collectAsState()
+
+    DisposableEffect(Unit) {
+        WakeLock.acquire()
+        onDispose { WakeLock.release() }
+    }
+
+    KeepScreenOn()
+
 
     when (state.phase) {
         GamePhase.SETUP -> Children(
@@ -83,5 +95,9 @@ fun GameScreen(component: DefaultGameComponent, onBack: () -> Unit, onGoHome: ()
         GamePhase.CONNECTION_LOST -> ConnectionLostScreen(
             onGoHome = onGoHome,
         )
+
+        GamePhase.RECONNECTING -> {
+            ReconnectingScreen()
+        }
     }
 }

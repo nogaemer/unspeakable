@@ -19,6 +19,8 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -53,6 +55,8 @@ class HostSession(
     private val connections = mutableMapOf<String, DefaultWebSocketServerSession>()
     private var server: EmbeddedServer<*, *>? = null
 
+    private val pendingLeaveJobs = mutableMapOf<String, Job>()
+
     @OptIn(ExperimentalUuidApi::class)
     override suspend fun start() {
         if (server != null) return
@@ -78,16 +82,39 @@ class HostSession(
 
                             when (event) {
                                 is GameClientEvent.JoinGame -> {
-                                    client = event.player.copy(
-                                        id = Uuid.random().toString(),
-                                        isHost = false
-                                    )
-                                    connections[client.id] = this
+                                    val existingId = event.player.id
+                                    val isReconnect = existingId.isNotEmpty() && authority.state.value.getPlayer(existingId) != null
 
-                                    authority.processEvent(
-                                        GameClientEvent.JoinGame(client)
-                                            .toHostBoundEvent(client.id)
-                                    )
+                                    if (isReconnect) {
+                                        // Cancel the pending leave, restore connection
+                                        pendingLeaveJobs[existingId]?.cancel()
+                                        pendingLeaveJobs.remove(existingId)
+                                        client = authority.state.value.getPlayer(existingId)!!
+                                        connections[existingId] = this
+
+                                        sendDirect(existingId,
+                                            GameHostEvent.SendMatch(authority.state.value.match!!)
+                                        )
+
+                                        sendDirect(existingId,
+                                            GameHostEvent.SendRound(authority.state.value.currentRound)
+                                        )
+
+                                        sendDirect(existingId,
+                                            GameHostEvent.SendPhase(authority.state.value.phase)
+                                        )
+                                    } else {
+                                        client = event.player.copy(
+                                            id = Uuid.random().toString(),
+                                            isHost = false
+                                        )
+                                        connections[client.id] = this
+
+                                        authority.processEvent(
+                                            GameClientEvent.JoinGame(client)
+                                                .toHostBoundEvent(client.id)
+                                        )
+                                    }
                                 }
 
                                 else -> authority.processEvent(
@@ -98,11 +125,20 @@ class HostSession(
                             }
                         }
                     } finally {
-                        if (client != null) {
-                            authority.processEvent(GameClientEvent.LeaveGame.toHostBoundEvent(client.id))
-                            client.let { connections.remove(it.id) }
+                        client?.let { disconnectedClient ->
+                            pendingLeaveJobs[disconnectedClient.id]?.cancel()
+
+                            pendingLeaveJobs[disconnectedClient.id] = scope.launch {
+                                delay(15_000)
+                                authority.processEvent(
+                                    GameClientEvent.LeaveGame.toHostBoundEvent(disconnectedClient.id)
+                                )
+                                connections.remove(disconnectedClient.id)
+                                pendingLeaveJobs.remove(disconnectedClient.id)
+                            }
                         }
                     }
+
                 }
             }
         }.apply { start(wait = false) }

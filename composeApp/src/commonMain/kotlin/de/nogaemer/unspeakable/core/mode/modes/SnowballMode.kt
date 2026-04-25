@@ -9,6 +9,7 @@ import de.nogaemer.unspeakable.core.model.GameHostEvent
 import de.nogaemer.unspeakable.core.model.PlayedCard
 import de.nogaemer.unspeakable.core.model.Round
 import de.nogaemer.unspeakable.db.UnspeakableCard
+import de.nogaemer.unspeakable.features.game.GameState
 
 /**
  * Game mode where taboo words accumulate during a round.
@@ -29,7 +30,7 @@ class SnowballMode : GameMode() {
         return listOf(GameHostEvent.ContaminationUpdated(emptyList()))
     }
 
-    override suspend fun onCardPlayed(playedCard: PlayedCard, modeState: ModeState): InterceptResult {
+    override suspend fun onCardPlayed(playedCard: PlayedCard, modeState: ModeState, gameState: GameState): InterceptResult {
         val s = modeState as ModeState.Snowball
         if (playedCard.outcome == CardOutcome.CORRECT) {
             s.contaminatedWords.add(playedCard.card.word.lowercase())

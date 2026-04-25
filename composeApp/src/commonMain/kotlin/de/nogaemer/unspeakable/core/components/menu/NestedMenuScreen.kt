@@ -38,6 +38,7 @@ fun <O> NestedMenuScreen(
                 title = rootTitle ?: (component as? MenuPage)?.titleKey?.invoke(s) ?: "",
                 onBack = onRootBack ?: component::goBack,
                 navigationIcon = rootTitle == null || showBackOnOverview,
+                hasBottomPadding = instance.hasBottomPadding,
                 isTransparent = instance.isTitleBarTransparent,
                 actions = instance.actions,
             ) {

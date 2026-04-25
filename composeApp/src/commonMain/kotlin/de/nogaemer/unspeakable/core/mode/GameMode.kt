@@ -7,6 +7,7 @@ import de.nogaemer.unspeakable.core.model.PlayedCard
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.Round
 import de.nogaemer.unspeakable.db.UnspeakableCard
+import de.nogaemer.unspeakable.features.game.GameState
 
 /**
  * Result returned by a mode when it intercepts an event.
@@ -76,7 +77,7 @@ abstract class GameMode {
      * Called when a card outcome is recorded (correct/skipped/wrong).
      * Modes can inject extra events (bonus points, timer changes, etc.)
      */
-    open suspend fun onCardPlayed(playedCard: PlayedCard, modeState: ModeState): InterceptResult = InterceptResult()
+    open suspend fun onCardPlayed(playedCard: PlayedCard, modeState: ModeState, gameState: GameState): InterceptResult = InterceptResult()
 
     /**
      * Called when the opposing team presses buzz.

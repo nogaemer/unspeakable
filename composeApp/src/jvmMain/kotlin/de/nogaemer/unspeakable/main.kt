@@ -11,12 +11,16 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import de.nogaemer.unspeakable.core.util.FirewallSetup.ensurePort
 import de.nogaemer.unspeakable.navigation.RootComponent
 
 fun main() = application {
     val lifecycle = LifecycleRegistry()
     val backDispatcher = BackDispatcher()
     val root = RootComponent(DefaultComponentContext(lifecycle, backHandler = backDispatcher))
+
+    //Firewall setup
+    ensurePort(8080)
 
     val windowState = rememberWindowState()
 
