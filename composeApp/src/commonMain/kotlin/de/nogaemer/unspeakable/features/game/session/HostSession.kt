@@ -96,10 +96,6 @@ class HostSession(
 
                                         val state = authority.state.value
 
-                                        sendDirect(existingId, GameHostEvent.SendMatch(state.match!!))
-                                        sendDirect(existingId, GameHostEvent.SendRound(state.currentRound))
-                                        sendDirect(existingId, GameHostEvent.SendPhase(state.phase))
-
                                         val currentRound = state.currentRound
                                         if (currentRound != null) {
                                             val role = when {
@@ -109,6 +105,10 @@ class HostSession(
                                             }
                                             sendDirect(existingId, GameHostEvent.InitNewRound(currentRound, role))
                                         }
+
+                                        sendDirect(existingId, GameHostEvent.SendMatch(state.match!!))
+                                        sendDirect(existingId, GameHostEvent.SendRound(state.currentRound))
+                                        sendDirect(existingId, GameHostEvent.SendPhase(state.phase))
 
                                         // If the round is active, send the current card and remaining time
                                         if (state.phase == GamePhase.PLAYING) {
@@ -142,7 +142,7 @@ class HostSession(
                             pendingLeaveJobs[disconnectedClient.id]?.cancel()
 
                             pendingLeaveJobs[disconnectedClient.id] = scope.launch {
-                                delay(15_000)
+                                delay(20_000)
                                 authority.processEvent(
                                     GameClientEvent.LeaveGame.toHostBoundEvent(disconnectedClient.id)
                                 )

@@ -49,7 +49,13 @@ class ClientSession(
     private lateinit var session: DefaultWebSocketSession
     private var hostDisconnectHandled = false
 
-    override suspend fun start() = connect(isReconnect = false)
+    override suspend fun start() = run {
+        try {
+            connect(isReconnect = false)
+        } catch (_: Exception) {
+            onHostDisconnected()
+        }
+    }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Logger.e { "Unhandled session error: $throwable" }
@@ -58,17 +64,11 @@ class ClientSession(
 
 
     suspend fun connect(isReconnect: Boolean) {
-        try {
-            session = client.webSocketSession("ws://$hostIp:8080/game")
+        session = client.webSocketSession("ws://$hostIp:8080/game")
 
-            val myId = if (isReconnect) state.value.me?.id ?: "" else ""
-            val me = Player(myId, playerName, profilePicture, isHost = false, "")
-            sendEvent(GameClientEvent.JoinGame(me))
-
-        } catch (_: Exception) {
-            onHostDisconnected()
-            return
-        }
+        val myId = if (isReconnect) state.value.me?.id ?: "" else ""
+        val me = Player(myId, playerName, profilePicture, isHost = false, "")
+        sendEvent(GameClientEvent.JoinGame(me))
 
         scope.launch(exceptionHandler) {
             try {
@@ -98,11 +98,11 @@ class ClientSession(
 
         _state.update { it.copy(phase = GamePhase.RECONNECTING) }
 
-        // Exponential backoff: 1s, 2s, 4s, 8s, … capped at 16s, give up after ~60s
+        // Exponential backoff: 1s, 2s, 4s, 8s, … capped at 8s, give up after ~30s
         var attempt = 0
         val maxAttempts = 6
         while (attempt < maxAttempts) {
-            val delayMs = minOf(1000L * (1 shl attempt), 16_000L)
+            val delayMs = minOf(1000L * (1 shl attempt), 8_000L)
             delay(delayMs)
             attempt++
             try {
