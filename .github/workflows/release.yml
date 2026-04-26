@@ -1,0 +1,66 @@
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            task: packageMsi
+            artifact: "**/*.msi"
+            name: installer-windows
+          - os: macos-latest
+            task: packageDmg
+            artifact: "**/*.dmg"
+            name: installer-macos
+          - os: ubuntu-latest
+            task: packageDeb
+            artifact: "**/*.deb"
+            name: installer-linux
+          - os: ubuntu-latest
+            task: bundleRelease
+            artifact: "**/*.aab"
+            name: installer-android
+          - os: ubuntu-latest
+            task: assembleRelease
+            artifact: "**/*.apk"
+            name: installer-android-apk
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        if: startsWith(matrix.name, 'installer-android')
+        uses: android-actions/setup-android@v3
+
+      # Decode and write the keystore file from secret
+      - name: Setup signing
+        if: startsWith(matrix.name, 'installer-android')
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+
+      - name: Build
+        run: ./gradlew :composeApp:${{ matrix.task }}
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: composeApp/build/outputs/${{ matrix.artifact }}

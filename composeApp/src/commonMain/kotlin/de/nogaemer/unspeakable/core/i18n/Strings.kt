@@ -524,7 +524,7 @@ val EnStrings = Strings(
             roundCountCustomLabel = "Custom",
             title = "Rounds per team",
             description = "Choose the number of rounds per team",
-            customRoundsSliderLabel = "Number of Rounds per team",
+            customRoundsSliderLabel = "Number of Rounds",
             roundCountValue = { value -> "$value rounds per team" },
         ),
         gameModeSettingsStrings = GameModeSettingsStrings(
@@ -785,7 +785,7 @@ val DeStrings = Strings(
             roundCountCustomLabel = "Benutzerdefiniert",
             title = "Rundenanzahl",
             description = "Wähle die Anzahl der Runden pro Team",
-            customRoundsSliderLabel = "Rundenanzahl pro Team",
+            customRoundsSliderLabel = "Rundenanzahl",
             roundCountValue = { value -> "$value Runden pro Team" },
         ),
         gameModeSettingsStrings = GameModeSettingsStrings(

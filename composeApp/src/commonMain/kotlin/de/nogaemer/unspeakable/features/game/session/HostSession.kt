@@ -3,6 +3,8 @@ package de.nogaemer.unspeakable.features.game.session
 import co.touchlab.kermit.Logger
 import de.nogaemer.unspeakable.core.model.GameClientEvent
 import de.nogaemer.unspeakable.core.model.GameHostEvent
+import de.nogaemer.unspeakable.core.model.GamePhase
+import de.nogaemer.unspeakable.core.model.GameRole
 import de.nogaemer.unspeakable.core.model.Player
 import de.nogaemer.unspeakable.core.model.ProfilePicture
 import de.nogaemer.unspeakable.db.UnspeakableCardsDao
@@ -92,17 +94,28 @@ class HostSession(
                                         client = authority.state.value.getPlayer(existingId)!!
                                         connections[existingId] = this
 
-                                        sendDirect(existingId,
-                                            GameHostEvent.SendMatch(authority.state.value.match!!)
-                                        )
+                                        val state = authority.state.value
 
-                                        sendDirect(existingId,
-                                            GameHostEvent.SendRound(authority.state.value.currentRound)
-                                        )
+                                        sendDirect(existingId, GameHostEvent.SendMatch(state.match!!))
+                                        sendDirect(existingId, GameHostEvent.SendRound(state.currentRound))
+                                        sendDirect(existingId, GameHostEvent.SendPhase(state.phase))
 
-                                        sendDirect(existingId,
-                                            GameHostEvent.SendPhase(authority.state.value.phase)
-                                        )
+                                        val currentRound = state.currentRound
+                                        if (currentRound != null) {
+                                            val role = when {
+                                                currentRound.explainerPlayer.id == client.id -> GameRole.EXPLAINER
+                                                currentRound.explainerTeam.players.any { it.id == client.id } -> GameRole.GUESSER
+                                                else -> GameRole.OPPONENT
+                                            }
+                                            sendDirect(existingId, GameHostEvent.InitNewRound(currentRound, role))
+                                        }
+
+                                        // If the round is active, send the current card and remaining time
+                                        if (state.phase == GamePhase.PLAYING) {
+                                            state.currentCard?.let { sendDirect(existingId, GameHostEvent.SendCard(it)) }
+                                            state.currentRoundTime?.let { sendDirect(existingId, GameHostEvent.Tick(it)) }
+                                        }
+
                                     } else {
                                         client = event.player.copy(
                                             id = Uuid.random().toString(),

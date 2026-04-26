@@ -16,7 +16,6 @@ sealed class GameClientEvent() {
     @Serializable data object StartGame : GameClientEvent()
     @Serializable data class UpdateGameSettings(val settings: GameSettings) : GameClientEvent()
 
-    @Serializable data object RequestNewRandomCard : GameClientEvent()
     @Serializable data object ReadyToStartMyTurn : GameClientEvent()
     @Serializable data object NextRoundOrEndGame : GameClientEvent()
 

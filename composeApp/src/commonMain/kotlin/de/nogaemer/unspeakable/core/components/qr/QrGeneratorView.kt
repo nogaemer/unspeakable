@@ -7,9 +7,6 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import com.composables.icons.lucide.ClipboardCopy
-import com.composables.icons.lucide.Lucide
 import qrgenerator.qrkitpainter.PatternType
 import qrgenerator.qrkitpainter.QrBallType
 import qrgenerator.qrkitpainter.QrFrameType
@@ -34,9 +31,6 @@ fun QrGeneratorView(
     colorScheme: ColorScheme,
     modifier: Modifier = Modifier,
 ) {
-
-    val logoPainter = rememberVectorPainter(Lucide.ClipboardCopy)
-
     val painter = rememberQrKitPainter(data) {
         shapes = QrKitShapes(
             ballShape = getSelectedQrBall(QrBallType.RoundCornersQrBall(radius = 0.2f)),
