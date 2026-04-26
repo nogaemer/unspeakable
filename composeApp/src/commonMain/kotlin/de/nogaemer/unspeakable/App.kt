@@ -1,16 +1,26 @@
 package de.nogaemer.unspeakable
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.lyricist.ProvideStrings
 import cafe.adriel.lyricist.rememberStrings
@@ -51,6 +61,7 @@ fun App(root: RootComponent) {
 
     val controller = remember { AppSettingsController() }
 
+    var databaseReady by remember { mutableStateOf(false) }
 
     //DB init
     LaunchedEffect(Unit) {
@@ -64,6 +75,7 @@ fun App(root: RootComponent) {
         val db = getRoomDatabase(builder)
         Graph.database = db
         Graph.settings = controller
+        databaseReady = true
     }
 
     //Locals
@@ -87,7 +99,7 @@ fun App(root: RootComponent) {
                 isAmoled = controller.appSettings.isAmoled,
                 paletteStyle = controller.appSettings.paletteStyle,
             ) {
-                AppContent(root)
+                AppContent(root, databaseReady)
             }
         }
     }
@@ -96,29 +108,44 @@ fun App(root: RootComponent) {
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun AppContent(root: RootComponent) {
+fun AppContent(root: RootComponent, databaseReady: Boolean) {
     Surface {
-        Children(
-            stack = root.stack,
-            animation = predictiveBackAnimation(
-                backHandler = root.backHandler,
-                onBack = root::goBack,
-                selector = { backEvent, _, _ ->
-                    androidPredictiveBackAnimatableV2(
-                        backEvent
-                    )
-                },
-                fallbackAnimation = stackAnimation(slide() + fade()),
-            )
-        ) { child ->
-            when (val instance = child.instance) {
-                is RootComponent.Child.Main -> MainScreen(instance.component)
-                is RootComponent.Child.Setup -> SetupScreen(instance.component, onBack = root::goBack)
-                is RootComponent.Child.Game -> GameScreen(
-                    component = instance.component,
+        if (!databaseReady) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Children(
+                stack = root.stack,
+                animation = predictiveBackAnimation(
+                    backHandler = root.backHandler,
                     onBack = root::goBack,
-                    onGoHome = root::goHome,
+                    selector = { backEvent, _, _ ->
+                        androidPredictiveBackAnimatableV2(
+                            backEvent
+                        )
+                    },
+                    fallbackAnimation = stackAnimation(slide() + fade()),
                 )
+            ) { child ->
+                when (val instance = child.instance) {
+                    is RootComponent.Child.Main -> MainScreen(instance.component)
+                    is RootComponent.Child.Setup -> SetupScreen(
+                        instance.component,
+                        onBack = root::goBack
+                    )
+
+                    is RootComponent.Child.Game -> GameScreen(
+                        component = instance.component,
+                        onBack = root::goBack,
+                        onGoHome = root::goHome,
+                    )
+                }
             }
         }
     }

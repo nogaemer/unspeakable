@@ -32,7 +32,8 @@ class SabotageMode : GameMode() {
         sabotageWord: String?,
     ): InterceptResult {
         val s = modeState as ModeState.Sabotage
-        val word = sabotageWord ?: return InterceptResult()  // no word provided → no-op
+        val word = sabotageWord ?: return InterceptResult()
+        if (word.isEmpty()) return InterceptResult()
 
         // Hard once-per-round-per-team limit
         if (buzzer.teamId in s.usedByTeamIds) {

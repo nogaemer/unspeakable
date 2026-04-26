@@ -91,7 +91,12 @@ kotlin {
 
             implementation(libs.kermit)
 
-            implementation(libs.qr.kit)
+            implementation("network.chaintech:qr-kit:3.1.3") {
+                exclude(group = "org.bytedeco", module = "opencv-platform")
+                exclude(group = "org.bytedeco", module = "leptonica-platform")
+                exclude(group = "org.bytedeco", module = "tesseract-platform")
+                exclude(group = "org.bytedeco", module = "javacpp-platform")
+            }
 
             implementation(libs.colormath)
         }
@@ -102,6 +107,40 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.ktor.client.okhttp)
+
+            val osName = System.getProperty("os.name").lowercase()
+            val arch = System.getProperty("os.arch").lowercase()
+            val classifier = when {
+                osName.contains("win")                      -> "windows-x86_64"
+                osName.contains("mac") && arch == "aarch64" -> "macosx-arm64"
+                osName.contains("mac")                      -> "macosx-x86_64"
+                osName.contains("nux")                      -> "linux-x86_64"
+                else -> null
+            }
+            if (classifier != null) {
+                runtimeOnly("org.bytedeco:opencv:4.6.0-1.5.8:$classifier")
+                runtimeOnly("org.bytedeco:javacpp:1.5.8:$classifier")
+            }
+
+
+            configurations {
+                all {
+                    exclude("org.bytedeco", "artoolkitplus")
+                    exclude("org.bytedeco", "ffmpeg")
+                    exclude("org.bytedeco", "flandmark")
+                    exclude("org.bytedeco", "flycapture")
+                    exclude("org.bytedeco", "leptonica")
+                    exclude("org.bytedeco", "libdc1394")
+                    exclude("org.bytedeco", "libfreenect")
+                    exclude("org.bytedeco", "librealsense")
+                    exclude("org.bytedeco", "librealsense2")
+                    exclude("org.bytedeco", "openblas")
+                    exclude("org.bytedeco", "tesseract")
+                    exclude("org.bytedeco", "videoinput")
+                    // keep only opencv and javacpp if needed
+                    // keep only windows-x86_64 classifier
+                }
+            }
         }
         webMain.dependencies {
             implementation(npm("@js-joda/timezone", "2.22.0"))
@@ -220,6 +259,17 @@ compose.desktop {
                 iconFile.set(project.file("src/jvmMain/resources/icon.png"))
             }
 
+            modules(
+                "java.base",
+                "java.desktop",
+                "java.logging",
+                "java.management",
+                "java.naming",
+                "java.net.http",
+                "java.sql",
+                "java.xml",
+                "jdk.unsupported"
+            )
         }
     }
 }

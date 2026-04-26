@@ -109,6 +109,16 @@ class GameAuthority(
             is GameClientEvent.LeaveGame -> {
                 val player = _state.value.getPlayer(boundClientEvent.playerId) ?: return
                 applyAndBroadcast(PlayerLeft(player))
+
+                val isCurrentExplainer = _state.value.currentExplainer?.id == player.id
+
+                if (isCurrentExplainer) {
+                    when (_state.value.phase) {
+                        GamePhase.PLAYING -> endCurrentRound()
+                        GamePhase.READY -> initNextRound()
+                        else -> Unit
+                    }
+                }
             }
 
             is JoinTeam -> {
@@ -147,12 +157,6 @@ class GameAuthority(
 
                 applyAndBroadcast(StartGame(match))
                 initNextRound()
-            }
-
-            GameClientEvent.RequestNewRandomCard -> {
-                if (_state.value.currentRound == null) return
-                val card = getRandomCard() ?: return
-                applyAndBroadcast(SendCard(card.toUnspeakableCard()))
             }
 
 
@@ -227,7 +231,10 @@ class GameAuthority(
 
                 scope.launch {
                     delay(durationMs)
-                    handleCardOutcome(WRONG)
+
+                    if (_state.value.phase == GamePhase.PLAYING) {
+                        handleCardOutcome(WRONG)
+                    }
                     resolvingWrongByOpponent = false
                 }
             }
@@ -334,6 +341,8 @@ class GameAuthority(
      * Updates the timer, applies mode effects, and deals the next card if time remains.
      */
     private suspend fun handleCardOutcome(outcome: CardOutcome) {
+        if (_state.value.phase != GamePhase.PLAYING) return
+
         val currentCard = _state.value.currentCard ?: return
         val playedCard = PlayedCard(card = currentCard, outcome = outcome)
         applyAndBroadcast(GameHostEvent.CardPlayed(playedCard))

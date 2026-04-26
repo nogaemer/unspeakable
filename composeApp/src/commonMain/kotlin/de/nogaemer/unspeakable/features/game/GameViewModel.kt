@@ -58,8 +58,6 @@ class GameViewModel(config: GameConfig) : ViewModel() {
         viewModelScope.launch { session.sendEventAs(event, playerId) }
     }
 
-    fun drawRandomCard() = onEvent(GameClientEvent.RequestNewRandomCard)
-
     fun closeSession() {
         if (isSessionClosed) return
         isSessionClosed = true
