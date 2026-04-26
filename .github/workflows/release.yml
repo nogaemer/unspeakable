@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
@@ -36,6 +37,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      - name: Grant gradlew permission
+        if: runner.os != 'Windows'
+        run: chmod +x gradlew
+
 
       - name: Setup Android SDK
         if: startsWith(matrix.name, 'installer-android')
