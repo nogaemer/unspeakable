@@ -8,23 +8,24 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
             task: packageMsi
-            artifact: "**/*.msi"
+            artifact: "composeApp/build/compose/binaries/main/msi/*.msi"
             name: installer-windows
           - os: ubuntu-latest
             task: packageDeb
-            artifact: "**/*.deb"
+            artifact: "composeApp/build/compose/binaries/main/deb/*.deb"
             name: installer-linux
           - os: ubuntu-latest
             task: bundleRelease
-            artifact: "**/*.aab"
+            artifact: "composeApp/build/outputs/bundle/release/*.aab"
             name: installer-android
           - os: ubuntu-latest
             task: assembleRelease
-            artifact: "**/*.apk"
+            artifact: "composeApp/build/outputs/apk/release/*.apk"
             name: installer-android-apk
 
     runs-on: ${{ matrix.os }}
@@ -36,6 +37,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      - name: Grant gradlew permission
+        if: runner.os != 'Windows'
+        run: chmod +x gradlew
+
 
       - name: Setup Android SDK
         if: startsWith(matrix.name, 'installer-android')
