@@ -1,9 +1,23 @@
-# Unspeakable
+<p align="center">
+  <img src="https://img.shields.io/badge/Kotlin-Multiplatform-purple?style=for-the-badge&logo=kotlin" alt="Kotlin" />
+  <img src="https://img.shields.io/badge/Compose-Multiplatform-blue?style=for-the-badge&logo=jetpackcompose" alt="Compose" />
+</p>
+<br>
+<p align="center">
+  <img src="docs/images/logo.png" alt="Unspeakable Logo" width="200" />
+</p>
+
+<h1 align="center" style="font-size: 56px; color: #6790a6;">
+  Unspeakable
+</h1>
+
+
+
+<br>
 
 A modernized, digital "forbidden-word" party game designed specifically for chaotic in-person play. Built for the [Hack Club Flavortown](https://flavortown.hackclub.com/) kitchen.
 
-![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-purple?logo=kotlin)
-![Compose](https://img.shields.io/badge/Compose-Multiplatform-blue)
+
 
 ## About the Project
 
@@ -11,19 +25,40 @@ I am building this game to create party moments that physical cards just can't r
 
 By connecting multiple devices in the same room, the app ensures each team sees different information: The describer’s view is completely different from the opposing team’s
 
-### Game Modes
-* **Classic:** Get your team to guess the word without saying the 5 forbidden words.
-* **Sabotage:** The opposing team can inject new forbidden words mid-round to mess with the describer in real-time.
-* **Survival:** The round timer speeds up on wrong guesses and slows down on correct ones — stay alive as long as possible.
-* **Chain Reaction:** Every correctly guessed word becomes an additional forbidden word for the rest of the round.
-* **Minefield** *(planned):* The describer only sees 3 of their forbidden words, but the opposing team sees all of them and waits with a digital buzzer to catch them stepping on an invisible mine.
+## Features
+
+- **Pass & Play and local multiplayer**
+    - Single‑device mode for quick games.
+    - Local network games where one device acts as the host and others join as clients.
+
+- **Multiple game modes**
+    - **Classic** – guess the word without saying any of the forbidden words.
+    - **Sabotage** – the other team injects new forbidden words into your cards in real time.
+    - **Survival** – dynamic timer that speeds up on mistakes and slows down on correct guesses.
+    - **Chain Reaction** – every correctly guessed word becomes a new forbidden word for the rest of the round.
+    - **Minefield** *(planned)* – partial information for the describer, full information and a buzzer for the opposing team.
+
+- **Configurable lobby**
+    - Adjust **round time** with a slider.
+    - Set **rounds per team**.
+    - Toggle game modes and core rules per match.
+    - Choose which **card categories** are included in the game.
+
+- **Cards & categories editor**
+    - Browse dozens of built‑in categories.
+    - Create your own categories with custom icons.
+    - Edit cards directly in the app: term + 5 forbidden words + assigned category.
+
+- **Offline‑first play**
+    - All cards are stored locally in an embedded database, so the game works even without internet.
+
 ## Tech Stack
 
 This project is built completely from scratch using modern Kotlin architecture:
 * **[Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform.html):** Sharing logic, state machines, and networking across devices.
 * **[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/):** A fully custom, highly expressive Material 3 UI featuring variable fonts (`Roboto Flex`).
 * **[Room (SQLite)](https://developer.android.com/kotlin/multiplatform/room):** Embedded local database to store and randomly generate thousands of game cards.
-* **[Ktor](https://ktor.io/):** (In Progress) Using Ktor's embedded server and WebSockets to allow one phone to act as the "Host" while others join the local network.
+* **[Ktor](https://ktor.io/):** Using Ktor's embedded server and WebSockets to allow one phone to act as the "Host" while others join the local network.
 
 ## Platforms & Compiling
 
@@ -32,6 +67,16 @@ The architecture is fully cross-platform! Currently, I am actively developing an
 * ✅ **Desktop (JVM)**
 
 *Note on iOS:* The codebase is written to support iOS natively via Kotlin Multiplatform. However, because I don't currently have a Mac, I cannot compile or test the `.ipa` build. 
+
+## Screenshots
+
+<p align="center">
+<img src="docs/images/unspeakable-theming.jpg" alt="Home screen – host / join / local" width="19%" />
+<img src="docs/images/unspeakable-lobby.jpg" alt="Lobby and game settings" width="19%" />
+<img src="docs/images/unspeakable-playing.jpg" alt="Lobby and game settings" width="19%" />
+<img src="docs/images/unspeakable-categories.jpg" alt="Lobby and game settings" width="19%" />
+<img src="docs/images/unspeakable-editor.jpg" alt="Card and category editor" width="19%" />
+</p>
 
 ## How to Run (Development)
 
